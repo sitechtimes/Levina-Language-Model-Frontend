@@ -4,7 +4,7 @@
     <div class="mb-4 flex flex-col items-center justify-center rounded-3xl px-2">
       <h3 class="mb-4">Log in to your Regents Prep App account</h3>
 
-      <form class="flex w-full flex-col items-center justify-center gap-7" @submit="console.log("loginWithEmail")" @submit.prevent>
+      <form class="flex w-full flex-col items-center justify-center gap-7" @submit="console.log('loginWithEmai')" @submit.prevent>
         <div class="relative flex flex-col items-start justify-center gap-1">
           <label class="font-medium" for="email">Email Address <span title="Required" class="text-red-500">*</span></label>
           <input
