@@ -33,7 +33,7 @@
         <p v-show="loginErr.length > 0" class="error -my-4 font-medium text-red-500">{{ loginErr }}</p>
 
         <div class="relative flex w-96 flex-col items-center justify-center gap-1">
-          <button class="w-40 items-center rounded-lg bg-green-accent px-16 py-2 hover:brightness-[0.85]" type="submit">
+          <button class="w-40 flex justify-center items-center rounded-lg bg-green-accent px-16 py-2 hover:brightness-[0.85]" type="submit">
             <span v-if="loading" class="loading du-loading du-loading-sm mt-1"></span>
             <p v-else class="text-lg">Login</p>
           </button>
