@@ -20,17 +20,6 @@
   --text-color: black;
   --border-color: #d9d9d9;
   --hover-background: #e5e5e5;
-
-  --math: #4db6ff;
-  --math-faded: #bbd1e2;
-  --english: #ff7354;
-  --english-faded: #dbc0ba;
-  --science: #a0d468;
-  --science-faded: #c2d3b4;
-  --history: #ffc95e;
-  --history-faded: #d3c8b3;
-  --russian: #a463ff;
-  --russian-faded: #c5b7d8;
 }
 
 .dark {
@@ -43,17 +32,6 @@
   --text-color: #ffffff;
   --border-color: #3d444d;
   --hover-background: #292929;
-
-  --math: #294356;
-  --math-faded: #434b50;
-  --science: #42814a;
-  --science-faded: #484e43;
-  --english: #55322b;
-  --english-faded: #584a47;
-  --history: #624b1d;
-  --history-faded: #5f5746;
-  --foreignlanguage: #3d2f51;
-  --foreignlanguage-faded: #4b4553;
 }
 
 body {
