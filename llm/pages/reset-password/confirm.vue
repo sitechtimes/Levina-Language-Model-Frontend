@@ -2,7 +2,7 @@
   <div class="bg-gray flex min-h-screen w-screen flex-col items-center justify-center py-12">
     <h1 class="text-3xl font-bold md:text-5xl">Set New Password</h1>
     <div class="mb-4 flex flex-col items-center justify-center rounded-3xl bg-body p-4">
-      <form class="login flex w-full flex-col items-center justify-center gap-7" @submit.prevent="console.log('onSubmit')">
+      <form class="login flex w-full flex-col items-center justify-center gap-7" @submit.prevent="onSubmit"> 
         <div class="relative flex flex-col items-start justify-center gap-1">
           <label class="font-medium" for="newPassword1"> New Password <span title="Required" class="font-2xl text-red-500">*</span> </label>
           <input
@@ -29,7 +29,7 @@
         <p v-if="submitError" class="error font-medium text-red-500">{{ errorMessage }}</p>
 
         <div class="relative flex flex-col items-center justify-center gap-1">
-          <button class="items-center rounded-lg bg-green-accent px-16 py-2 hover:brightness-[0.85]" type="submit" @click="showModal = true"> <!-- Reminder to remove the @click in the future -->
+          <button class="items-center rounded-lg bg-green-accent px-16 py-2 hover:brightness-[0.85]" type="submit">
             <span v-if="loading" class="loading du-loading du-loading-sm mt-1"></span>
             <span v-else class="text-nowrap text-lg">Reset Password</span>
           </button>
@@ -69,7 +69,7 @@ const errorMessage = ref("");
 
 const showModal = ref(false);
 
-// async function onSubmit() {
+async function onSubmit() {
 //   if (newPassword1.value !== newPassword2.value) {
 //     submitError.value = false;
 //     notMatching.value = true;
@@ -99,7 +99,8 @@ const showModal = ref(false);
 //   if (data === "Password has been reset with the new password.") showModal.value = true;
 //   else submitError.value = true;
 //   loading.value = false;
-// }
+  showModal.value = true;
+}
 
 async function handleConfirm() {
   await router.push("/login");

@@ -9,11 +9,14 @@
           SITHS Levina Language Model
         </h1>
       </div>
-      <p class="mb-2 mt-4 text-xl sm:mb-8 sm:text-2xl">Do NOT go failing Levina now.</p>
+      <p class="mb-2 mt-4 text-xl sm:mb-8 sm:text-2xl">Do NOT fail Levina.</p>
       <!-- buttons -->
       <div class="mt-4 flex space-x-4 sm:mt-0">
         <NuxtLink to="/login" class="flex items-center rounded-xl bg-[var(--primary)] px-6 py-2 text-2xl text-[var(--text-color)] hover:brightness-[0.85] lg:px-16 hover:dark:brightness-125">
           {{ isAuth ? "Continue" : "Login" }}
+        </NuxtLink>
+        <NuxtLink to="/access-code" class="flex items-center rounded-xl bg-[var(--primary)] px-6 py-2 text-2xl text-[var(--text-color)] hover:brightness-[0.85] lg:px-[44px] hover:dark:brightness-125">
+          {{ isAuth ? "Continue" : "Access Code" }}
         </NuxtLink>
       </div>
     </div>

@@ -3,14 +3,14 @@
     <h1 class="text-5xl font-bold">Reset Password</h1>
     <div class="mb-2 flex flex-col items-center justify-center rounded-3xl p-4">
       <h3 class="mb-4">Enter your email address below to receive the link.</h3>
-      <form class="login flex w-full flex-col items-center justify-center gap-7" @submit.prevent="console.log('onSubmit')">
+      <form class="login flex w-full flex-col items-center justify-center gap-7" @submit.prevent="onSubmit">
         <div class="relative flex flex-col items-start justify-center gap-1">
           <label class="font-medium" for="email"> Email Address <span title="Required" class="font-2xl text-red-500">*</span> </label>
           <input id="email" v-model="email" class="h-12 w-[22rem] rounded-lg border-0 bg-gray-accent px-4" type="email" required autocomplete="email" />
         </div>
 
         <div class="relative flex w-96 flex-col items-center justify-center gap-1">
-          <button class="w-40 flex justify-center items-center rounded-lg bg-green-accent px-16 py-2 hover:brightness-[0.85]" type="submit" @click="setNewPassword"> <!-- Reminder to remove the @click in the future -->
+          <button class="w-40 flex justify-center items-center rounded-lg bg-green-accent px-16 py-2 hover:brightness-[0.85]" type="submit"> 
             <span v-if="loading" class="loading du-loading du-loading-sm mt-1"></span>
             <span v-else class="text-lg">Send</span>
           </button>
@@ -36,7 +36,8 @@ const success = ref(false);
 
 const route = useRoute();
 const router = useRouter();
-// async function onSubmit() {
+
+async function onSubmit() {
 //   error.value = false;
 //   success.value = false;
 //   loading.value = true;
@@ -49,9 +50,6 @@ const router = useRouter();
 //     error.value = true;
 //     console.error("Reset email failed:", sendError);
 //   } else success.value = true;
-// }
-
-async function setNewPassword() {
   await router.push({ path: "/reset-password/confirm"});
 }
 </script>

@@ -4,7 +4,7 @@
     <div class="mb-4 flex flex-col items-center justify-center rounded-3xl px-2">
       <h3 class="mb-4">Log in to your Regents Prep App account</h3>
 
-      <form class="flex w-full flex-col items-center justify-center gap-7" @submit="console.log('loginWithEmail')" @submit.prevent>
+      <form class="flex w-full flex-col items-center justify-center gap-7" @submit="loginWithEmail" @submit.prevent>  
         <div class="relative flex flex-col items-start justify-center gap-1">
           <label class="font-medium" for="email">Email Address <span title="Required" class="text-red-500">*</span></label>
           <input
@@ -44,6 +44,7 @@
     <p>Don't have an account?</p>
     <p class="font-medium">Ask your teacher about account creation.</p>
     <NuxtLink to="/reset-password/" class="mt-3 text-neutral-600 dark:text-neutral-200"> Forgot password? <span class="underline underline-offset-2">Reset here</span>. </NuxtLink>
+    <NuxtLink to="/access-code" class="text-neutral-600 dark:text-neutral-200"> Need to use an Access Code? <span class="underline underline-offset-2">Enter here</span>. </NuxtLink>
   </div>
 </template>
 
@@ -55,7 +56,7 @@
 // useSeoMeta({ title: "SITHS Regents Prep - Login" });
 
 // const userStore = useUserStore();
-// const router = useRouter();
+const router = useRouter();
 
 const email = ref("");
 const password = ref("");
@@ -70,7 +71,7 @@ const loading = ref(false);
 //   else emailErr.value = "";
 // });
 
-// async function loginWithEmail() {
+async function loginWithEmail() {
 //   loginErr.value = "";
 //   if (emailErr.value || loginErr.value) return;
 
@@ -84,7 +85,8 @@ const loading = ref(false);
 //   }
 
 //   loading.value = false;
-// }
+  await router.push("/success");
+}
 
 // // for vitest
 // defineExpose({ email, emailErr, password, loginErr });
