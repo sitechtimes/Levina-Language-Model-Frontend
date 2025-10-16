@@ -85,7 +85,7 @@ async function loginWithEmail() {
 //   }
 
 //   loading.value = false;
-  await router.push("/success");
+  await router.push("/classView");
 }
 
 // // for vitest
