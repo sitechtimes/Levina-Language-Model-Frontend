@@ -15,7 +15,7 @@
         <NuxtLink to="/login" class="flex items-center rounded-xl bg-[var(--primary)] px-6 py-2 text-2xl text-[var(--text-color)] hover:brightness-[0.85] lg:px-16 hover:dark:brightness-125">
           {{ isAuth ? "Continue" : "Login" }}
         </NuxtLink>
-        <NuxtLink to="/access-code" class="flex items-center rounded-xl bg-[var(--primary)] px-6 py-2 text-2xl text-[var(--text-color)] hover:brightness-[0.85] lg:px-[44px] hover:dark:brightness-125">
+        <NuxtLink to="/accessCode" class="flex items-center rounded-xl bg-[var(--primary)] px-6 py-2 text-2xl text-[var(--text-color)] hover:brightness-[0.85] lg:px-[44px] hover:dark:brightness-125">
           {{ isAuth ? "Continue" : "Access Code" }}
         </NuxtLink>
       </div>
@@ -31,7 +31,8 @@
 // const userStore = useUserStore();
 // const { isAuth } = storeToRefs(userStore);
 
-const isAuth = false;
+const isAuth = false; 
+
 </script>   
 
 <style scoped></style>
