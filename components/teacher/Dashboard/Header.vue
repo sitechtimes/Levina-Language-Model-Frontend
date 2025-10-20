@@ -8,9 +8,8 @@
 
     <div class="flex items-center justify-center">
       <NuxtLink to="/teacher/dashboard" class="group flex items-center justify-center gap-2">
-        <span class="hidden text-2xl font-semibold group-hover:-translate-x-0.5 sm:block">Regents</span>
         <img class="size-12 select-none rounded-full group-hover:scale-105 group-active:scale-95" src="/seagull.png" aria-hidden="true" draggable="false" />
-        <span class="hidden text-2xl font-semibold group-hover:translate-x-0.5 sm:block">Prep</span>
+        <span class="hidden text-2xl font-semibold group-hover:translate-x-0.5 sm:block">Levina Language Model</span>
       </NuxtLink>
     </div>
 
