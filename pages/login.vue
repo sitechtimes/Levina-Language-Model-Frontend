@@ -64,6 +64,7 @@ const password = ref("");
 const emailErr = ref("");
 const loginErr = ref("");
 const loading = ref(false);
+const userType = ref("teacher")
 
 // watch(email, (value) => {
 //   const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
@@ -85,7 +86,7 @@ async function loginWithEmail() {
 //   }
 
 //   loading.value = false;
-  await router.push("/classView");
+  await router.push(`${userType.value}/dashboard`);
 }
 
 // // for vitest
