@@ -78,7 +78,7 @@ async function loginWithEmail() {
   loading.value = true;
   const data = await userStore.login(email.value.toLowerCase(), password.value);
 
-  if (!data) void router.push(`${userStore.userType}/dashboard`);
+  if (!data) void router.push(`/classView`); //${userStore.userType}/dashboard
   else {
     if ("non_field_errors" in data) loginErr.value = data.non_field_errors.join(" ");
     if ("email" in data) emailErr.value = data.email.join(" ");
