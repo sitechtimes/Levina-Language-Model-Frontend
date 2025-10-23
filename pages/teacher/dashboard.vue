@@ -5,11 +5,10 @@
 
       <div class="flex w-full flex-col">
         <div v-if="teacherCourses.length > 0" class="flex flex-wrap content-start items-start justify-around gap-8">
-          <!--prettier-ignore-->
+          <!--v-for="course in (sortedTeacherCourses.filter((course) => !('instanceInfo' in course)) as TeacherCourse[])"
+                      :key="course.id"
+            :course="course"-->
           <TeacherDashboardCard
-            v-for="course in (sortedTeacherCourses.filter((course) => !('instanceInfo' in course)) as TeacherCourse[])"
-            :key="course.id"
-            :course="course"
           />
         </div>
 

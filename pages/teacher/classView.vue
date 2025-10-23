@@ -3,15 +3,17 @@
    <div class="flex w-[90%] flex-col items-center justify-center sm:w-[80%] md:w-[70%] xl:w-[60%] 2xl:w-[50%]">
      <div class="flex w-full flex-col items-end justify-center gap-4">
        <div class="flex h-52 w-full flex-col items-start justify-end rounded-2xl p-6 bg-purple-500" >
+        <!--${course.name}-->
          <h1 class="text-4xl font-semibold">College Russian</h1>
          <h3 class="text-xl">Period 6</h3>
        </div>
 
 
        <div class="flex items-center justify-center gap-4">
-           <TeacherDashboardActionButton type="link" :to="`/teacher/course/{classCodePlaceholder}/roster`" img="" text="View Students"/>
-           <TeacherDashboardActionButton type="link" :to="`/teacher/create-assignment?course={classCodePlaceholder}`" img="" text="View Students"/>
-           <TeacherDashboardActionButton type="button" img="" text="Delete Course" class="hover:bg-red-400" @on-click="" />
+          <!--change img links later will be imported into a ui folder-->
+           <TeacherDashboardActionButton type="link" :to="`/teacher/course/{classCodePlaceholder}/roster`" img="https://cdn2.iconfinder.com/data/icons/instagram-ui/48/jee-74-512.png" text="View Students"/>
+           <TeacherDashboardActionButton type="link" :to="`/teacher/create-assignment?course={classCodePlaceholder}`" img="https://png.pngtree.com/png-clipart/20230405/original/pngtree-assignment-line-icon-png-image_9025828.png" text="Create Assignment"/>
+           <TeacherDashboardActionButton type="button" img="https://www.freeiconspng.com/uploads/trash-can-icon-18.png" text="Delete Course" class="hover:bg-red-400" @on-click="" />
        </div>
      </div>
 
@@ -47,7 +49,8 @@
          <div class="flex justify-center gap-4">
          </div>
        </div>-->
-       <!--next part is a sample assignment card, will make into a component after i make page look how it should-->
+       <!--next part is a sample assignment card, will make into a component after i make page look how it should
+        <div v-for="assignments in assignments.course.id" will make all the cards for each assignment-->
        <TeacherDashboardAssignmentCard/>
    </div>
  </div>
