@@ -2,7 +2,7 @@
   <div class="flex min-h-dvh w-screen flex-col items-center justify-center py-12">
     <h1 class="text-5xl font-bold">Welcome back!</h1>
     <div class="mb-4 flex flex-col items-center justify-center rounded-3xl px-2">
-      <h3 class="mb-4">Log in to your Regents Prep App account</h3>
+      <h3 class="mb-4">Log in to your Levina Language Model account</h3>
 
       <form class="flex w-full flex-col items-center justify-center gap-7" @submit="loginWithEmail" @submit.prevent>  
         <div class="relative flex flex-col items-start justify-center gap-1">
@@ -97,7 +97,7 @@ async function loginWithEmail() {
   const result = await userStore.login(email.value.toLowerCase(), password.value);
 
   if (result.success) {
-    void router.push(`/${userStore.userType}/dashboard`);
+    void router.push(`/success`); //  /${userStore.userType}/dashboard
   } else {
     const data = result.data;
 

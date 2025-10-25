@@ -38,7 +38,6 @@ export const useUserStore = defineStore("userStore", () => {
 
   const accessToken = ref<string | null>(null);
   const refreshToken = ref<string | null>(null);
-
   
 
   async function refreshAccessToken() {
@@ -60,6 +59,7 @@ export const useUserStore = defineStore("userStore", () => {
     }
 
     accessToken.value = data.access;
+    isAuth.value = true;
     console.log("Access token refreshed.");
     return true;
   }
@@ -132,8 +132,10 @@ export const useUserStore = defineStore("userStore", () => {
     if ("access" in data) {
       accessToken.value = data.access;
       refreshToken.value = data.refresh;
-      name.value = data.name ?? "";
-      userType.value = data.userType?.toLowerCase() as "student" | "teacher";
+
+      name.value = "Anon";
+      userType.value = "student";
+
       isAuth.value = true;
       return { success: true, data };
     }
@@ -142,9 +144,6 @@ export const useUserStore = defineStore("userStore", () => {
   }
 
   async function logout() {
-    const { error } = await tryRequestEndpoint("api/logout/", "POST");
-    if (error) console.error(error);
-
     accessToken.value = null;
     refreshToken.value = null;
     isAuth.value = false;
