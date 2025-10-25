@@ -45,14 +45,42 @@ export async function requestEndpoint(endpoint: string, method?: string, body?: 
 export async function requestEndpoint<T>(endpoint: string, method?: string, body?: object, bypassError?: boolean): Promise<T>;
 export async function requestEndpoint<T>(endpoint: string, method?: string, body?: object, bypassError?: boolean): Promise<T | void> {
   const config = useRuntimeConfig();
+  const userStore = useUserStore();
   const options: RequestInit = { credentials: "include" };
+
+  const headers: HeadersInit = { "Content-Type": "application/json" };
+  if (userStore.accessToken) {
+    headers.Authorization = `Bearer ${userStore.accessToken}`;
+  }
+
   if (method) {
     options.method = method;
-    options.headers = { "Content-Type": "application/json" };
+    options.headers = headers
     options.body = JSON.stringify(body);
   }
 
-  const res = await fetch(config.public.backend + endpoint, options);
+  let res = await fetch(config.public.backend + endpoint, options);
+
+  if (res.status === 401 && userStore.refreshToken) {
+    console.warn("Access token expired, attempting refresh...");
+
+    const { data: refreshData, error } = await tryRequestEndpoint<{ access: string }>(
+      "api/token/refresh/",
+      "POST",
+      { refresh: userStore.refreshToken }
+    );
+
+    if (!refreshData || error) {
+      console.warn("Refresh failed — logging out");
+      await userStore.logout?.();
+      throw new Error("Session expired");
+    }
+
+    userStore.accessToken = refreshData.access;
+    options.headers = { ...options.headers, Authorization: `Bearer ${userStore.accessToken}` };
+    res = await fetch(config.public.backend + endpoint, options);
+  }
+
   if (!bypassError && !res.ok) throw new Error(`Failed to fetch ${endpoint}`);
 
   const contentLength = res.headers.get("Content-Length");

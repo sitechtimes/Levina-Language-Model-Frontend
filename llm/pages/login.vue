@@ -44,7 +44,7 @@
     <p>Don't have an account?</p>
     <p class="font-medium">Ask your teacher about account creation.</p>
     <NuxtLink to="/reset-password/" class="mt-3 text-neutral-600 dark:text-neutral-200"> Forgot password? <span class="underline underline-offset-2">Reset here</span>. </NuxtLink>
-    <NuxtLink to="/access-code" class="text-neutral-600 dark:text-neutral-200"> Need to use an Access Code? <span class="underline underline-offset-2">Enter here</span>. </NuxtLink>
+    <NuxtLink to="/accessCode" class="text-neutral-600 dark:text-neutral-200"> Need to use an Access Code? <span class="underline underline-offset-2">Enter here</span>. </NuxtLink>
   </div>
 </template>
 
@@ -71,22 +71,47 @@ watch(email, (value) => {
   else emailErr.value = "";
 });
 
+// async function loginWithEmail() {
+//   loginErr.value = "";
+//   if (emailErr.value || loginErr.value) return;
+
+//   loading.value = true;
+//   const data = await userStore.login(email.value.toLowerCase(), password.value);
+
+//   if (!data) void router.push(`/${userStore.userType}/dashboard`); 
+//   else {
+//     if ("non_field_errors" in data) loginErr.value = data.non_field_errors.join(" ");
+//     if ("email" in data) emailErr.value = data.email.join(" ");
+//   }
+
+//   loading.value = false;
+// }
 async function loginWithEmail() {
   loginErr.value = "";
+  emailErr.value = "";
+
   if (emailErr.value || loginErr.value) return;
 
   loading.value = true;
-  const data = await userStore.login(email.value.toLowerCase(), password.value);
 
-  if (!data) void router.push(`/classView`); //${userStore.userType}/dashboard
-  else {
-    if ("non_field_errors" in data) loginErr.value = data.non_field_errors.join(" ");
-    if ("email" in data) emailErr.value = data.email.join(" ");
+  const result = await userStore.login(email.value.toLowerCase(), password.value);
+
+  if (result.success) {
+    void router.push(`/${userStore.userType}/dashboard`);
+  } else {
+    const data = result.data;
+
+    if (data) {
+      if ("non_field_errors" in data) loginErr.value = data.non_field_errors.join(" ");
+      if ("email" in data) emailErr.value = data.email.join(" ");
+    } else {
+      loginErr.value = "Login failed. Please try again.";
+    }
   }
 
   loading.value = false;
-  // await router.push("/classView");
 }
+
 
 // // for vitest
 // defineExpose({ email, emailErr, password, loginErr });

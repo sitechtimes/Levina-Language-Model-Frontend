@@ -1,5 +1,11 @@
 import { tryRequestEndpoint } from "@/utils/functions/fetch";
 
+type LoginResponse = {
+  access: string;
+  refresh: string;
+  name?: string;
+  userType?: "Student" | "Teacher";
+};
 
 type LoginSuccess = {
   name: string;
@@ -30,6 +36,34 @@ export const useUserStore = defineStore("userStore", () => {
   const name = ref("");
   const userType = ref<"student" | "teacher">("student");
 
+  const accessToken = ref<string | null>(null);
+  const refreshToken = ref<string | null>(null);
+
+  
+
+  async function refreshAccessToken() {
+    if (!refreshToken.value) {
+      console.warn("No refresh token available.");
+      return false;
+    }
+
+    const { data, error } = await tryRequestEndpoint<{ access: string }>(
+      "api/token/refresh/",
+      "POST",
+      { refresh: refreshToken.value }
+    );
+
+    if (error || !data) {
+      console.error("Token refresh failed:", error);
+      logout(); // optionally log the user out
+      return false;
+    }
+
+    accessToken.value = data.access;
+    console.log("Access token refreshed.");
+    return true;
+  }
+
 //   const studentCourses = ref<StudentCourse[]>([]);
 //   const teacherCourses = ref<TeacherCourseNoAssignment[]>([]);
 //   const studentCurrentCourse = ref<StudentCourse>();
@@ -59,24 +93,60 @@ export const useUserStore = defineStore("userStore", () => {
 //     teacherCourses.value = data.courses;
 //   }
 
-//   async function init() {
-//     const { data, error } = await tryRequestEndpoint<LoginSuccess, LoginFailure>("init/false/");
-//     if (error) return;
+  async function init() {
+    if (!refreshToken.value) {
+      console.log("No refresh token found, user is not authenticated.");
+      isAuth.value = false;
+      return;
+    }
 
-//     handleLoginData(data);
-//   }
+    console.log("Refresh token found, validating session...");
+
+    const refreshed = await refreshAccessToken();
+
+    if (!refreshed) {
+      console.warn("Failed to refresh token — logging out.");
+      isAuth.value = false;
+      await logout();
+      return;
+    }
+  }
+
+  // async function login(email: string, password: string) {
+  //   const { data, error } = await tryRequestEndpoint<LoginSuccess | LoginFailure>("auth/token/", "POST", { email, password }, true);
+  //   // if (!error && data && "name" in data) return handleLoginData(data);
+
+  //   console.error(data, error);
+  //   return data as LoginFailure;
+  // }
+
   async function login(email: string, password: string) {
-    const { data, error } = await tryRequestEndpoint<LoginSuccess | LoginFailure>("auth/login/", "POST", { email, password }, true);
-    // if (!error && data && "name" in data) return handleLoginData(data);
+    const { data, error } = await tryRequestEndpoint<LoginResponse | LoginFailure>("api/token/","POST",{ email, password },true);
 
-    console.error(data, error);
-    return data as LoginFailure;
+    if (error) {
+      console.error("Login error:", error);
+      return { success: false, data: undefined, error };
+    }
+
+    console.log("Login response data:", data);
+    if ("access" in data) {
+      accessToken.value = data.access;
+      refreshToken.value = data.refresh;
+      name.value = data.name ?? "";
+      userType.value = data.userType?.toLowerCase() as "student" | "teacher";
+      isAuth.value = true;
+      return { success: true, data };
+    }
+
+    return { success: false, data };
   }
 
   async function logout() {
-    const { error } = await tryRequestEndpoint("auth/logout/", "POST");
+    const { error } = await tryRequestEndpoint("api/logout/", "POST");
     if (error) console.error(error);
 
+    accessToken.value = null;
+    refreshToken.value = null;
     isAuth.value = false;
     await router.push("/");
   }
@@ -87,6 +157,10 @@ export const useUserStore = defineStore("userStore", () => {
     userType,
     isDarkMode,
     showSideMenu,
+    accessToken,
+    refreshToken,
+    init,
+    refreshAccessToken,
     // studentCourses,
     // teacherCourses,
     // studentCurrentCourse,
@@ -99,5 +173,11 @@ export const useUserStore = defineStore("userStore", () => {
     // init,
     login,
     logout
-  };
-});
+  }; 
+}, 
+{
+  persist: {
+    pick: ["accessToken", "refreshToken"],
+  },
+}
+);
