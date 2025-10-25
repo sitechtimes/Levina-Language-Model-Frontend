@@ -38,7 +38,6 @@ export const useUserStore = defineStore("userStore", () => {
 
   const accessToken = ref<string | null>(null);
   const refreshToken = ref<string | null>(null);
-  
 
   async function refreshAccessToken() {
     if (!refreshToken.value) {
@@ -112,14 +111,6 @@ export const useUserStore = defineStore("userStore", () => {
     }
   }
 
-  // async function login(email: string, password: string) {
-  //   const { data, error } = await tryRequestEndpoint<LoginSuccess | LoginFailure>("auth/token/", "POST", { email, password }, true);
-  //   // if (!error && data && "name" in data) return handleLoginData(data);
-
-  //   console.error(data, error);
-  //   return data as LoginFailure;
-  // }
-
   async function login(email: string, password: string) {
     const { data, error } = await tryRequestEndpoint<LoginResponse | LoginFailure>("api/token/","POST",{ email, password },true);
 
@@ -128,13 +119,14 @@ export const useUserStore = defineStore("userStore", () => {
       return { success: false, data: undefined, error };
     }
 
-    console.log("Login response data:", data);
+    console.log("Login response data:", data); // i still need this
+
     if ("access" in data) {
       accessToken.value = data.access;
       refreshToken.value = data.refresh;
 
-      name.value = "Anon";
-      userType.value = "student";
+      name.value = "Anon"; // data.name || "";
+      userType.value = "student"; // data.userType ? data.userType.toLowerCase() as "student" | "teacher" : "student";
 
       isAuth.value = true;
       return { success: true, data };
