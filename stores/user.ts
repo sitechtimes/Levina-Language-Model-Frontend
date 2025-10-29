@@ -3,8 +3,14 @@ import { tryRequestEndpoint } from "@/utils/functions/fetch";
 type LoginResponse = {
   access: string;
   refresh: string;
-  name?: string;
-  userType?: "Student" | "Teacher";
+};
+
+type UserInfo = {
+  id: number;
+  email: string;
+  first_name: string;
+  last_name: string;
+  user_type: number; 
 };
 
 type LoginSuccess = {
@@ -79,32 +85,29 @@ export const useUserStore = defineStore("userStore", () => {
 //   /** how many questions are there in total total */
 //   const totalQuestionCount = ref<number>(0);
 
-//   function handleLoginData(data: LoginSuccess): void {
-//     isAuth.value = true;
-//     name.value = data.name;
-//     userType.value = data.userType.toLowerCase() as "student" | "teacher";
+  async function handleLoginData() {
+    const { data, error } = await tryRequestEndpoint<UserInfo>("users/get-user","GET");
 
-//     if (data.userType === "Student") {
-//       courseToDate(data.courses);
-//       return void (studentCourses.value = data.courses);
-//     }
+    if (error || !data) {
+      console.error("Failed to fetch user info:", error);
+      return { success: false, data: undefined, error };
+    }
 
-//     teacherCourses.value = data.courses;
-//   }
+    isAuth.value = true;
+    if (!data.first_name && !data.last_name) {
+      name.value = data.email;
+    } else {
+      name.value = `${data.first_name} ${data.last_name}`.trim();
+    }
 
-  async function test() {
-    const { data, error } = await tryRequestEndpoint("users/get-user","GET");
-    console.log("Test user data:", data, error);
+    if (data.user_type) {
+      userType.value = "teacher"
+    } else {
+      userType.value = "student"
+    } 
 
-    // {id: 1, email: 'student1@example.com', first_name: '', last_name: '', user_type: 0}
-    //   email: "student1@example.com"
-    //   first_name: ""
-    //   id: 1
-    //   last_name: ""
-    //   user_type: 0
-    //   [[Prototype]]: Object
-
-    // This needs to be changed and discussed with SAM
+    console.log("User info fetched successfully:", data);
+    console.log(userType.value, name.value);
   }
 
   async function init() {
@@ -140,12 +143,8 @@ export const useUserStore = defineStore("userStore", () => {
       accessToken.value = data.access;
       refreshToken.value = data.refresh;
 
-      await test();
+      handleLoginData();
 
-      name.value = "Anon"; // data.name || "";
-      userType.value = "student"; // data.userType ? data.userType.toLowerCase() as "student" | "teacher" : "student";
-
-      isAuth.value = true;
       return { success: true, data };
     }
 

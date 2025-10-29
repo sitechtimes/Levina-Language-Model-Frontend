@@ -12,7 +12,7 @@ export default defineNuxtConfig({
   },
   runtimeConfig: {
     public: {
-      backend: "http://localhost:8000/"
+      backend: ""
     }
   },
   app: {
