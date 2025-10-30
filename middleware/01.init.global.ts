@@ -1,3 +1,5 @@
+import { tryCatch } from "~/utils/functions/fetch";
+
 export default defineNuxtRouteMiddleware(async (to) => {
   const nuxtApp = useNuxtApp();
   const userStore = useUserStore();
@@ -5,8 +7,9 @@ export default defineNuxtRouteMiddleware(async (to) => {
   if (userStore.isAuth && to.meta.redirectIfAuth) return await navigateTo(`/${userStore.userType}/dashboard`, { redirectCode: 301 });
 
   // only run on initial page load
-  // https://nuxt.com/docs/guide/directory-structure/middleware#when-middleware-runs
-  if (!import.meta.client || !nuxtApp.isHydrating || !nuxtApp.payload.serverRendered) return;
+  // https://nuxt.com/docs/guide/directory-structure/middleware#when-middleware-runs'
+  
+  if (!import.meta.client|| !nuxtApp.isHydrating || !nuxtApp.payload.serverRendered) return;
 
   const { error } = await tryCatch(userStore.init());
   if (error) console.error(error);
