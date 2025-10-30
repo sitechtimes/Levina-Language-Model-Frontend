@@ -24,10 +24,10 @@
 </template>
 
 <script setup lang="ts">
-// definePageMeta({
-//   requiresAuth: false,
-//   redirectIfAuth: true
-// });
+definePageMeta({
+  requiresAuth: false,
+  redirectIfAuth: true
+});
 
 const email = ref("");
 const loading = ref(false);
