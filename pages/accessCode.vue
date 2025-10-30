@@ -24,6 +24,11 @@
 </template>
 
 <script setup lang="ts">
+definePageMeta({
+  requiresAuth: false,
+  redirectIfAuth: true
+});
+useSeoMeta({ title: "SITHS Levina Language Model - Access Code" });
 
 const accessCode = ref("");
 const loading = ref(false);

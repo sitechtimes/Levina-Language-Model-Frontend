@@ -87,6 +87,7 @@ export const useUserStore = defineStore("userStore", () => {
 
   async function handleLoginData() {
     const { data, error } = await tryRequestEndpoint<UserInfo>("users/get-user","GET");
+    console.log("User info response:", data, error); //remove this line 
 
     if (error || !data) {
       console.error("Failed to fetch user info:", error);
@@ -106,8 +107,7 @@ export const useUserStore = defineStore("userStore", () => {
       userType.value = "student"
     } 
 
-    console.log("User info fetched successfully:", data);
-    console.log(userType.value, name.value);
+    return { success: true, data };
   }
 
   async function init() {
@@ -127,6 +127,8 @@ export const useUserStore = defineStore("userStore", () => {
       await logout();
       return;
     }
+
+    await handleLoginData();
   }
 
   async function login(email: string, password: string) {
@@ -137,13 +139,11 @@ export const useUserStore = defineStore("userStore", () => {
       return { success: false, data: undefined, error };
     }
 
-    console.log("Login response data:", data); // i still need this
-
     if ("access" in data) {
       accessToken.value = data.access;
       refreshToken.value = data.refresh;
 
-      handleLoginData();
+      await handleLoginData();
 
       return { success: true, data };
     }

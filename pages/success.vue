@@ -9,6 +9,11 @@
 </template>
 
 <script setup lang="ts">
+definePageMeta({
+  requiresAuth: true,
+  redirectIfAuth: false
+});
+
 const userStore = useUserStore();
 </script>
 

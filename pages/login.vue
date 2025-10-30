@@ -53,7 +53,7 @@ definePageMeta({
   requiresAuth: false,
   redirectIfAuth: true
 });
-useSeoMeta({ title: "SITHS Regents Prep - Login" });
+useSeoMeta({ title: "SITHS Levina Language Model - Login" });
 
 const userStore = useUserStore();
 const router = useRouter();
