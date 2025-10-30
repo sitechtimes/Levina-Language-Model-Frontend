@@ -6,12 +6,13 @@ export default defineNuxtRouteMiddleware(async (to) => {
   const userStore = useUserStore();
 
   console.log(userStore.isAuth, to.meta.requiresAuth, to.meta.redirectIfAuth, userStore.userType); // remove
+  
   // if (userStore.isAuth && to.meta.redirectIfAuth) return await navigateTo(`/${userStore.userType}/dashboard`, { redirectCode: 301 });
   
   // only run on initial page load
   // https://nuxt.com/docs/guide/directory-structure/middleware#when-middleware-runs'
   
-  // if (!nuxtApp.isClient || !nuxtApp.isHydrating || !nuxtApp.payload.serverRendered) return;
+  if (!nuxtApp.isClient || !nuxtApp.isHydrating || !nuxtApp.payload.serverRendered) return;
 
   const { error } = await tryCatch(userStore.init());
   if (error) console.error(error);
