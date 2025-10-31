@@ -1,13 +1,10 @@
 import { tryCatch } from "~/utils/functions/fetch";
 
 export default defineNuxtRouteMiddleware(async (to) => {
-  console.log("Global middleware running..."); // remove
   const nuxtApp = useNuxtApp();
   const userStore = useUserStore();
-
-  console.log(userStore.isAuth, to.meta.requiresAuth, to.meta.redirectIfAuth, userStore.userType); // remove
   
-  // if (userStore.isAuth && to.meta.redirectIfAuth) return await navigateTo(`/${userStore.userType}/dashboard`, { redirectCode: 301 });
+  if (userStore.isAuth && to.meta.redirectIfAuth) return await navigateTo(`/${userStore.userType}/dashboard`, { redirectCode: 301 });
   
   // only run on initial page load
   // https://nuxt.com/docs/guide/directory-structure/middleware#when-middleware-runs'
@@ -16,8 +13,6 @@ export default defineNuxtRouteMiddleware(async (to) => {
 
   const { error } = await tryCatch(userStore.init());
   if (error) console.error(error);
-
-  console.log(userStore.isAuth, to.meta.requiresAuth, to.meta.redirectIfAuth, userStore.userType); // remove
 
   if (!userStore.isAuth && to.meta.requiresAuth) return await navigateTo("/login", { redirectCode: 301 });
   else if (userStore.isAuth && to.meta.redirectIfAuth) return await navigateTo(`/${userStore.userType}/dashboard`, { redirectCode: 301 });

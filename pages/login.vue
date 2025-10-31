@@ -82,7 +82,8 @@ async function loginWithEmail() {
   const result = await userStore.login(email.value.toLowerCase(), password.value);
 
   if (result.success) {
-    void router.push(`/success`); //  /${userStore.userType}/dashboard
+    if (userStore.userType === "teacher") {void router.push(`/${userStore.userType}/dashboard`);}  // change this in the future
+    else {void router.push(`/success`); }
   } else {
     const data = result.data;
 
@@ -98,8 +99,8 @@ async function loginWithEmail() {
 }
 
 
-// // for vitest
-// defineExpose({ email, emailErr, password, loginErr });
+// for vitest
+defineExpose({ email, emailErr, password, loginErr });
 </script>
 
 <style scoped>

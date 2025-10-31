@@ -87,7 +87,6 @@ export const useUserStore = defineStore("userStore", () => {
 
   async function handleLoginData() {
     const { data, error } = await tryRequestEndpoint<UserInfo>("users/get-user","GET");
-    console.log("User info response:", data, error); //remove this line 
 
     if (error || !data) {
       console.error("Failed to fetch user info:", error);
