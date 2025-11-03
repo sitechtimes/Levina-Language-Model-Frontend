@@ -11,7 +11,7 @@ export default defineNuxtRouteMiddleware(async (to) => {
   // only run on initial page load
   // https://nuxt.com/docs/guide/directory-structure/middleware#when-middleware-runs'
   
-  // if (!nuxtApp.isClient || !nuxtApp.isHydrating || !nuxtApp.payload.serverRendered) return;
+  if (!import.meta.client || !nuxtApp.isHydrating || !nuxtApp.payload.serverRendered) return;
 
   const { error } = await tryCatch(userStore.init());
   if (error) console.error(error);
