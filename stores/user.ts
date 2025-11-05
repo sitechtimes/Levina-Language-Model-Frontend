@@ -13,6 +13,30 @@ type UserInfo = {
   user_type: number; 
 };
 
+type SessionInfo = {
+  session_instance: {
+    id: number;
+    session: number;
+    student_name: string;
+    joined_at: string; 
+    submitted: boolean;
+    session_question_instances: {
+      id: number;
+      text_answer: string | null;
+      audio_answer: string | null;
+      submitted: boolean;
+      question: {
+        id: number;
+        question_type: "MCQ" | "ShortAnswer" | "Essay" | string; 
+        answer: string | null;
+        author: number;
+        title: string;
+      };
+    }[];
+  };
+  token: string;
+};
+
 type LoginSuccess = {
   name: string;
 } & (
@@ -44,6 +68,7 @@ export const useUserStore = defineStore("userStore", () => {
 
   const accessToken = ref<string | null>(null);
   const refreshToken = ref<string | null>(null);
+  // const sessionToken = ref<string | null>(null);
 
   async function refreshAccessToken() {
     if (!refreshToken.value) {
@@ -59,7 +84,7 @@ export const useUserStore = defineStore("userStore", () => {
 
     if (error || !data) {
       console.error("Token refresh failed:", error);
-      logout(); // optionally log the user out
+      logout(); 
       return false;
     }
 
@@ -157,6 +182,22 @@ export const useUserStore = defineStore("userStore", () => {
     await router.push("/");
   }
 
+  // async function startSession(accessCode: string, studentName: string) {
+  //   const { data, error } = await tryRequestEndpoint<SessionInfo>("sessions/join_session/", "POST", { access_code: accessCode, student_name: studentName }, true);
+    
+  //   if (error) {
+  //     console.error("Session error:", error);
+  //     return { success: false, data: undefined, error };
+  //   }
+
+  //   if (data && data.session_instance && data.token) {
+  //     name.value = data.session_instance.student_name;
+  //     userType.value = "student";
+  //     sessionToken.value = data.token;
+  //     return { success: true, data };
+  //   }
+  // } 
+
   return {
     name,
     isAuth,
@@ -178,7 +219,8 @@ export const useUserStore = defineStore("userStore", () => {
     // totalQuestionCount,
     // init,
     login,
-    logout
+    logout,
+    // startSession,
   }; 
 }, 
 {

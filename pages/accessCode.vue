@@ -4,7 +4,12 @@
     <div class="mb-4 flex flex-col items-center justify-center rounded-3xl px-2">
       <h3 class="mb-4">Enter an Access Code for any assignment</h3>
 
-      <form class="flex w-full flex-col items-center justify-center gap-7" @submit.prevent="useAccessCode"> 
+      <form class="flex w-full flex-col items-center justify-center gap-7" @submit.prevent="startSession"> 
+        <div class="relative flex flex-col items-start justify-center gap-1">
+          <label class="font-medium" for="name"> Name <span title="Required" class="font-2xl text-red-500">*</span> </label>
+          <input id="name" v-model="name" class="h-12 w-[22rem] rounded-lg border-0 bg-gray-accent px-4" type="text" required autocomplete="text" />
+        </div>
+
         <div class="relative flex flex-col items-start justify-center gap-1">
           <label class="font-medium" for="access-code"> Access Code <span title="Required" class="font-2xl text-red-500">*</span> </label>
           <input id="access-code" v-model="accessCode" class="h-12 w-[22rem] rounded-lg border-0 bg-gray-accent px-4" type="number" required autocomplete="number" />
@@ -30,6 +35,7 @@ definePageMeta({
 });
 useSeoMeta({ title: "SITHS Levina Language Model - Access Code" });
 
+const name = ref("");
 const accessCode = ref("");
 const loading = ref(false);
 const error = ref(false);
@@ -37,8 +43,8 @@ const error = ref(false);
 const route = useRoute();
 const router = useRouter();
 
-async function useAccessCode() {
-    await router.push("/success");
+async function startSession() {
+  await router.push("/success");
 }
 
 </script>
