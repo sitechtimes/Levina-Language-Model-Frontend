@@ -44,18 +44,18 @@
     <p>Don't have an account?</p>
     <p class="font-medium">Ask your teacher about account creation.</p>
     <NuxtLink to="/reset-password/" class="mt-3 text-neutral-600 dark:text-neutral-200"> Forgot password? <span class="underline underline-offset-2">Reset here</span>. </NuxtLink>
-    <NuxtLink to="/access-code" class="text-neutral-600 dark:text-neutral-200"> Need to use an Access Code? <span class="underline underline-offset-2">Enter here</span>. </NuxtLink>
+    <NuxtLink to="/accessCode" class="text-neutral-600 dark:text-neutral-200"> Need to use an Access Code? <span class="underline underline-offset-2">Enter here</span>. </NuxtLink>
   </div>
 </template>
 
 <script setup lang="ts">
-// definePageMeta({
-//   requiresAuth: false,
-//   redirectIfAuth: true
-// });
-// useSeoMeta({ title: "SITHS Regents Prep - Login" });
+definePageMeta({
+  requiresAuth: false,
+  redirectIfAuth: true
+});
+useSeoMeta({ title: "SITHS Levina Language Model - Login" });
 
-// const userStore = useUserStore();
+const userStore = useUserStore();
 const router = useRouter();
 
 const email = ref("");
@@ -64,33 +64,43 @@ const password = ref("");
 const emailErr = ref("");
 const loginErr = ref("");
 const loading = ref(false);
-const userType = ref("teacher")
 
-// watch(email, (value) => {
-//   const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
-//   if (value.length !== 0 && !emailRegex.test(value)) emailErr.value = "Invalid email.";
-//   else emailErr.value = "";
-// });
+watch(email, (value) => {
+  const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+  if (value.length !== 0 && !emailRegex.test(value)) emailErr.value = "Invalid email.";
+  else emailErr.value = "";
+});
 
 async function loginWithEmail() {
-//   loginErr.value = "";
-//   if (emailErr.value || loginErr.value) return;
+  loginErr.value = "";
+  emailErr.value = "";
 
-//   loading.value = true;
-//   const data = await userStore.login(email.value.toLowerCase(), password.value);
+  if (emailErr.value || loginErr.value) return;
 
-//   if (!data) void router.push(`${userStore.userType}/dashboard`);
-//   else {
-//     if ("non_field_errors" in data) loginErr.value = data.non_field_errors.join(" ");
-//     if ("email" in data) emailErr.value = data.email.join(" ");
-//   }
+  loading.value = true;
 
-//   loading.value = false;
-  await router.push(`${userType.value}/dashboard`);
+  const result = await userStore.login(email.value.toLowerCase(), password.value);
+
+  if (result.success) {
+    if (userStore.userType === "teacher") {void router.push(`/${userStore.userType}/dashboard`);}  // change this in the future
+    else {void router.push(`/success`); }
+  } else {
+    const data = result.data;
+
+    if (data) {
+      if ("non_field_errors" in data) loginErr.value = data.non_field_errors.join(" ");
+      if ("email" in data) emailErr.value = data.email.join(" ");
+    } else {
+      loginErr.value = "Login failed. Please try again.";
+    }
+  }
+
+  loading.value = false;
 }
 
-// // for vitest
-// defineExpose({ email, emailErr, password, loginErr });
+
+// for vitest
+defineExpose({ email, emailErr, password, loginErr });
 </script>
 
 <style scoped>
