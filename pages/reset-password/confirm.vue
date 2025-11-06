@@ -45,13 +45,13 @@
 </template>
 
 <script setup lang="ts">
-// definePageMeta({
-//   requiresAuth: false,
-//   redirectIfAuth: true,
-//   middleware: (to) => {
-//     if (!to.query.uid && !to.query.token) return navigateTo("/reset-password", { redirectCode: 301 });
-//   }
-// });
+definePageMeta({
+  requiresAuth: false,
+  redirectIfAuth: true,
+  // middleware: (to) => {
+  //   if (!to.query.uid && !to.query.token) return navigateTo("/reset-password", { redirectCode: 301 });
+  // }
+});
 
 const route = useRoute();
 const router = useRouter();

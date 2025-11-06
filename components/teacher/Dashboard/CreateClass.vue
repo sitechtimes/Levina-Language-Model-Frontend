@@ -63,10 +63,6 @@ const showSuccessModal = ref(false);
 const newCourseId = ref<number>();
 
 const regentsTypes = {
-  Math: ["Algebra I", "Geometry", "Algebra II"],
-  Science: ["Chemistry", "Physics", "Biology"],
-  English: ["English"],
-  History: ["World History", "US History"],
   "Foreign Language": ["Russian"]
 } as const satisfies Record<Subject, string[]>;
 
