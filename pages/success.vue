@@ -13,7 +13,6 @@ definePageMeta({
   requiresAuth: true,
   redirectIfAuth: false
 });
-console.log("Success page loaded. User should be authenticated to see this page.");
 
 const userStore = useUserStore();
 </script>
