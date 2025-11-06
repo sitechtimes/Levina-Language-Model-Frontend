@@ -13,29 +13,29 @@ type UserInfo = {
   user_type: number; 
 };
 
-type SessionInfo = {
-  session_instance: {
-    id: number;
-    session: number;
-    student_name: string;
-    joined_at: string; 
-    submitted: boolean;
-    session_question_instances: {
-      id: number;
-      text_answer: string | null;
-      audio_answer: string | null;
-      submitted: boolean;
-      question: {
-        id: number;
-        question_type: "MCQ" | "ShortAnswer" | "Essay" | string; 
-        answer: string | null;
-        author: number;
-        title: string;
-      };
-    }[];
-  };
-  token: string;
-};
+// type SessionInfo = {
+//   session_instance: {
+//     id: number;
+//     session: number;
+//     student_name: string;
+//     joined_at: string; 
+//     submitted: boolean;
+//     session_question_instances: {
+//       id: number;
+//       text_answer: string | null;
+//       audio_answer: string | null;
+//       submitted: boolean;
+//       question: {
+//         id: number;
+//         question_type: "MCQ" | "ShortAnswer" | "Essay" | string; 
+//         answer: string | null;
+//         author: number;
+//         title: string;
+//       };
+//     }[];
+//   };
+//   token: string;
+// };
 
 type LoginSuccess = {
   name: string;
