@@ -18,3 +18,18 @@ export function getRandomInt(min: number, max: number) {
 export function getRandomItem<T>(arr: T[]) {
   return arr[getRandomInt(0, arr.length - 1)];
 }
+
+/**
+ * Modifies the current route's query parameters while keeping other existing query parameters.
+ *
+ * @param query - An object representing the query parameters to add or update.
+ * @param replace - Whether to use `router.push` or `router.replace` to change the route. Defaults to `replace`.
+ * @example changeRouteQuery({ u: 0 }) -> router.replace({ query: { ...route.query, u: 0 } })
+ */
+export async function changeRouteQuery<T extends string | number>(query: Record<string, T | T[] | undefined>, method: "replace" | "push" = "replace"): Promise<void> {
+  const route = useRoute();
+  const router = useRouter();
+
+  if (method === "replace") return void (await router.replace({ query: { ...route.query, ...query } }));
+  await router.push({ query: { ...route.query, ...query } });
+}
