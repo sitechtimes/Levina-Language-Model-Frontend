@@ -18,3 +18,5 @@ export function getRandomInt(min: number, max: number) {
 export function getRandomItem<T>(arr: T[]) {
   return arr[getRandomInt(0, arr.length - 1)];
 }
+
+export * from "./functions/fetch"

@@ -52,14 +52,23 @@
        <!--next part is a sample assignment card, will make into a component after i make page look how it should
         <div v-for="assignments in assignments.course.id" will make all the cards for each assignment-->
        <TeacherDashboardAssignmentCard/>
+       <!-- v-for="assignment in filteredAssignments"
+          :key="assignment.id"
+          :course="teacherCurrentCourse"
+          :assignment="assignment"
+          :current-date="currentDate"
+          @delete-assignment="(deleteType = 'assignment'), (currentDeleteAssignmentId = assignment.id)"-->
    </div>
  </div>
 </template>
 
-
 <script setup lang="ts">
 
 
+const data = await requestEndpoint<[]>(`/courses/1/`);
+//1 needs to be replaced for the course ID, currently testing with course ID 1)
+console.log(data)
+console.log(data.assignments)
 
 
 
