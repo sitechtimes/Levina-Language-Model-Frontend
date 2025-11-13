@@ -25,7 +25,7 @@
           />
         </div>
 
-        <p v-if="notMatching" class="error font-medium text-red-500">Passwords do not match</p>
+        <p v-if="notMatching" class="error font-medium text-red-500">Passwords do not match.</p>
         <p v-if="submitError" class="error font-medium text-red-500">{{ errorMessage }}</p>
 
         <div class="relative flex flex-col items-center justify-center gap-1">
@@ -45,7 +45,7 @@
 </template>
 
 <script setup lang="ts">
-import { tryRequestEndpoint } from '~/utils/functions/fetch';
+import { tryRequestEndpoint, type PasswordResetResponse } from '~/utils/functions/fetch';
 
 definePageMeta({
   requiresAuth: false,
@@ -81,25 +81,27 @@ async function onSubmit() {
   submitError.value = false;
   loading.value = true;
 
-  const { data: response } = await tryRequestEndpoint<{ message?: string }>(
+  const { data: response } = await tryRequestEndpoint<PasswordResetResponse>(
     `users/password-reset/confirm/`,
     "POST",
     { code, new_password: newPassword.value },
     true
   );
 
-  console.log(response) // log the error and return it as error message.
   const data = response?.message;
 
   if (typeof data !== "string") {
     submitError.value = true;
-    errorMessage.value = "An unexpected error occurred.";
+
+    if (response?.error) errorMessage.value = response.error;
+    else errorMessage.value = "An unexpected error occurred.";
+    
     return;
   }
 
   errorMessage.value = data;
 
-  if (data === "Password has been reset with the new password.") showModal.value = true;
+  if (data === "Password has been reset successfully.") showModal.value = true;
   else submitError.value = true;
 
   loading.value = false;
