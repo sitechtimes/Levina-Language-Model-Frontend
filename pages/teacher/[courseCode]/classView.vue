@@ -51,7 +51,11 @@
        </div>-->
        <!--next part is a sample assignment card, will make into a component after i make page look how it should
         <div v-for="assignments in assignments.course.id" will make all the cards for each assignment-->
-       <TeacherDashboardAssignmentCard/>
+       <TeacherDashboardAssignmentCard
+       v-for="assignment in assignments"
+          :key="assignment.id"
+          :assignment="assignment"
+          />
        <!-- v-for="assignment in filteredAssignments"
           :key="assignment.id"
           :course="teacherCurrentCourse"
@@ -70,7 +74,7 @@ const data = await requestEndpoint<[]>(`/courses/1/`);
 console.log(data)
 console.log(data.assignments)
 
-
+const assignments = computed(() => data.assignments);
 
 </script>
 

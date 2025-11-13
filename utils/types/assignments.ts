@@ -48,12 +48,15 @@ export interface StudentAssignment extends Assignment {
 }
 
 export interface TeacherAssignment extends Assignment {
+  id: number;
+  time_limit: number;
+  timed: boolean;
   /** @readonly Name of the assignment. */
   readonly title: string;
   /** Date the assignment was submitted (Date(UTC)) */
   dateAssigned: Date;
   /** Date the assignment is due (Date(UTC)) */
-  dueDate: Date;
+  due_date: Date;
   /** @readonly Number of questions in the assignment */
   readonly numQuestions: number;
   /** @readonly Whether or not the assignment can be turned in late. */

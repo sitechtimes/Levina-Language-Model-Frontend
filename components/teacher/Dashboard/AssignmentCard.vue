@@ -24,15 +24,12 @@
     >
       <div class="flex w-5/6 flex-col items-start justify-start">
         <h3 class="w-full overflow-hidden overflow-ellipsis text-nowrap text-2xl font-semibold">
-          Audio Thing
+          {{assignment.title}}
         </h3>
-        <!--<h2 :title="assignment.type">Assignment Type: {{ assignment.type }}</h2>-->
-        <h2 class="w-full overflow-hidden overflow-ellipsis text-nowrap text-l">Assignment Type: ${Placeholder}</h2>
-        <!--<h2 :title="assignment.type" v-if:"assignment.assessment">Assessment</h2>-->
-        <h2 class="w-full overflow-hidden overflow-ellipsis text-nowrap text-l">Assessment (v-if)</h2>
+        <h2 v-if="assignment.timed" class="w-full overflow-hidden overflow-ellipsis text-nowrap text-l">Timed Assignment</h2>
         <ClientOnly>
           <!--<p :title="assignment.dueDate.toLocaleString()">Due {{ formatDate(assignment.dueDate, currentDate) }}</p>-->
-          <p>Due 10/25/2030</p>
+          <p>Due {{ assignment.due_date }}</p>
         </ClientOnly>
       </div>
 
@@ -52,9 +49,9 @@
 
 <script setup lang="ts">
  defineProps<{
-  course: TeacherCourse;
+  //course: TeacherCourse;
   assignment: TeacherAssignment;
-  currentDate: Date;
+  //currentDate: Date;
 }>();
 
 //assignment.title should grab assignment

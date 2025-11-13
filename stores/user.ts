@@ -97,7 +97,7 @@ export const useUserStore = defineStore("userStore", () => {
 //   const studentCourses = ref<StudentCourse[]>([]);
 //   const teacherCourses = ref<TeacherCourseNoAssignment[]>([]);
 //   const studentCurrentCourse = ref<StudentCourse>();
-//   const teacherCurrentCourse = ref<TeacherCourse>();
+   const teacherCurrentCourse = ref<TeacherCourse>();
 
 //   const currentQuestion = ref<StaticQuestionInterface | DynamicQuestionInterface>();
 
@@ -211,7 +211,7 @@ export const useUserStore = defineStore("userStore", () => {
     // studentCourses,
     // teacherCourses,
     // studentCurrentCourse,
-    // teacherCurrentCourse,
+     teacherCurrentCourse,
     // currentQuestion,
     // loadedTopics,
     // loadedTopicPaths,
