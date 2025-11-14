@@ -52,7 +52,6 @@ async function onSubmit() {
     error.value = true;
     console.error("Reset email failed:", sendError);
   } else success.value = true;
-  // await router.push({ path: "/reset-password/confirm"});
 }
 </script>
 
