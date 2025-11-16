@@ -2,7 +2,7 @@ interface Course {
   /** @readonly ID of the course. */
   readonly id: number;
   /** @readonly Name of the course. */
-  readonly name: string;
+  readonly title: string;
   /** @readonly Name of the teacher in First Name Last Name format.
    * @example "Michael Whalen"
    */
@@ -12,7 +12,9 @@ interface Course {
   /** @readonly Period of the course. */
   readonly period: number;
   /** @readonly Class Type of the course. */
-  readonly classType: classType;
+  readonly classType: string;
+  /** @warning This field is not returned from the API, must be added manually on fetch */
+  assignmentsFetched: boolean;
 }
 
 export interface StudentCourse extends Course {

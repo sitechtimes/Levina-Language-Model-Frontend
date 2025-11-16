@@ -5,7 +5,7 @@
   >
     <!-- course information -->
     <div class="flex h-24 w-full flex-col items-center justify-end p-2" :style="{ backgroundColor: classColors[course.classType] }">
-      <h2 :title="course.name" class="w-72 overflow-hidden overflow-ellipsis text-nowrap text-center text-2xl font-semibold">{{ course.name }}</h2>
+      <h2 :title="course.title" class="w-72 overflow-hidden overflow-ellipsis text-nowrap text-center text-2xl font-semibold">{{ course.title }}</h2>
       <p class="text-sm">Period {{ course.period }}</p>
       <p>{{ course.teacher }}</p>
       <p v-if="!course.teacher">{{ userStore.name }}</p>
