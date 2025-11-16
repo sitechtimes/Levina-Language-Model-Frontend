@@ -7,12 +7,12 @@ interface Course {
    * @example "Michael Whalen"
    */
   readonly teacher: string;
+  /** @readonly Description of the course. */
+  readonly description: string;
   /** @readonly Period of the course. */
   readonly period: number;
   /** @readonly Class Type of the course. */
-  /** @warning This field is not returned from the API, must be added manually on fetch */
-  readonly classType: string;
-  assignmentsFetched: boolean;
+  readonly classType: classType;
 }
 
 export interface StudentCourse extends Course {

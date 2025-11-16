@@ -8,7 +8,7 @@
       <label class="du-label" for="course-subject">Course Subject <span title="Required" class="font-2xl text-red-500">*</span></label>
       <select id="course-subject" v-model="courseSubject" class="du-select w-72 bg-neutral-200 xs:w-80 sm:w-96 dark:bg-neutral-700">
         <option value="" selected>Select the subject of the course</option>
-        <option v-for="regents in Object.values(regentsTypes).flat().sort()" :key="regents" :value="regents">{{ regents }}</option>
+        <option v-for="regents in Object.values(classTypes).flat().sort()" :key="regents" :value="regents">{{ regents }}</option>
       </select>
 
       <label class="du-label" for="course-name">Period <span title="Required" class="font-2xl text-red-500">*</span></label>
@@ -62,12 +62,12 @@ const userStore = useUserStore();
 const showSuccessModal = ref(false);
 const newCourseId = ref<number>();
 
-const regentsTypes = {
+const classTypes = {
   Regular: ["Freshman Russian", "Sophomore Russian", "Junior Russian"],
-  Advanced: ["Sophomore Advanced Russian, College Russian"],
+  Advanced: ["Sophomore Advanced Russian", "College Russian"],
   Heritage: ["Freshman Heritage Russian", "Sophomore Heritage Russian", "College Heritage Russian"],
   Business: ["Russian in Business"],
-} as const satisfies Record<Subject, string[]>;
+} as const satisfies Record<classType, string[]>;
 
 const courseName = ref("");
 const courseSubject = ref("");
