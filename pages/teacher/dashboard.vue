@@ -37,13 +37,13 @@ definePageMeta({
 
 const route = useRoute();
 const store = useUserStore();
-// const { teacherCourses, teacherCurrentCourse } = storeToRefs(store);
+const { teacherCourses, teacherCurrentCourse } = storeToRefs(store);
 
 const showNotFound = ref(false);
 const loaded = ref(false);
 const showCreateClass = ref(false);
 
-// const sortedTeacherCourses = computed(() => teacherCourses.value.sort((a, b) => a.period - b.period));
+const sortedTeacherCourses = computed(() => teacherCourses.value.sort((a, b) => a.period - b.period));
 
 watch(
   () => route.query,
@@ -57,7 +57,7 @@ onBeforeMount(() => {
 });
 
 onMounted(() => {
-  // teacherCurrentCourse.value = undefined;
+  teacherCurrentCourse.value = undefined;
   loaded.value = true;
 });
 

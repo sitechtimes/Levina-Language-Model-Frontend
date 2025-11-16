@@ -8,7 +8,7 @@
       <label class="du-label" for="course-subject">Course Subject <span title="Required" class="font-2xl text-red-500">*</span></label>
       <select id="course-subject" v-model="courseSubject" class="du-select w-72 bg-neutral-200 xs:w-80 sm:w-96 dark:bg-neutral-700">
         <option value="" selected>Select the subject of the course</option>
-        <option v-for="regents in Object.values(classTypes).flat().sort()" :key="regents" :value="regents">{{ regents }}</option>
+        <option v-for="classes in Object.values(classTypes).flat().sort()" :key="classes" :value="classes">{{ classes }}</option>
       </select>
 
       <label class="du-label" for="course-name">Period <span title="Required" class="font-2xl text-red-500">*</span></label>
@@ -80,30 +80,30 @@ function closeModal() {
   emit("close");
 }
 
-// async function createCourse() {
-//   if (!courseName.value || !courseSubject.value || !coursePeriod.value) return;
+async function createCourse() {
+  if (!courseName.value || !courseSubject.value || !coursePeriod.value) return;
 
-//   const subjectCode = Object.values(regentsTypes).findIndex((regents) => regents.includes(courseSubject.value as never));
+  const subjectCode = Object.values(classTypes).findIndex((classes) => classes.includes(courseSubject.value as never));
 
-//   const { data: course, error } = await tryRequestEndpoint<CreateCourse>("courses/teacher/create-course/", "POST", { name: courseName.value, period: coursePeriod.value, subject: subjectCode });
-//   if (error) return console.error("Failed to create course:", error);
+  const { data: course, error } = await tryRequestEndpoint<CreateCourse>("courses/teacher/create-course/", "POST", { name: courseName.value, period: coursePeriod.value, subject: subjectCode });
+  if (error) return console.error("Failed to create course:", error);
 
-//   newCourseId.value = course.id;
-//   userStore.teacherCourses.push({
-//     id: course.id,
-//     joinCode: course.joinCode,
-//     name: courseName.value,
-//     subject: Object.keys(regentsTypes)[subjectCode] as keyof typeof regentsTypes,
-//     period: coursePeriod.value,
-//     numStudents: 0,
-//     teacher: userStore.name,
-//     assignments: [],
-//     assignmentsFetched: false
-//   });
+  newCourseId.value = course.id;
+  userStore.teacherCourses.push({
+    id: course.id,
+    joinCode: course.joinCode,
+    name: courseName.value,
+    classType: Object.keys(classTypes)[subjectCode] as keyof typeof classTypes,
+    period: coursePeriod.value,
+    numStudents: 0,
+    teacher: userStore.name,
+    assignments: [],
+    description: ""
+  });
 
-//   showSuccessModal.value = true;
-//   closeModal();
-// }
+  showSuccessModal.value = true;
+  closeModal();
+}
 </script>
 
 <style scoped>
