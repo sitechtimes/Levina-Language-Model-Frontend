@@ -63,7 +63,10 @@ const showSuccessModal = ref(false);
 const newCourseId = ref<number>();
 
 const regentsTypes = {
-  "Foreign Language": ["Russian"]
+  Regular: ["Freshman Russian", "Sophomore Russian", "Junior Russian"],
+  Advanced: ["Sophomore Advanced Russian, College Russian"],
+  Heritage: ["Freshman Heritage Russian", "Sophomore Heritage Russian", "College Heritage Russian"],
+  Business: ["Russian in Business"],
 } as const satisfies Record<Subject, string[]>;
 
 const courseName = ref("");
