@@ -45,8 +45,6 @@
 </template>
 
 <script setup lang="ts">
-import { tryRequestEndpoint, type PasswordResetResponse } from '~/utils/functions/fetch';
-
 definePageMeta({
   requiresAuth: false,
   redirectIfAuth: true,

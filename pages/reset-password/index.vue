@@ -24,8 +24,6 @@
 </template>
 
 <script setup lang="ts">
-import { tryRequestEndpoint } from '~/utils/functions/fetch';
-
 definePageMeta({
   requiresAuth: false,
   redirectIfAuth: true
