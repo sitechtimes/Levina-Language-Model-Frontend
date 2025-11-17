@@ -1,5 +1,3 @@
-import { tryRequestEndpoint } from "@/utils/functions/fetch";
-
 type LoginResponse = {
   access: string;
   refresh: string;

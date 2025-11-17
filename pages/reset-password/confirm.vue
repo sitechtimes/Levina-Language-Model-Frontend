@@ -7,7 +7,7 @@
           <label class="font-medium" for="newPassword1"> New Password <span title="Required" class="font-2xl text-red-500">*</span> </label>
           <input
             id="newPassword1"
-            v-model="newPassword1"
+            v-model="newPassword"
             class="h-12 w-[22rem] rounded-lg border-0 bg-gray-accent px-4 focus:bg-[color:var(--bg-color)] focus:outline focus:outline-2 focus:outline-[color:var(--primary)]"
             type="password"
             required
@@ -18,14 +18,14 @@
           <label class="font-medium" for="newPassword2"> Confirm New Password <span title="Required" class="font-2xl text-red-500">*</span> </label>
           <input
             id="newPassword2"
-            v-model="newPassword2"
+            v-model="newPasswordCheck"
             class="h-12 w-[22rem] rounded-lg border-0 bg-gray-accent px-4 focus:bg-[color:var(--bg-color)] focus:outline focus:outline-2 focus:outline-[color:var(--primary)]"
             type="password"
             required
           />
         </div>
 
-        <p v-if="notMatching" class="error font-medium text-red-500">Passwords do not match</p>
+        <p v-if="notMatching" class="error font-medium text-red-500">Passwords do not match.</p>
         <p v-if="submitError" class="error font-medium text-red-500">{{ errorMessage }}</p>
 
         <div class="relative flex flex-col items-center justify-center gap-1">
@@ -48,19 +48,18 @@
 definePageMeta({
   requiresAuth: false,
   redirectIfAuth: true,
-  // middleware: (to) => {
-  //   if (!to.query.uid && !to.query.token) return navigateTo("/reset-password", { redirectCode: 301 });
-  // }
+  middleware: (to) => {
+   if (!to.query.code) return navigateTo("/reset-password", { redirectCode: 301 });
+ }
 });
 
 const route = useRoute();
 const router = useRouter();
 
-const uid = String(route.query.uid ?? "");
-const token = String(route.query.token ?? "");
+const code = String(route.query.code ?? "");
 
-const newPassword1 = ref("");
-const newPassword2 = ref("");
+const newPassword = ref("");
+const newPasswordCheck = ref("");
 
 const loading = ref(false);
 const notMatching = ref(false);
@@ -70,36 +69,40 @@ const errorMessage = ref("");
 const showModal = ref(false);
 
 async function onSubmit() {
-//   if (newPassword1.value !== newPassword2.value) {
-//     submitError.value = false;
-//     notMatching.value = true;
-//     return;
-//   }
+  if (newPassword.value !== newPasswordCheck.value) {
+    submitError.value = false;
+    notMatching.value = true;
+    return;
+  }
 
-//   notMatching.value = false;
-//   submitError.value = false;
-//   loading.value = true;
+  notMatching.value = false;
+  submitError.value = false;
+  loading.value = true;
 
-//   const { data: response } = await tryRequestEndpoint<{ detail?: string; new_password2?: string; token?: string }>(
-//     `/auth/password/reset/confirm/`,
-//     "POST",
-//     // eslint-disable-next-line camelcase
-//     { uid, token, new_password1: newPassword1.value, new_password2: newPassword2.value }, // backend needs it in snake_case
-//     true
-//   );
-//   const data = response?.new_password2?.[0] ?? response?.detail ?? response?.token?.[0];
+  const { data: response } = await tryRequestEndpoint<PasswordResetResponse>(
+    `users/password-reset/confirm/`,
+    "POST",
+    { code, new_password: newPassword.value },
+    true
+  );
 
-//   if (typeof data !== "string") {
-//     submitError.value = true;
-//     errorMessage.value = "An unexpected error occurred.";
-//     return;
-//   }
+  const data = response?.message;
 
-//   errorMessage.value = data;
-//   if (data === "Password has been reset with the new password.") showModal.value = true;
-//   else submitError.value = true;
-//   loading.value = false;
-  showModal.value = true;
+  if (typeof data !== "string") {
+    submitError.value = true;
+
+    if (response?.error) errorMessage.value = response.error;
+    else errorMessage.value = "An unexpected error occurred.";
+    
+    return;
+  }
+
+  errorMessage.value = data;
+
+  if (data === "Password has been reset successfully.") showModal.value = true;
+  else submitError.value = true;
+
+  loading.value = false;
 }
 
 async function handleConfirm() {
