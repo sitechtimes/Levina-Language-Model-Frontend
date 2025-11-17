@@ -33,5 +33,10 @@ export default defineNuxtConfig({
         lang: "en"
       }
     }
-  }
+  },
+  imports: {
+    dirs: [           
+      'utils/functions', 
+    ],
+  },
 });
