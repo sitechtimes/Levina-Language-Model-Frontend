@@ -45,10 +45,10 @@
       <!-- prettier-ignore -->
       <p class="pb-4">You have created <span class="font-bold">{{ courseName }}</span>.</p>
 
-      <!-- <div class="flex w-full items-center justify-end gap-2">
+      <div class="flex w-full items-center justify-end gap-2">
         <TeacherCourseActionButton type="link" img="/ui/arrow-right.svg" text="Go to Course" :to="`/teacher/course/${newCourseId}`" @click="showSuccessModal = false" />
         <TeacherCourseActionButton type="button" img="/ui/close.svg" text="Close" @on-click="showSuccessModal = false" />
-      </div> -->
+      </div>
     </div>
   </FullScreenModal>
 </template>
@@ -67,13 +67,12 @@ const classTypes = {
   Regular: ["Freshman Russian", "Sophomore Russian", "Junior Russian"],
   Advanced: ["Sophomore Advanced Russian", "College Russian"],
   Heritage: ["Freshman Heritage Russian", "Sophomore Heritage Russian", "College Heritage Russian"],
-  Business: ["Russian in Business"],
+  Business: ["Russian in Business"]
 } as const satisfies Record<classType, string[]>;
 
 const courseName = ref("");
 const courseSubject = ref("");
 const coursePeriod = ref(0);
-const courseDescription = ref("N/A");
 function closeModal() {
   courseName.value = "";
   courseSubject.value = "";
@@ -81,21 +80,11 @@ function closeModal() {
   emit("close");
 }
 
-function toAcronym(name: string): string {
-  return name
-    .split(" ")
-    .map(word => word[0])
-    .join("")
-    .toUpperCase();
-}
-
 async function createCourse() {
   console.log(courseSubject.value);
   if (!courseName.value || !courseSubject.value || !coursePeriod.value) return;
-
-  const subjectCode = toAcronym(courseSubject.value) 
-  console.log(courseName.value, courseDescription.value, coursePeriod.value, toAcronym(courseSubject.value));
-  const { data: course, error } = await tryRequestEndpoint<CreateCourse>("courses/","POST",{title: courseName.value, description: courseDescription.value, period: coursePeriod.value, class_type: subjectCode}
+  console.log(courseName.value,coursePeriod.value, courseSubject.value);
+  const { data: course, error } = await tryRequestEndpoint<CreateCourse>("courses/","POST",{name: courseName.value, period: coursePeriod.value, class_type: courseSubject.value }
   );
 
   if (error) return console.error("Failed to create course:", error);
@@ -106,12 +95,11 @@ async function createCourse() {
     id: course.id,
     joinCode: course.joinCode,
     title: courseName.value,
-    classType: subjectCode,
+    classType: courseSubject.value,
     period: coursePeriod.value,
     numStudents: 0,
     teacher: userStore.name,
     assignments: [],
-    description: courseDescription.value,
     assignmentsFetched: false,
   });
 

@@ -7,8 +7,6 @@ interface Course {
    * @example "Michael Whalen"
    */
   readonly teacher: string;
-  /** @readonly Description of the course. */
-  readonly description: string;
   /** @readonly Period of the course. */
   readonly period: number;
   /** @readonly Class Type of the course. */
