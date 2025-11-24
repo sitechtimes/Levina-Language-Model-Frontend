@@ -46,7 +46,7 @@ type LoginSuccess = {
     }
   | {
       userType: "Teacher";
-    //   courses: TeacherCourseNoAssignment[];
+      courses: TeacherCourseNoAssignment[];
     }
 );
 type LoginFailure =
