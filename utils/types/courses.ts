@@ -2,7 +2,7 @@ interface Course {
   /** @readonly ID of the course. */
   readonly id: number;
   /** @readonly Name of the course. */
-  readonly title: string;
+  readonly name: string;
   /** @readonly Name of the teacher in First Name Last Name format.
    * @example "Michael Whalen"
    */

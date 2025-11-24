@@ -94,7 +94,7 @@ async function createCourse() {
   userStore.teacherCourses.push({
     id: course.id,
     joinCode: course.joinCode,
-    title: courseName.value,
+    name: courseName.value,
     classType: courseSubject.value,
     period: coursePeriod.value,
     numStudents: 0,
