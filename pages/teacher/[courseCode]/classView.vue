@@ -55,6 +55,7 @@
        v-for="assignment in assignments"
           :key="assignment.id"
           :assignment="assignment"
+          @delete-assignment="confirmDelete"
           />
        <!-- v-for="assignment in filteredAssignments"
           :key="assignment.id"
@@ -69,13 +70,30 @@
 <script setup lang="ts">
 
 
-const data = await requestEndpoint<[]>(`/courses/1/`);
+const data = await requestEndpoint<TeacherCourse>(`/courses/1/`);
 //1 needs to be replaced for the course ID, currently testing with course ID 1)
 console.log(data)
 console.log(data.assignments)
 
+
+
 const assignments = computed(() => data.assignments);
 
+const deleteStep = ref<1 | 2>(1);
+const deleteType = ref<"course" | "assignment">();
+const currentDeleteAssignmentId = ref<number>();
+
+
+async function confirmDeleteAssignment() {
+
+  const { error } = await tryRequestEndpoint<TeacherAssignment>(`/assignments/${currentDeleteAssignmentId.value}`, "DELETE");
+  if (error) return console.error("Failed to delete assignment:", error);
+
+  data.assignments = data.assignments.filter((assignment) => assignment.id !== currentDeleteAssignmentId.value);
+}
+function confirmDelete() {
+  if (deleteType.value === "assignment") void confirmDeleteAssignment();
+}
 </script>
 
 

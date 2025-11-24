@@ -24,7 +24,7 @@
     >
       <div class="flex w-5/6 flex-col items-start justify-start">
         <h3 class="w-full overflow-hidden overflow-ellipsis text-nowrap text-2xl font-semibold">
-          {{assignment.title}}
+          {{assignment.name}} / ID: {{ assignment.id }}
         </h3>
         <h2 v-if="assignment.timed" class="w-full overflow-hidden overflow-ellipsis text-nowrap text-l">Timed Assignment</h2>
         <ClientOnly>
@@ -35,7 +35,7 @@
 
       <div class="flex w-5/6 flex-col items-center justify-center gap-1">
         <p class="text-xl font-medium">
-          Submissions: {{ 1 }}/{{ 2 }}
+          Submissions: {{ assignment.assignment_instances.submitted }}/{{ assignment.assignment_instances.length }}
           
           <span class="text-sm">students</span>
         </p>
@@ -48,18 +48,22 @@
 </template>
 
 <script setup lang="ts">
- defineProps<{
+const props = defineProps<{
   //course: TeacherCourse;
   assignment: TeacherAssignment;
   //currentDate: Date;
-}>();
+ }>();
+
 
 //assignment.title should grab assignment
-//const emit = defineEmits<{ deleteAssignment: [void] }>();
+const emit = defineEmits<{ deleteAssignment: [void] }>();
 const isOpen = ref(false);
 
-function deleteAssignment() {
-  //emit("deleteAssignment");
+async function deleteAssignment() {
+  console.log(props.assignment.id)
+  const { error } = await tryRequestEndpoint(`/assignments/${props.assignment.id}`);
+  if (error) return console.error("Failed to delete assignment:", error);
   isOpen.value = false;
+  console.log("trying to delete")
 }
 </script>

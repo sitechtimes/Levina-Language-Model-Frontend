@@ -1,3 +1,4 @@
+
 interface Course {
   /** @readonly ID of the course. */
   readonly id: number;
@@ -9,15 +10,13 @@ interface Course {
   readonly teacher: string;
   /** @readonly Period of the course. */
   readonly period: number;
-  /** @readonly Subject of the course. */
-  readonly subject: Subject;
   /** @warning This field is not returned from the API, must be added manually on fetch */
   assignmentsFetched: boolean;
 }
 
-export interface StudentCourse extends Course {
+/**export interface StudentCourse extends Course {
   assignments: StudentAssignment[];
-}
+}*/
 
 export interface TeacherCourseNoAssignment extends Course {
   /** @warning This field is not returned from the API, must be added manually on fetch */

@@ -48,11 +48,12 @@ export interface StudentAssignment extends Assignment {
 }
 
 export interface TeacherAssignment extends Assignment {
-  id: number;
+  readonly id: number;
   time_limit: number;
   timed: boolean;
+  assignment_instances: AssignmentInstance;
   /** @readonly Name of the assignment. */
-  readonly title: string;
+  readonly name: string;
   /** Date the assignment was submitted (Date(UTC)) */
   dateAssigned: Date;
   /** Date the assignment is due (Date(UTC)) */
@@ -70,6 +71,10 @@ export interface AssignmentInstance {
   readonly assignment: number;
   /** @readonly ID of the student. */
   readonly student: number;
+  submitted: boolean;
+  time_used: number;
+  /** @readonly Length of AssignmentInstances */
+  readonly length: number;
 }
 
 export interface AssignmentResults {
