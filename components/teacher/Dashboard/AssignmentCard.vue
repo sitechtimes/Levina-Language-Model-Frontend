@@ -35,7 +35,7 @@
 
       <div class="flex w-5/6 flex-col items-center justify-center gap-1">
         <p class="text-xl font-medium">
-          Submissions: {{ assignment.assignment_instances.submitted }}/{{ assignment.assignment_instances.length }}
+          Submissions: {{ submitted(assignment) }}/{{ assignment.assignment_instances.length }}
           
           <span class="text-sm">students</span>
         </p>
@@ -54,6 +54,10 @@ const props = defineProps<{
   //currentDate: Date;
  }>();
 
+function submitted(assignment: TeacherAssignment) {
+   return assignment.assignment_instances.filter(instance => instance.submitted).length;
+ }
+//whyyyyyyyyyyy
 
 //assignment.title should grab assignment
 const emit = defineEmits<{ deleteAssignment: [void] }>();
