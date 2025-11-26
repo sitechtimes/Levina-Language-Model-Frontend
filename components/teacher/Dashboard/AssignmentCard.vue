@@ -61,7 +61,7 @@ const isOpen = ref(false);
 
 async function deleteAssignment() {
   console.log(props.assignment.id)
-  const { error } = await tryRequestEndpoint(`/assignments/${props.assignment.id}`);
+  const { error } = await tryRequestEndpoint(`/assignments/${props.assignment.id}/`, `DELETE`);
   if (error) return console.error("Failed to delete assignment:", error);
   isOpen.value = false;
   console.log("trying to delete")
