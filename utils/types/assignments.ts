@@ -34,7 +34,6 @@ export interface StudentAssignment extends Assignment {
       readonly id: number;
       /** @readonly Name of the course assignment belongs to */
       readonly name: string;
-      readonly subject: Subject;
     };
     /**
      * Used to store already-fetched `QuestionInterface`s for easy access when going back and forth.
