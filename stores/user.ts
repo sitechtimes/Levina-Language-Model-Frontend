@@ -127,6 +127,7 @@ export const useUserStore = defineStore("userStore", () => {
 
     if (data.user_type) {
       userType.value = "teacher"
+      teacherCourses.value = await tryRequestEndpoint<TeacherCourseNoAssignment[]>("/courses/","GET").then(res => res.data || []);
     } else {
       userType.value = "student"
     } 

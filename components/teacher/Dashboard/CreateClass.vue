@@ -43,7 +43,7 @@
     <div class="flex w-full flex-col">
       <h3 class="text-2xl font-bold">Success!</h3>
       <!-- prettier-ignore -->
-      <p class="pb-4">You have created <span class="font-bold">{{ courseName }}</span>.</p>
+      <p class="pb-4">You have created <span class="font-bold">{{ createdCourseName }}</span>.</p>
 
       <div class="flex w-full items-center justify-end gap-2">
         <TeacherCourseActionButton type="link" img="/ui/arrow-right.svg" text="Go to Course" :to="`/teacher/course/${newCourseId}`" @click="showSuccessModal = false" />
@@ -73,6 +73,7 @@ const classTypes = {
 const courseName = ref("");
 const courseSubject = ref("");
 const coursePeriod = ref(0);
+const createdCourseName = ref("");
 function closeModal() {
   courseName.value = "";
   courseSubject.value = "";
@@ -88,7 +89,7 @@ async function createCourse() {
   );
 
   if (error) return console.error("Failed to create course:", error);
-
+  createdCourseName.value = courseName.value;
   newCourseId.value = course.id;
 
   userStore.teacherCourses.push({
