@@ -10,6 +10,8 @@ interface Course {
   readonly teacher: string;
   /** @readonly Period of the course. */
   readonly period: number;
+  /** @readonly Class Type of the course. */
+  readonly classType: string;
   /** @warning This field is not returned from the API, must be added manually on fetch */
   assignmentsFetched: boolean;
 }

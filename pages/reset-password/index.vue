@@ -38,19 +38,18 @@ const route = useRoute();
 const router = useRouter();
 
 async function onSubmit() {
-//   error.value = false;
-//   success.value = false;
-//   loading.value = true;
+  error.value = false;
+  success.value = false;
+  loading.value = true;
 
-//   const { error: sendError } = await tryRequestEndpoint(`/auth/password/reset/`, "POST", { email: email.value.toLowerCase() });
+  const { error: sendError } = await tryRequestEndpoint(`users/password-reset/`, "POST", { email: email.value.toLowerCase() });
 
-//   loading.value = false;
+  loading.value = false;
 
-//   if (sendError) {
-//     error.value = true;
-//     console.error("Reset email failed:", sendError);
-//   } else success.value = true;
-  await router.push({ path: "/reset-password/confirm"});
+  if (sendError) {
+    error.value = true;
+    console.error("Reset email failed:", sendError);
+  } else success.value = true;
 }
 </script>
 

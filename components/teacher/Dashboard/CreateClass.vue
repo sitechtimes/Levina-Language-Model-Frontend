@@ -8,7 +8,7 @@
       <label class="du-label" for="course-subject">Course Subject <span title="Required" class="font-2xl text-red-500">*</span></label>
       <select id="course-subject" v-model="courseSubject" class="du-select w-72 bg-neutral-200 xs:w-80 sm:w-96 dark:bg-neutral-700">
         <option value="" selected>Select the subject of the course</option>
-        <option v-for="regents in Object.values(regentsTypes).flat().sort()" :key="regents" :value="regents">{{ regents }}</option>
+        <option v-for="classes in Object.values(classTypes).flat().sort()" :key="classes" :value="classes">{{ classes }}</option>
       </select>
 
       <label class="du-label" for="course-name">Period <span title="Required" class="font-2xl text-red-500">*</span></label>
@@ -43,7 +43,7 @@
     <div class="flex w-full flex-col">
       <h3 class="text-2xl font-bold">Success!</h3>
       <!-- prettier-ignore -->
-      <p class="pb-4">You have created <span class="font-bold">{{ courseName }}</span>.</p>
+      <p class="pb-4">You have created <span class="font-bold">{{ createdCourseName }}</span>.</p>
 
       <div class="flex w-full items-center justify-end gap-2">
         <TeacherCourseActionButton type="link" img="/ui/arrow-right.svg" text="Go to Course" :to="`/teacher/course/${newCourseId}`" @click="showSuccessModal = false" />
@@ -55,6 +55,7 @@
 
 <script setup lang="ts">
 defineProps<{ show: boolean }>();
+
 const emit = defineEmits<{ close: [void] }>();
 
 const userStore = useUserStore();
@@ -62,14 +63,17 @@ const userStore = useUserStore();
 const showSuccessModal = ref(false);
 const newCourseId = ref<number>();
 
-const regentsTypes = {
-  "Foreign Language": ["Russian"]
-} as const satisfies Record<Subject, string[]>;
+const classTypes = {
+  Regular: ["Freshman Russian", "Sophomore Russian", "Junior Russian"],
+  Advanced: ["Sophomore Advanced Russian", "College Russian"],
+  Heritage: ["Freshman Heritage Russian", "Sophomore Heritage Russian", "College Heritage Russian"],
+  Business: ["Russian in Business"]
+} as const satisfies Record<classType, string[]>;
 
 const courseName = ref("");
 const courseSubject = ref("");
 const coursePeriod = ref(0);
-
+const createdCourseName = ref("");
 function closeModal() {
   courseName.value = "";
   courseSubject.value = "";
@@ -77,30 +81,32 @@ function closeModal() {
   emit("close");
 }
 
-// async function createCourse() {
-//   if (!courseName.value || !courseSubject.value || !coursePeriod.value) return;
+async function createCourse() {
+  console.log(courseSubject.value);
+  if (!courseName.value || !courseSubject.value || !coursePeriod.value) return;
+  console.log(courseName.value,coursePeriod.value, courseSubject.value);
+  const { data: course, error } = await tryRequestEndpoint<CreateCourse>("courses/","POST",{name: courseName.value, period: coursePeriod.value, class_type: courseSubject.value }
+  );
 
-//   const subjectCode = Object.values(regentsTypes).findIndex((regents) => regents.includes(courseSubject.value as never));
+  if (error) return console.error("Failed to create course:", error);
+  createdCourseName.value = courseName.value;
+  newCourseId.value = course.id;
 
-//   const { data: course, error } = await tryRequestEndpoint<CreateCourse>("courses/teacher/create-course/", "POST", { name: courseName.value, period: coursePeriod.value, subject: subjectCode });
-//   if (error) return console.error("Failed to create course:", error);
+  userStore.teacherCourses.push({
+    id: course.id,
+    joinCode: course.joinCode,
+    name: courseName.value,
+    classType: courseSubject.value,
+    period: coursePeriod.value,
+    numStudents: 0,
+    teacher: userStore.name,
+    assignments: [],
+    assignmentsFetched: false,
+  });
 
-//   newCourseId.value = course.id;
-//   userStore.teacherCourses.push({
-//     id: course.id,
-//     joinCode: course.joinCode,
-//     name: courseName.value,
-//     subject: Object.keys(regentsTypes)[subjectCode] as keyof typeof regentsTypes,
-//     period: coursePeriod.value,
-//     numStudents: 0,
-//     teacher: userStore.name,
-//     assignments: [],
-//     assignmentsFetched: false
-//   });
-
-//   showSuccessModal.value = true;
-//   closeModal();
-// }
+  showSuccessModal.value = true;
+  closeModal();
+}
 </script>
 
 <style scoped>

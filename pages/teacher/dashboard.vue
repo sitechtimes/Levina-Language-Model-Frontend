@@ -4,7 +4,7 @@
       <NotFound :show-modal="showNotFound" user-type="teacher" :message="route.query.course ? 'class' : 'assignment'" />
 
       <div class="flex w-full flex-col">
-        <div v-if="teacherCourses.length > 0" class="flex flex-wrap content-start items-start justify-around gap-8">
+        <div v-if="teacherCourses && teacherCourses.length > 0" class="flex flex-wrap content-start items-start justify-around gap-8">
           <!--prettier-ignore-->
           <TeacherDashboardCard
             v-for="course in (sortedTeacherCourses.filter((course) => !('instanceInfo' in course)) as TeacherCourse[])"
@@ -37,13 +37,13 @@ definePageMeta({
 
 const route = useRoute();
 const store = useUserStore();
-// const { teacherCourses, teacherCurrentCourse } = storeToRefs(store);
+const { teacherCourses, teacherCurrentCourse } = storeToRefs(store);
 
 const showNotFound = ref(false);
 const loaded = ref(false);
 const showCreateClass = ref(false);
 
-// const sortedTeacherCourses = computed(() => teacherCourses.value.sort((a, b) => a.period - b.period));
+const sortedTeacherCourses = computed(() => teacherCourses.value.sort((a, b) => a.period - b.period));
 
 watch(
   () => route.query,
@@ -57,7 +57,7 @@ onBeforeMount(() => {
 });
 
 onMounted(() => {
-  // teacherCurrentCourse.value = undefined;
+  teacherCurrentCourse.value = undefined;
   loaded.value = true;
 });
 

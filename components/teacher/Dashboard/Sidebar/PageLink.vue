@@ -19,7 +19,7 @@ const props = defineProps<{
 const route = useRoute();
 
 const matched = computed(() => {
-  if (route.name !== "teacher-create-assignment") return route.path === props.to;
+  // if (route.name !== "teacher-create-assignment") return route.path === props.to;
 
   // handle print vs create
   if (route.query.print === "true") return route.fullPath === props.to;

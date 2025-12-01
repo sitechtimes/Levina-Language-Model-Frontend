@@ -7,6 +7,10 @@ interface Failure<E> {
   error: E;
 }
 
+export type PasswordResetResponse =
+  | { message: string; error?: never }
+  | { error: string; message?: never };
+
 export type Result<T, E = Error> = Success<T> | Failure<E>;
 /** Implements try/catch for a given promise.
  *

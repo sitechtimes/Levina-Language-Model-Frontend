@@ -1,11 +1,8 @@
 <template>
   <Teleport to="body">
     <Transition :name="transitionName">
-      <div v-if="showModal" class="fixed left-0 top-0 z-50 flex h-dvh w-dvw items-center justify-center bg-black/50" @click="emit('close')">
+      <div v-if="showModal" class="fixed left-0 top-0 z-50 flex h-dvh w-dvw items-center justify-center bg-black/50">
         <div class="menu relative flex flex-col items-center justify-center gap-4 rounded-xl bg-body p-8" :class="customWidthClass ?? 'w-80 xs:w-96 sm:w-125'" @click.stop>
-          <button class="absolute right-2 top-2" type="button" @click="emit('close')">
-            <img class="size-8 select-none dark:invert" src="/ui/close.svg" aria-hidden="true" draggable="false" />
-          </button>
 
           <slot></slot>
         </div>
@@ -22,7 +19,7 @@ defineProps<{
   /** Override the default width scale with a custom class. */
   customWidthClass?: string;
 }>();
-const emit = defineEmits<{ close: [void] }>();
+
 </script>
 
 <style scoped>
