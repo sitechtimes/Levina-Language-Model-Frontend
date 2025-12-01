@@ -29,10 +29,10 @@
         <h2 v-if="assignment.timed" class="w-full overflow-hidden overflow-ellipsis text-nowrap text-l">Timed Assignment</h2>
         <ClientOnly>
           <!--<p :title="assignment.dueDate.toLocaleString()">Due {{ formatDate(assignment.dueDate, currentDate) }}</p>-->
-          <p>Due {{ assignment.due_date }}</p>
+          <p>Due {{ formatDate(assignment.due_date, currentDate) }}</p>
         </ClientOnly>
       </div>
-    
+
       <div class="flex w-5/6 flex-col items-center justify-center gap-1">
         <p class="text-xl font-medium">
           Submissions: {{ submitted(assignment) }}/{{ assignment.assignment_instances.length }}
@@ -51,17 +51,35 @@
 const props = defineProps<{
   //course: TeacherCourse;
   assignment: TeacherAssignment;
-  //currentDate: Date;
+  currentDate: Date;
  }>();
 
 function submitted(assignment: TeacherAssignment) {
-   return assignment.assignment_instances.filter((instance: { submitted: any; }) => instance.submitted).length;
+   const instances = (assignment as any).assignment_instances;
+   if (!Array.isArray(instances)) return 0;
+   return instances.filter((instance: any) => !!instance && !!instance.submitted).length;
  }
-//whyyyyyyyyyyy
 
-//assignment.title should grab assignment
 const emit = defineEmits<{ deleteAssignment: [void] }>();
 const isOpen = ref(false);
+
+function formatDate(target: Date, current: Date) {
+  const dateHour = target.toLocaleString("default", { hour12: true, hour: "numeric", minute: "2-digit" });
+  const week = target.toLocaleDateString("default", { weekday: "long" });
+  const long = `${target.toLocaleString("default", { year: target.getFullYear() === current.getFullYear() ? undefined : "numeric", month: "short", day: "numeric" })} at ${target.toLocaleString("default", { hour12: true, hour: "numeric", minute: "2-digit" })}`;
+
+  const inputDate = new Date(target).setHours(0, 0, 0, 0);
+  const now = new Date(current).setHours(0, 0, 0, 0);
+  const diffDays = Math.round((inputDate - now) / (24 * 60 * 60 * 1000));
+
+  const labels: Readonly<Record<string, string>> = {
+    "0": `today at ${dateHour}`,
+    "1": `tomorrow at ${dateHour}`,
+    "-1": `yesterday at ${dateHour}`
+  };
+
+  return labels[String(diffDays)] || (diffDays > 1 && diffDays <= 7 ? week : diffDays < -1 && diffDays >= -7 ? `last ${week}` : long);
+}
 
 async function deleteAssignment() {
   console.log(props.assignment.id)

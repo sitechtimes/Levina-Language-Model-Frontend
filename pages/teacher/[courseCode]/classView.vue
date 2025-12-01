@@ -4,7 +4,7 @@
      <div class="flex w-full flex-col items-end justify-center gap-4">
        <div class="flex h-52 w-full flex-col items-start justify-end rounded-2xl p-6 bg-purple-500" >
         <!--${course.name}-->
-         <h1 class="text-4xl font-semibold">College Russian</h1>
+         <h1 class="text-4xl font-semibold">{{ CourseLink.name }}</h1>
          <h3 class="text-xl">Period 6</h3>
        </div>
 
@@ -68,15 +68,16 @@
 
 <script setup lang="ts">
 
-
+/*const teacherCurrentCourse = useUserStore().teacherCurrentCourse;
+if (!teacherCurrentCourse) {
+  throw new Error("No current course selected.");
+}
+const data = await requestEndpoint<TeacherCourse>(`/courses/${teacherCurrentCourse.id}/`);*/
 const data = await requestEndpoint<TeacherCourse>(`/courses/1/`);
 //1 needs to be replaced for the course ID, currently testing with course ID 1)
-console.log(data)
-console.log(data.assignments)
-
-
-
 const assignments = computed(() => data.assignments);
+const currentDate = new Date();
+
 
 </script>
 
