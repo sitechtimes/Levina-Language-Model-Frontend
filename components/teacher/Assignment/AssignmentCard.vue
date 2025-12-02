@@ -13,7 +13,7 @@
         <ul v-show="isOpen" tabindex="0" class="absolute right-0 z-20 mt-2 w-52 rounded-lg border border-[var(--border-color)] bg-body p-2 shadow-lg" @click.stop>
           <li>
             <!--@click="deleteAssignmentFunction"-->
-            <button class="h-10 w-full rounded-lg pl-4 text-left transition-all hover:bg-red-400/70" type="button">Delete</button>
+            <button @click="deleteAssignment" class="h-10 w-full rounded-lg pl-4 text-left transition-all hover:bg-red-400/70" type="button">Delete</button>
           </li>
         </ul>
       </Transition>
@@ -24,43 +24,50 @@
     >
       <div class="flex w-5/6 flex-col items-start justify-start">
         <h3 class="w-full overflow-hidden overflow-ellipsis text-nowrap text-2xl font-semibold">
-          Audio Thing
+          {{assignment.name}} / ID: {{ assignment.id }}
         </h3>
-        <!--<h2 :title="assignment.type">Assignment Type: {{ assignment.type }}</h2>-->
-        <h2 class="w-full overflow-hidden overflow-ellipsis text-nowrap text-l">Assignment Type: ${Placeholder}</h2>
-        <!--<h2 :title="assignment.type" v-if:"assignment.assessment">Assessment</h2>-->
-        <h2 class="w-full overflow-hidden overflow-ellipsis text-nowrap text-l">Assessment (v-if)</h2>
+        <h2 v-if="assignment.timed" class="w-full overflow-hidden overflow-ellipsis text-nowrap text-l">Timed Assignment</h2>
         <ClientOnly>
-          <!--<p :title="assignment.dueDate.toLocaleString()">Due {{ formatDate(assignment.dueDate, currentDate) }}</p>-->
-          <p>Due 10/25/2030</p>
+          <!--<p>Due {{ formatDate(assignment.due_date, currentDate) }}</p>
+          when we implement formatting this needs to be implemented-->
+          
+          <p>Due {{ assignment.due_date }}</p>
         </ClientOnly>
       </div>
 
       <div class="flex w-5/6 flex-col items-center justify-center gap-1">
         <p class="text-xl font-medium">
-          Submissions: {{ 1 }}/{{ 2 }}
+          Submissions: {{ submitted(assignment) }}/{{ assignment.assignment_instances.length }}
           
           <span class="text-sm">students</span>
         </p>
         <div class="relative h-2 w-full overflow-hidden rounded-full border border-neutral-300 bg-neutral-100/25">
-          <!--<div class="absolute left-0 top-0 h-full" :style="{ width: `${(assignment.numSubmitted / course.numStudents) * 100}%`, backgroundColor: subjectColors[course.subject] }"></div>
-        --></div>
+          </div>
       </div>
     </NuxtLink>
   </div>
 </template>
 
 <script setup lang="ts">
-/* defineProps<{
-  course: TeacherCourse;
+const props = defineProps<{
   assignment: TeacherAssignment;
   currentDate: Date;
-}>();*/
-//const emit = defineEmits<{ deleteAssignment: [void] }>();
+ }>();
+
+function submitted(assignment: TeacherAssignment) {
+   const instances = (assignment as any).assignment_instances;
+   if (!Array.isArray(instances)) return 0;
+   return instances.filter((instance: any) => !!instance && !!instance.submitted).length;
+ }
+
+const emit = defineEmits(['delete-assignment']);
 const isOpen = ref(false);
 
-/*function deleteAssignment() {
-  emit("deleteAssignment");
+async function deleteAssignment() {
+  console.log(props.assignment.id)
+  const { error } = await tryRequestEndpoint(`/assignments/${props.assignment.id}/`, `DELETE`);
+  if (error) return console.error("Failed to delete assignment:", error);
   isOpen.value = false;
-}*/
+  emit('delete-assignment', props.assignment.id);
+}
 </script>

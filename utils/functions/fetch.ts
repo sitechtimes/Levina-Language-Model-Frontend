@@ -112,3 +112,4 @@ export async function tryRequestEndpoint<T, K = Error>(endpoint: string, method?
 export async function tryRequestEndpoint<T, K = Error>(endpoint: string, method?: string, body?: object, bypassError?: boolean): Promise<Result<T | void, K>> {
   return tryCatch<T, K>(requestEndpoint<T>(endpoint, method, body, bypassError));
 }
+

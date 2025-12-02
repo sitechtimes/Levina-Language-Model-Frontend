@@ -34,7 +34,7 @@ export interface StudentAssignment extends Assignment {
       readonly id: number;
       /** @readonly Name of the course assignment belongs to */
       readonly name: string;
-    };
+  };
     /**
      * Used to store already-fetched `QuestionInterface`s for easy access when going back and forth.
      *
@@ -42,17 +42,21 @@ export interface StudentAssignment extends Assignment {
      * @warning Must be manually added to `StudentAssignment`; this field is not returned from the API.
      * @warning **Questions at certain indices may not exist yet**; the question must be fetched from the API first before being added.
      */
-    questionInterfaces: Record<number, QuestionInterface>;
+    /* questionInterfaces: Record<number, QuestionInterface>; */
   };
 }
 
 export interface TeacherAssignment extends Assignment {
+  readonly id: number;
+  time_limit: number;
+  timed: boolean;
+  assignment_instances: AssignmentInstance;
   /** @readonly Name of the assignment. */
   readonly name: string;
   /** Date the assignment was submitted (Date(UTC)) */
   dateAssigned: Date;
   /** Date the assignment is due (Date(UTC)) */
-  dueDate: Date;
+  due_date: Date;
   /** @readonly Number of questions in the assignment */
   readonly numQuestions: number;
   /** @readonly Whether or not the assignment can be turned in late. */
@@ -62,19 +66,24 @@ export interface TeacherAssignment extends Assignment {
 }
 
 export interface AssignmentInstance {
+  filter(arg0: (instance: { submitted: any; }) => any): unknown;
   /** @readonly ID of the assignment instance. */
   readonly assignment: number;
   /** @readonly ID of the student. */
   readonly student: number;
+  submitted: boolean;
+  time_used: number;
+  /** @readonly Length of AssignmentInstances */
+  readonly length: number;
 }
 
-export interface AssignmentResults extends SubmitAssignment {
-  /** @readonly An array of the question results. */
+export interface AssignmentResults {
+  /** @readonly An array of the question results. extends submitAssignment*/
   readonly questionInstances: {
     /** @readonly ID of the question. */
     readonly id: number;
     /** @readonly The data for the question referenced by the instance. */
-    readonly question: Question;
+    /** readonly question: Question; */
     /** @readonly Array of dynamic user answers (IDs of selected answers). */
     readonly dynamicUserAnswers: number[] | null;
     /** @readonly The ID of the chosen answer if the assignment is static.*/
