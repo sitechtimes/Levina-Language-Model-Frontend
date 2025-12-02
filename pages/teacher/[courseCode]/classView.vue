@@ -3,8 +3,8 @@
    <div class="flex w-[90%] flex-col items-center justify-center sm:w-[80%] md:w-[70%] xl:w-[60%] 2xl:w-[50%]">
      <div class="flex w-full flex-col items-end justify-center gap-4">
        <div class="flex h-52 w-full flex-col items-start justify-end rounded-2xl p-6 bg-purple-500" >
-        <!--${course.name}-->
-         <h1 class="text-4xl font-semibold">{{ CourseLink.name }}</h1>
+        <!--<h1 class="text-4xl font-semibold">{{ course.name }}</h1>-->
+         <h1 class="text-4xl font-semibold">College Russian</h1>
          <h3 class="text-xl">Period 6</h3>
        </div>
 
@@ -49,12 +49,12 @@
          <div class="flex justify-center gap-4">
          </div>
        </div>-->
-       <!--next part is a sample assignment card, will make into a component after i make page look how it should
-        <div v-for="assignments in assignments.course.id" will make all the cards for each assignment-->
-       <TeacherDashboardAssignmentCard
+       <TeacherAssignmentCard
        v-for="assignment in assignments"
           :key="assignment.id"
           :assignment="assignment"
+          :current-date="currentDate"
+          @delete-assignment="removeAssignment"
           />
        <!-- v-for="assignment in filteredAssignments"
           :key="assignment.id"
@@ -73,11 +73,18 @@ if (!teacherCurrentCourse) {
   throw new Error("No current course selected.");
 }
 const data = await requestEndpoint<TeacherCourse>(`/courses/${teacherCurrentCourse.id}/`);*/
+
+//change to teacher/course/${course.id}/ rather than courseid/classView
+
 const data = await requestEndpoint<TeacherCourse>(`/courses/1/`);
 //1 needs to be replaced for the course ID, currently testing with course ID 1)
 const assignments = computed(() => data.assignments);
 const currentDate = new Date();
 
+async function removeAssignment() {
+  const newData = await requestEndpoint<TeacherCourse>(`/courses/1/`);
+  data.assignments = newData.assignments;
+}
 
 </script>
 
