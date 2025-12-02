@@ -19,24 +19,6 @@ export function getRandomItem<T>(arr: T[]) {
   return arr[getRandomInt(0, arr.length - 1)];
 }
 
-export function formatDate(target: Date, current: Date) {
-  const dateHour = target.toLocaleString("default", { hour12: true, hour: "numeric", minute: "2-digit" });
-  const week = target.toLocaleDateString("default", { weekday: "long" });
-  const long = `${target.toLocaleString("default", { year: target.getFullYear() === current.getFullYear() ? undefined : "numeric", month: "short", day: "numeric" })} at ${target.toLocaleString("default", { hour12: true, hour: "numeric", minute: "2-digit" })}`;
-
-  const inputDate = new Date(target).setHours(0, 0, 0, 0);
-  const now = new Date(current).setHours(0, 0, 0, 0);
-  const diffDays = Math.round((inputDate - now) / (24 * 60 * 60 * 1000));
-
-  const labels: Readonly<Record<string, string>> = {
-    "0": `today at ${dateHour}`,
-    "1": `tomorrow at ${dateHour}`,
-    "-1": `yesterday at ${dateHour}`
-  };
-
-  return labels[String(diffDays)] || (diffDays > 1 && diffDays <= 7 ? week : diffDays < -1 && diffDays >= -7 ? `last ${week}` : long);
-}
-
 /**
  * Modifies the current route's query parameters while keeping other existing query parameters.
  *

@@ -28,11 +28,13 @@
         </h3>
         <h2 v-if="assignment.timed" class="w-full overflow-hidden overflow-ellipsis text-nowrap text-l">Timed Assignment</h2>
         <ClientOnly>
-          <!--<p :title="assignment.dueDate.toLocaleString()">Due {{ formatDate(assignment.dueDate, currentDate) }}</p>-->
+          <!--<p>Due {{ formatDate(assignment.due_date, currentDate) }}</p>
+          when we implement formatting this needs to be implemented-->
+          
           <p>Due {{ assignment.due_date }}</p>
         </ClientOnly>
       </div>
-    
+
       <div class="flex w-5/6 flex-col items-center justify-center gap-1">
         <p class="text-xl font-medium">
           Submissions: {{ submitted(assignment) }}/{{ assignment.assignment_instances.length }}
@@ -40,8 +42,7 @@
           <span class="text-sm">students</span>
         </p>
         <div class="relative h-2 w-full overflow-hidden rounded-full border border-neutral-300 bg-neutral-100/25">
-          <!--<div class="absolute left-0 top-0 h-full" :style="{ width: `${(assignment.numSubmitted / course.numStudents) * 100}%`, backgroundColor: subjectColors[course.subject] }"></div>
-        --></div>
+          </div>
       </div>
     </NuxtLink>
   </div>
@@ -49,18 +50,17 @@
 
 <script setup lang="ts">
 const props = defineProps<{
-  //course: TeacherCourse;
   assignment: TeacherAssignment;
-  //currentDate: Date;
+  currentDate: Date;
  }>();
 
 function submitted(assignment: TeacherAssignment) {
-   return assignment.assignment_instances.filter((instance: { submitted: any; }) => instance.submitted).length;
+   const instances = (assignment as any).assignment_instances;
+   if (!Array.isArray(instances)) return 0;
+   return instances.filter((instance: any) => !!instance && !!instance.submitted).length;
  }
-//whyyyyyyyyyyy
 
-//assignment.title should grab assignment
-const emit = defineEmits<{ deleteAssignment: [void] }>();
+const emit = defineEmits(['delete-assignment']);
 const isOpen = ref(false);
 
 async function deleteAssignment() {
@@ -68,6 +68,6 @@ async function deleteAssignment() {
   const { error } = await tryRequestEndpoint(`/assignments/${props.assignment.id}/`, `DELETE`);
   if (error) return console.error("Failed to delete assignment:", error);
   isOpen.value = false;
-  console.log("trying to delete")
+  emit('delete-assignment', props.assignment.id);
 }
 </script>
