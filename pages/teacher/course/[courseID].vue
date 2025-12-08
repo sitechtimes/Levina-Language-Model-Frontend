@@ -11,9 +11,8 @@
 
        <div class="flex items-center justify-center gap-4">
            <TeacherCourseActionButton type="link" :to="`/teacher/course/{classCodePlaceholder}/roster`" img="https://cdn2.iconfinder.com/data/icons/instagram-ui/48/jee-74-512.png" text="View Students"/>
-           <TeacherCourseActionButton type="link" :to="`/teacher/create-assignment?course={classCodePlaceholder}`" img="https://png.pngtree.com/png-clipart/20230405/original/pngtree-assignment-line-icon-png-image_9025828.png" text="Create Assignment"/>
+           <TeacherCourseActionButton type="link" :to="`/teacher/createAssignment`" img="https://png.pngtree.com/png-clipart/20230405/original/pngtree-assignment-line-icon-png-image_9025828.png" text="Create Assignment"/>
            <TeacherCourseActionButton type="button" img="https://www.freeiconspng.com/uploads/trash-can-icon-18.png" text="Delete Course" class="hover:bg-red-400" @on-click="deleteCourse()" />
-          <!--on-click=deleteCourse()-->
           </div>
      </div>
 
