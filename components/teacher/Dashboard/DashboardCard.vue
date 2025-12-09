@@ -1,7 +1,7 @@
 <template>
   <NuxtLink
-    :to="`/teacher/course/${course.id}`"
-    class="flex w-115 flex-col items-center justify-center overflow-hidden rounded-xl bg-body border border-neutral-300 hover:border-neutral-600/50 hover:shadow-lg dark:border-neutral-600 dark:hover:border-neutral-300/50"
+    :to="`/teacher/course/${course.id}`" :class="`bg-[var(--${generalClassType?.toLowerCase()})]`"
+    class="flex w-115 flex-col items-center justify-center overflow-hidden rounded-xl border border-neutral-300 hover:border-neutral-600/50 hover:shadow-lg dark:border-neutral-600 dark:hover:border-neutral-300/50"
   >
     <!-- course information -->
     <div class="flex h-24 w-full flex-col items-center justify-end p-2 bg-regular"  :style="{ backgroundColor: classColors[course.classType as keyof typeof classColors] }">
@@ -33,21 +33,6 @@
 const props = defineProps<{ course: TeacherCourse }>();
 const userStore = useUserStore();
 console.log(props.course.class_type) //why does't classType work
-
-const classTypes = {
-  Regular: ["Freshman Russian", "Sophomore Russian", "Junior Russian"],
-  Advanced: ["Sophomore Advanced Russian", "College Russian"],
-  Heritage: ["Freshman Heritage Russian", "Sophomore Heritage Russian", "College Heritage Russian"],
-  Business: ["Russian in Business"]
-} as const satisfies Record<classType, string[]>;
-
-function getGeneralClassType(specificClass: string): string | null {
-  const types = Object.keys(classTypes) as Array<keyof typeof classTypes>;
-
-  return (
-    types.find(type => classTypes[type].includes(specificClass)) || null
-  );
-}
 
 const generalClassType = getGeneralClassType(props.course.class_type)
 
