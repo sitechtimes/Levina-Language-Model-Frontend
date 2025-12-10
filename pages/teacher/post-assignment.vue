@@ -162,7 +162,7 @@
 </template>
 
 <script setup lang="ts">
-definePageMeta({ layout: "teacher" });
+// definePageMeta({ layout: "teacher" });
 
 const route = useRoute();
 const router = useRouter();
