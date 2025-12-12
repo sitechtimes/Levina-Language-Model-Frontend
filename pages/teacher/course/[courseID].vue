@@ -53,7 +53,6 @@
 </template>
 
 <script setup lang="ts">
-
 const data = ref<TeacherCourse | null>(null);
 
 //data.value = await requestEndpoint<TeacherCourse>(`/courses/${teacherCurrentCourse.id}/`);
@@ -78,9 +77,8 @@ async function removeAssignment() {
 }
 */
 
-//const generalClassType = getGeneralClassType(props.course.class_type)
-const generalClassType = "Regular"
-
+//const generalClassType = getGeneralClassType()
+const generalClassType = "Regular" 
 </script>
 
 

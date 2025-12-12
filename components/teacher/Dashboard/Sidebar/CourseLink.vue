@@ -13,12 +13,12 @@
 </template>
 
 <script setup lang="ts">
-defineProps<{ course: TeacherCourseNoAssignment }>();
+const props = defineProps<{ course: TeacherCourseNoAssignment }>();
 
 const route = useRoute();
 
-//const generalClassType = getGeneralClassType(props.course.class_type)
-const generalClassType = "Regular"
+const generalClassType = getGeneralClassType(props.course.class_type)
+
 </script>
 
 <style scoped></style>
