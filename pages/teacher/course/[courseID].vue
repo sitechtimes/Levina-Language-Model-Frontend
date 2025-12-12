@@ -77,7 +77,7 @@ async function removeAssignment() {
 }
 */
 
-//const generalClassType = getGeneralClassType()
+//const generalClassType = getGeneralClassType(course.classType)
 const generalClassType = "Regular" 
 </script>
 
