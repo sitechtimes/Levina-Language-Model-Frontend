@@ -2,7 +2,7 @@
  <div class="flex h-full min-h-[calc(100vh-6rem)] w-full flex-col items-center justify-start">
    <div class="flex w-[90%] flex-col items-center justify-center sm:w-[80%] md:w-[70%] xl:w-[60%] 2xl:w-[50%]">
      <div class="flex w-full flex-col items-end justify-center gap-4">
-       <div class="flex h-52 w-full flex-col items-start justify-end rounded-2xl p-6" :style="{ backgroundColor: `var(--${generalClassType.toLowerCase()})` }">
+       <div class="flex h-52 w-full flex-col items-start justify-end rounded-2xl p-6" :style="{ backgroundColor: classColors[generalClassType] }">
         <!--<h1 class="text-4xl font-semibold">{{ course.name / course.period }}</h1>-->
          <h1 class="text-4xl font-semibold">College Russian</h1>
          <h3 class="text-xl">Period 6</h3>
@@ -79,7 +79,7 @@ async function removeAssignment() {
 */
 
 //const generalClassType = getGeneralClassType(props.course.class_type)
-const generalClassType = "regular"
+const generalClassType = "Regular"
 
 </script>
 

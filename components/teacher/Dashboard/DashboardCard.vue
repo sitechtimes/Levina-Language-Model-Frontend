@@ -1,6 +1,6 @@
 <template>
   <NuxtLink
-    :to="`/teacher/course/${course.id}`" :style="{ backgroundColor: `var(--${generalClassType.toLowerCase()})` }"
+    :to="`/teacher/course/${course.id}`" :style="{ backgroundColor: classColors[generalClassType] }"
     class="flex w-115 flex-col items-center justify-center overflow-hidden rounded-xl border border-neutral-300 hover:border-neutral-600/50 hover:shadow-lg dark:border-neutral-600 dark:hover:border-neutral-300/50"
   >
     <!-- course information -->
@@ -35,7 +35,7 @@ const userStore = useUserStore();
 console.log(props.course.class_type) //why does't classType work
 
 //const generalClassType = getGeneralClassType(props.course.class_type)
-const generalClassType = "regular"
+const generalClassType = "Regular"
 </script>
 
 <style scoped>
