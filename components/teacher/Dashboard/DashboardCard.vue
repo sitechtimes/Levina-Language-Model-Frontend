@@ -32,9 +32,8 @@
 <script setup lang="ts">
 const props = defineProps<{ course: TeacherCourse }>();
 const userStore = useUserStore();
-console.log(props.course.class_type) //why does't classType work
 
-const generalClassType = getGeneralClassType(props.course.class_type) as classType
+const generalClassType = getGeneralClassType(props.course.class_type) as classType //why doesn't classType work when it's supposed to?
 </script>
 
 <style scoped>
