@@ -17,7 +17,7 @@ const props = defineProps<{ course: TeacherCourseNoAssignment }>();
 
 const route = useRoute();
 
-const generalClassType = getGeneralClassType(props.course.class_type)
+const generalClassType = getGeneralClassType(props.course.class_type) as classType
 
 </script>
 
