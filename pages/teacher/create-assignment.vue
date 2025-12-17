@@ -60,4 +60,14 @@
 
 <script setup lang="ts">
 
+const assignmentInfo = reactive({
+  name: "",
+  //questions: ref<CreateAssignmentQuestion[]>([]),
+  numOfQuestions: ref<number>(),
+  lateSubmissions: false,
+  /** In minutes */
+  timeAllotted: ref<number>(),
+  attemptsAllowed: ref<number>()
+});
+
 </script>
