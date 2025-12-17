@@ -6,9 +6,9 @@ type LoginResponse = {
 type UserInfo = {
   id: number;
   email: string;
-  first_name: string;
-  last_name: string;
-  user_type: number; 
+  firstName: string;
+  lastName: string;
+  userType: number; 
 };
 
 // type SessionInfo = {
@@ -118,13 +118,13 @@ export const useUserStore = defineStore("userStore", () => {
     }
 
     isAuth.value = true;
-    if (!data.first_name && !data.last_name) {
+    if (!data.firstName && !data.lastName) {
       name.value = data.email;
     } else {
-      name.value = `${data.first_name} ${data.last_name}`.trim();
+      name.value = `${data.firstName} ${data.lastName}`.trim();
     }
 
-    if (data.user_type) {
+    if (data.userType) {
       userType.value = "teacher"
       teacherCourses.value = await tryRequestEndpoint<TeacherCourseNoAssignment[]>("/courses/","GET").then(res => res.data || []);
     } else {
