@@ -33,7 +33,7 @@
 const props = defineProps<{ course: TeacherCourse }>();
 const userStore = useUserStore();
 
-const generalClassType = getGeneralClassType(props.course.class_type) as classType
+const generalClassType = getGeneralClassType(props.course.classType) as classType
 </script>
 
 <style scoped>

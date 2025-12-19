@@ -32,12 +32,16 @@ export async function tryCatch<T, E = Error>(promise: Promise<T>): Promise<Resul
 }
 
 /** Deserializes a `snake_case` object to `camelCase`. */
-function toCamelCase(obj: object) {
-  const camelCaseData: object = {};
-  for (const key in obj) {
+function toCamelCase(data: any): any {
+  if (Array.isArray(data)) {
+    return data.map(item =>
+      typeof item === "object" && item !== null ? toCamelCase(item) : item);
+  }
+  if (typeof data !== "object" || data === null) return data;
+  const camelCaseData: any = {};
+  for (const key in data) {
     const camelCaseKey = key.replace(/_([a-z])/g, (_, letter) => letter.toUpperCase());
-    // @ts-expect-error dont care just any
-    camelCaseData[camelCaseKey] = obj[key];
+    camelCaseData[camelCaseKey] = toCamelCase(data[key]);
   }
   return camelCaseData;
 }
@@ -103,8 +107,8 @@ export async function requestEndpoint<T>(endpoint: string, method?: string, body
   if (contentLength === "0") return undefined as T;
 
   const data = await res.json();
-  //  return data;
-  return (typeof data !== "object" || Array.isArray(data) ? data : toCamelCase(data)) as T;
+  return (typeof data !== "object" || data === null ? data : toCamelCase(data)) as T;
+
 }
 
 /** **Serves as a wrapper for `tryCatch(requestEndpoint())`.**
