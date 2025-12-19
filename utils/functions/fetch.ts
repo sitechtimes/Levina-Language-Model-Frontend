@@ -31,6 +31,22 @@ export async function tryCatch<T, E = Error>(promise: Promise<T>): Promise<Resul
   }
 }
 
+/** Deserializes a `snake_case` object to `camelCase`. */
+function toCamelCase(data: any): any {
+  if (Array.isArray(data)) {
+    return data.map(item =>
+      typeof item === "object" && item !== null ? toCamelCase(item) : item);
+  }
+  if (typeof data !== "object" || data === null) return data;
+  const camelCaseData: any = {};
+  for (const key in data) {
+    const camelCaseKey = key.replace(/_([a-z])/g, (_, letter) => letter.toUpperCase());
+    camelCaseData[camelCaseKey] = toCamelCase(data[key]);
+  }
+  return camelCaseData;
+}
+
+
 /** Makes a request to the given endpoint with the given method and body.
  * @param endpoint - the endpoint to request. It will be automatically appended to the base URL, **so it should NOT start with a `/`**.
  * @param method - the HTTP method to use for the request. Defaults to `"GET"`.
@@ -90,7 +106,9 @@ export async function requestEndpoint<T>(endpoint: string, method?: string, body
   const contentLength = res.headers.get("Content-Length");
   if (contentLength === "0") return undefined as T;
 
-  return res.json();
+  const data = await res.json();
+  return (typeof data !== "object" || data === null ? data : toCamelCase(data)) as T;
+
 }
 
 /** **Serves as a wrapper for `tryCatch(requestEndpoint())`.**

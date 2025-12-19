@@ -1,10 +1,10 @@
 <template>
   <NuxtLink
     :to="`/teacher/course/${course.id}`"
-    class="flex w-115 flex-col items-center justify-center overflow-hidden rounded-xl border border-neutral-300 bg-body hover:border-neutral-600/50 hover:shadow-lg dark:border-neutral-600 dark:hover:border-neutral-300/50"
+    class="flex w-115 flex-col items-center justify-center overflow-hidden rounded-xl border border-neutral-300 hover:border-neutral-600/50 hover:shadow-lg dark:border-neutral-600 dark:hover:border-neutral-300/50"
   >
     <!-- course information -->
-    <div class="flex h-24 w-full flex-col items-center justify-end p-2" :style="{ backgroundColor: classColors[course.classType as keyof typeof classColors] }">
+    <div class="flex h-24 w-full flex-col items-center justify-end p-2" :style="{ backgroundColor: classColors[generalClassType] }">
       <h2 :title="course.name" class="w-72 overflow-hidden overflow-ellipsis text-nowrap text-center text-2xl font-semibold">{{ course.name }}</h2>
       <p class="text-sm">Period {{ course.period }}</p>
       <p>{{ course.teacher }}</p>
@@ -30,8 +30,10 @@
 </template>
 
 <script setup lang="ts">
-defineProps<{ course: TeacherCourse }>();
+const props = defineProps<{ course: TeacherCourse }>();
 const userStore = useUserStore();
+
+const generalClassType = getGeneralClassType(props.course.classType) as classType
 </script>
 
 <style scoped>
