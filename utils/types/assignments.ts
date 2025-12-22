@@ -65,6 +65,17 @@ export interface TeacherAssignment extends Assignment {
   readonly numSubmitted: number;
 }
 
+export interface TeacherAssignmentTemplate extends Assignment {
+  /** @readonly Name of the assignment. */
+  readonly name: string;
+  timed: boolean;
+  time_limit: number;
+  questions: number[];
+  /** Date the assignment is due (Date(UTC)) */
+  due_date: Date;
+  course: number;
+}
+
 export interface AssignmentInstance {
   filter(arg0: (instance: { submitted: any; }) => any): unknown;
   /** @readonly ID of the assignment instance. */
