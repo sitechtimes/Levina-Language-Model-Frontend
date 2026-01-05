@@ -1,11 +1,34 @@
 <template>
     <div>
-        <StudentCard v-for="student in students" :studentName="student.name"/>
+        <div v-for="student in students">{{ student.firstName }}</div>
+        <StudentCard v-for="student in students" :studentName="`${student.firstName} ${student.lastName}`"/>
     </div>
 </template>
 
 <script setup lang="ts">
-const students = [{name: "John Doe"}]
+const students = [
+   {
+    "id": 1,
+     "email": "student1@example.com",
+     "firstName": "Student",
+     "lastName": "One",
+     "userType": 0
+   },
+   {
+     "id": 2,
+     "email": "student2@example.com",
+     "firstName": "Student",
+     "lastName": "Two",
+     "userType": 0
+   },
+   {
+     "id": 3,
+     "email": "sam.kipnis@gmail.com",
+     "firstName": "Sam",
+     "lastName": "Kipnis",
+     "userType": 0
+   }
+ ]
 // /courses/1/students/ returns:
 // [
 //   {

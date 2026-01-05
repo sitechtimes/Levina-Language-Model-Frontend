@@ -31,13 +31,13 @@
           <!--<p>Due {{ formatDate(assignment.due_date, currentDate) }}</p>
           when we implement formatting this needs to be implemented-->
           
-          <p>Due {{ assignment.due_date }}</p>
+          <p>Due {{ assignment.dueDate }}</p>
         </ClientOnly>
       </div>
 
       <div class="flex w-5/6 flex-col items-center justify-center gap-1">
         <p class="text-xl font-medium">
-          Submissions: {{ submitted(assignment) }}/{{ assignment.assignment_instances.length }}
+          Submissions: {{ submitted(assignment) }}/{{ assignment.assignmentInstances.length }}
           
           <span class="text-sm">students</span>
         </p>

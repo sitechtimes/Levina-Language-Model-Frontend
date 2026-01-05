@@ -1,7 +1,7 @@
 <template>
     <div class="flex flex-row">
-{{ studentName }}
-<button @click="handleDeleteStudent"><img src="/close.svg" aria-hidden="true" draggable="false" class="dark:invert"></button>
+       {{ studentName }}
+       <button @click="handleDeleteStudent"><img src="/close.svg" aria-hidden="true" draggable="false" class="dark:invert"></button>
     </div>
 </template>
 
