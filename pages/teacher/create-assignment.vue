@@ -12,7 +12,7 @@
                 required
                 />
             </label>
-            <label class="flex flex-col gap-1">
+            <!-- <label class="flex flex-col gap-1">
                 <span class="font-medium">Assignment Topic</span>
                 <input 
                 type="text" 
@@ -20,7 +20,7 @@
                 placeholder="Grammar Rules" 
                 required
                 />
-            </label>
+            </label> -->
             <label class="flex flex-col gap-1">
                 <span class="font-medium">Number of Questions</span>
                 <input 
@@ -44,18 +44,28 @@
         <div
           class="flex h-0 max-h-full min-h-60 w-full grow items-center justify-center rounded-lg border border-neutral-400 bg-white hover:border-neutral-500 dark:border-neutral-600 dark:bg-neutral-900 dark:hover:border-neutral-300/50"
         >
-          <div class="mb-6 flex h-fit flex-col items-center justify-center">
+          <div v-if="!assignmentInfo.questions.length" class="mb-6 flex h-fit flex-col items-center justify-center">
             <img class="pointer-events-none size-40 select-none opacity-65 dark:invert" src="/ui/plus.svg" aria-hidden="true" />
             <p class="text-center text-xl font-bold text-neutral-500 dark:text-white">No Questions Selected</p>
             <p class="w-3/4 text-center text-sm font-medium text-neutral-400">Select questions from the question bank to add them to this assignment!</p>
           </div>
-          </div>
-            <button type="submit" class="rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600 mt-15">Create Assignment</button>
-        </div>
-        </div>
-        </form>
-    </div>
+          <div v-else class="flex h-full w-full flex-col items-start justify-start gap-4 overflow-y-scroll pl-4 pr-2 pt-4">
+            <ol v-if="assignmentInfo.questions.length" class="flex w-full flex-col items-start justify-start gap-2">
+<!--               <li v-for="(question, index) in assignmentInfo.questions" :key="question.questionId" class="flex w-full items-center justify-start gap-3">
+ -->               <li  class="flex w-full items-center justify-start gap-3">
 
+                <span>{{ 1 }}.</span>
+                </li>  
+              </ol>
+                <div class="flex items-center justify-center gap-2">
+                  </div>
+                  </div>
+                </div>
+          </div>
+        </div>
+         <button type="submit" class="rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600 mt-15">Create Assignment</button>
+    </form>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -64,6 +74,7 @@ const assignmentInfo = reactive({
   name: "",
   //questions: ref<CreateAssignmentQuestion[]>([]),
   numOfQuestions: ref<number>(),
+  questions: ref<number[]>([]),
   lateSubmissions: false,
   /** In minutes */
   timeAllotted: ref<number>(),
