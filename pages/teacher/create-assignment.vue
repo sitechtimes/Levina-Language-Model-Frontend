@@ -30,6 +30,14 @@
                 required 
                 />
             </label>
+            <label class="flex items-center gap-2 cursor-pointer">
+                <span class="font-medium">Timed Assignment</span>
+                <input 
+                type="checkbox" 
+                class="checkbox checkbox-primary"
+                required
+                />
+            </label>
             <label class="flex flex-col gap-1">
                 <span class="font-medium">Time Limit</span>
                 <input 
@@ -63,7 +71,7 @@
                 </div>
           </div>
         </div>
-         <button type="submit" class="rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600 mt-15">Create Assignment</button>
+         <button type="submit" @submit="handleSubmit" class="rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600 mt-15">Create Assignment</button>
     </form>
   </div>
 </template>
@@ -72,13 +80,44 @@
 
 const assignmentInfo = reactive({
   name: "",
+  timed: ref<boolean>(false),
+    /** In minutes */
+  timeLimit: ref<number>(),
   //questions: ref<CreateAssignmentQuestion[]>([]),
-  numOfQuestions: ref<number>(),
   questions: ref<number[]>([]),
-  lateSubmissions: false,
-  /** In minutes */
-  timeAllotted: ref<number>(),
-  attemptsAllowed: ref<number>()
 });
 
+
+/*async function handleSubmit(){
+  const { error } = await tryCatch(
+    submitCreateAssignment(
+      assignmentInfo.name,
+      courseIds,
+      guaranteed,
+      random,
+      assignmentInfo.topicPaths.map((arr) => arr.at(-1) ?? 1),
+      assignmentInfo.excludedQuestions,
+      time.getTime() / 1000,
+      assignmentInfo.numOfQuestions ?? 1,
+      assignmentInfo.lateSubmissions,
+      assignmentInfo.timeAllotted ?? 0,
+      assignmentInfo.attemptsAllowed ?? 0
+    )
+  );
+  if (initialCourse) {
+    const course = teacherCourses.value.find((course) => course.id === initialCourse);
+    if (course) course.assignmentsFetched = false;
+    await router.push(`/teacher/course/${initialCourse}`);
+  }
+
+  createAssignmentResult.isLoading = false;
+
+  if (error) {
+    createAssignmentResult.error = error.message;
+    console.error(error);
+  } else {
+    createAssignmentResult.success = true;
+    watch(createAssignmentResult, () => void router.push("/teacher/dashboard"));
+  }
+}*/
 </script>
