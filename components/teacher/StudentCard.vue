@@ -1,16 +1,22 @@
 <template>
     <div class="flex flex-row">
-       {{ studentName }}
-       <button @click="handleDeleteStudent"><img src="/close.svg" aria-hidden="true" draggable="false" class="dark:invert"></button>
+       {{ student.firstName }} {{ student.lastName }}
+       <button @click="deleteStudent"><img src="/close.svg" aria-hidden="true" draggable="false" class="dark:invert"></button>
     </div>
 </template>
 
 <script setup lang="ts">
-defineProps<{
-    studentName: string 
+const props = defineProps<{
+    student: string 
+    courseID: number
 }>()
 
-function handleDeleteStudent(){}
+async function deleteStudent(){
+    const confirmed = window.confirm("Are you sure you want to delete this student?");
+    if (!confirmed) return
+    const {error} = await tryRequestEndpoint(`/courses/${props.courseID}/remove_student/`, props.student.id);
+    if (error) return console.error("Failed to delete student:", error)
+}
 </script>
 
 <style scoped>
