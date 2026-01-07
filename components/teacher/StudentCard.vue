@@ -7,7 +7,7 @@
 
 <script setup lang="ts">
 const props = defineProps<{
-    student: string 
+    student: string //make student type?
     courseID: number
 }>()
 
