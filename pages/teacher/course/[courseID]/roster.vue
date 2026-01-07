@@ -38,7 +38,6 @@ const route = useRoute()
 const courseID = route.params.courseID
 
 async function getStudents() {
-  console.log(courseID)
     const {data, error} = await tryRequestEndpoint(`/courses/${courseID}/students/`)
     if (error) return console.error("Failed to fetch students:", error);
     students.value = data
