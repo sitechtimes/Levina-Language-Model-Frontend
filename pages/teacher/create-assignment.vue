@@ -77,39 +77,40 @@
 </template>
 
 <script setup lang="ts">
+definePageMeta({
+  layout: "teacher",
+  requiresAuth: true,
+  redirectIfAuth: false
+})
+const route = useRoute();
+const router = useRouter();
+const userStore = useUserStore();
 
 const assignmentInfo = reactive({
   name: "",
   timed: ref<boolean>(false),
     /** In minutes */
-  timeLimit: ref<number>(),
+  time_limit: ref<number>(),
   //questions: ref<CreateAssignmentQuestion[]>([]),
   questions: ref<number[]>([]),
 });
 
+const createAssignmentResult = reactive({
+  isLoading: false,
+  error: "",
+  success: false
+});
 
-/*async function handleSubmit(){
+
+async function handleSubmit(){
   const { error } = await tryCatch(
     submitCreateAssignment(
-      assignmentInfo.name,
-      courseIds,
-      guaranteed,
-      random,
-      assignmentInfo.topicPaths.map((arr) => arr.at(-1) ?? 1),
-      assignmentInfo.excludedQuestions,
-      time.getTime() / 1000,
-      assignmentInfo.numOfQuestions ?? 1,
-      assignmentInfo.lateSubmissions,
-      assignmentInfo.timeAllotted ?? 0,
-      assignmentInfo.attemptsAllowed ?? 0
+      name,
+      timed,
+      time_limit,
+      questions
     )
   );
-  if (initialCourse) {
-    const course = teacherCourses.value.find((course) => course.id === initialCourse);
-    if (course) course.assignmentsFetched = false;
-    await router.push(`/teacher/course/${initialCourse}`);
-  }
-
   createAssignmentResult.isLoading = false;
 
   if (error) {
@@ -117,7 +118,7 @@ const assignmentInfo = reactive({
     console.error(error);
   } else {
     createAssignmentResult.success = true;
-    watch(createAssignmentResult, () => void router.push("/teacher/dashboard"));
+    watch(createAssignmentResult, () => void router.push("/teacher/post-assignment"));
   }
-}*/
+}
 </script>
