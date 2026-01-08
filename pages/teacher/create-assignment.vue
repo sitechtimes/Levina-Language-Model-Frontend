@@ -3,7 +3,7 @@
         <form class="flex h-full max-h-full w-full shrink-0 flex-col gap-2 p-4 lg:w-[35rem] lg:overflow-y-scroll">
         <h1 class="text-2xl font-bold mt-10 mb-5">Create Assignment</h1>
         <div class="flex flex-col gap-4">
-            <label class="flex flex-col gap-1">
+            <label title="Required" class="flex flex-col gap-1">
                 <span class="font-medium">Assignment Name</span>
                 <input 
                 type="text" 
@@ -21,7 +21,7 @@
                 required
                 />
             </label> -->
-            <label class="flex flex-col gap-1">
+            <label title="Required" class="flex flex-col gap-1">
                 <span class="font-medium">Number of Questions</span>
                 <input 
                 type="number" 
@@ -38,7 +38,7 @@
                 required
                 />
             </label>
-            <label class="flex flex-col gap-1">
+            <label title="Required" class="flex flex-col gap-1">
                 <span class="font-medium">Time Limit</span>
                 <input 
                 type="number" 
@@ -48,7 +48,7 @@
                 />
             </label>
             <div class="mb-2 flex w-full grow flex-col">
-        <p class="fo-label fo-label-text pointer-events-none flex-none shrink-0 font-bold text-black dark:text-white">Questions and Topics <span title="Required" class="text-red-500">*</span></p>
+        <p class="fo-label fo-label-text pointer-events-none flex-none shrink-0 font-bold text-black dark:text-white">Questions<span title="Required" class="text-red-500">*</span></p>
         <div
           class="flex h-0 max-h-full min-h-60 w-full grow items-center justify-center rounded-lg border border-neutral-400 bg-white hover:border-neutral-500 dark:border-neutral-600 dark:bg-neutral-900 dark:hover:border-neutral-300/50"
         >
@@ -74,6 +74,9 @@
          <button type="submit" @submit="handleSubmit" class="rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600 mt-15">Create Assignment</button>
     </form>
   </div>
+  <div>
+    
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -86,11 +89,14 @@ const route = useRoute();
 const router = useRouter();
 const userStore = useUserStore();
 
+const questions = await requestEndpoint(`/questions/`);
+console.log(questions)
+
 const assignmentInfo = reactive({
   name: "",
   timed: ref<boolean>(false),
     /** In minutes */
-  time_limit: ref<number>(),
+  time_limit: ref<number>(0),
   //questions: ref<CreateAssignmentQuestion[]>([]),
   questions: ref<number[]>([]),
 });
@@ -105,10 +111,10 @@ const createAssignmentResult = reactive({
 async function handleSubmit(){
   const { error } = await tryCatch(
     submitCreateAssignment(
-      name,
-      timed,
-      time_limit,
-      questions
+      assignmentInfo.name,
+      assignmentInfo.timed,
+      assignmentInfo.time_limit,
+      assignmentInfo.questions
     )
   );
   createAssignmentResult.isLoading = false;

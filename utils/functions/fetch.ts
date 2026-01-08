@@ -97,7 +97,7 @@ export async function submitCreateAssignment(
   name: string,
   timed: boolean,
   time_limit: number,
-  questions: number
+  questions: number[]
 ) {
   await requestEndpoint<void>(`assignment-templates/`, "POST", {
     name,
