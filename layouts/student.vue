@@ -13,17 +13,6 @@
 </template>
 
 <script setup lang="ts">
-const router = useRouter();
-
-const userStore = useUserStore();
-
-router.afterEach(() => {
-  // Handle any student-specific routing logic
-});
-
-onMounted(() => {
-  // Initialize student dashboard
-});
 </script>
 
 <style scoped></style>

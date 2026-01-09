@@ -21,12 +21,6 @@ definePageMeta({
   redirectIfAuth: false,
   allowedRoles: ["student"]
 });
-
-const store = useUserStore();
-
-onMounted(() => {
-  // Initialize student dashboard
-});
 </script>
 
 <style scoped></style>
