@@ -1,7 +1,12 @@
 <template> 
     <div class="-m-4 flex w-auto flex-col px-4 lg:h-[calc(100vh-4rem)] lg:max-h-[calc(100vh-4rem)] lg:flex-row lg:overflow-y-hidden">
-        <form class="flex h-full max-h-full w-full shrink-0 flex-col gap-2 p-4 lg:w-[35rem] lg:overflow-y-scroll">
-        <h1 class="text-2xl font-bold mt-10 mb-5">Create Assignment</h1>
+        <form
+      class="flex h-full w-full shrink-0 flex-col gap-2 p-4
+             lg:w-[35rem]
+             lg:overflow-y-scroll"
+      @submit.prevent="handleSubmit"
+    >
+      <h1 class="mt-10 mb-5 text-2xl font-bold">Create Assignment</h1>
         <div class="flex flex-col gap-4">
             <label title="Required" class="flex flex-col gap-1">
                 <span class="font-medium">Assignment Name</span>
@@ -71,11 +76,22 @@
                 </div>
           </div>
         </div>
-         <button type="submit" @submit="handleSubmit" class="rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600 mt-15">Create Assignment</button>
+         <button type="submit" class="mt-5 rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600">
+        Create Assignment
+      </button>
     </form>
-  </div>
-  <div>
-    
+    <div class="flex h-full flex-1 flex-col p-4 lg:overflow-y-scroll">
+      <h2 class="mt-10 mb-5 text-2xl font-bold">Available Questions</h2>
+      <ul class="flex flex-col gap-2">
+        <li
+          v-for="question in questions"
+          :key="question.id"
+          class="flex items-center gap-3 rounded border p-2 hover:bg-neutral-100 dark:hover:bg-neutral-800"
+        >
+          {{ question.id }}
+        </li>
+      </ul>
+    </div>
   </div>
 </template>
 
@@ -107,6 +123,22 @@ const createAssignmentResult = reactive({
   success: false
 });
 
+function addQuestion(questionId: number) {
+  // If questions are stored as an array of IDs (numbers), check by equality.
+  if (!assignmentInfo.questions.find((q: number) => q === questionId)) {
+    assignmentInfo.questions.push(questionId);
+  } else {
+    removeQuestion(questionId);
+  }
+}
+
+function removeQuestion(questionId: number) {
+  // prettier-ignore
+  const idx = assignmentInfo.questions.findIndex((q: number) => q === questionId);
+  if (idx !== -1) {
+    assignmentInfo.questions.splice(idx, 1);
+  }
+}
 
 async function handleSubmit(){
   const { error } = await tryCatch(
