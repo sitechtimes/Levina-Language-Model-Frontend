@@ -53,6 +53,13 @@
 </template>
 
 <script setup lang="ts">
+definePageMeta({
+  layout: "teacher",
+  requiresAuth: true,
+  redirectIfAuth: false,
+  allowedRoles: ["teacher"]
+});
+
 const data = ref<TeacherCourse | null>(null);
 
 //data.value = await requestEndpoint<TeacherCourse>(`/courses/${teacherCurrentCourse.id}/`);
