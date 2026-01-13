@@ -65,6 +65,9 @@
         </li>
       </ul>
     </div>
+    <div class="flex h-full flex-1 flex-col p-4 lg:overflow-y-scroll">
+      <h2 class="mt-10 mb-5 text-2xl font-bold">Create Questions</h2>
+    </div>
   </div>
 </template>
 
