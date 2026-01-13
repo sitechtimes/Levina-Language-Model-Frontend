@@ -66,16 +66,27 @@ export async function requestEndpoint<T>(endpoint: string, method?: string, body
 export async function requestEndpoint<T>(endpoint: string, method?: string, body?: object, bypassError?: boolean): Promise<T | void> {
   const config = useRuntimeConfig();
   const userStore = useUserStore();
-  const options: RequestInit = { credentials: "include" };
+  // const options: RequestInit = { credentials: "include" };
 
-  const headers: HeadersInit = { "Content-Type": "application/json" };
+  // const headers: HeadersInit = { "Content-Type": "application/json" };
+  // if (userStore.accessToken) {
+  //   headers.Authorization = `Bearer ${userStore.accessToken}`;
+  // }
+
+  const options: RequestInit = {
+    credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  };
+
   if (userStore.accessToken) {
-    headers.Authorization = `Bearer ${userStore.accessToken}`;
+    (options.headers as HeadersInit).Authorization =
+      `Bearer ${userStore.accessToken}`;
   }
 
   if (method) {
     options.method = method;
-    options.headers = headers
     options.body = JSON.stringify(body);
   }
 

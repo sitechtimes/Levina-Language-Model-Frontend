@@ -48,11 +48,12 @@ const route = useRoute()
 const courseID = route.params.courseID
 
 async function getStudents() {
-    const {data, error} = await tryRequestEndpoint(`courses/${courseID}/students/`)
+    const {data, error} = await tryRequestEndpoint<Student[]>(`courses/${courseID}/students/`)
     console.log(data)
     if (error) return console.error("Failed to fetch students:", error);
     students.value = data
 }
+
 onMounted(getStudents)
 </script>
 

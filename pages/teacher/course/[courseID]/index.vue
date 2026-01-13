@@ -70,7 +70,7 @@ async function removeAssignment() {
 }
 
 /* async function deleteCourse(){
-  const { error } = await tryRequestEndpoint(`/courses/${course.id}/`, `DELETE`);
+  const { error } = await tryRequestEndpoint(`courses/${course.id}/`, `DELETE`);
   if (error) return console.error("Failed to delete course:", error);
   //redirect to teacher dashboard after deletion
   navigateTo('/teacher/dashboard');
