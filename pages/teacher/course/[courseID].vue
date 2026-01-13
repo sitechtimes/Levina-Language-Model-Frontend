@@ -4,16 +4,15 @@
      <div class="flex w-full flex-col items-end justify-center gap-4">
        <div class="flex h-52 w-full flex-col items-start justify-end rounded-2xl p-6" :style="{ backgroundColor: classColors[generalClassType] }">
         <!--<h1 class="text-4xl font-semibold">{{ course.name / course.period }}</h1>-->
-         <h1 class="text-4xl font-semibold">College Russian</h1>
-         <h3 class="text-xl">Period 6</h3>
+         <h1 class="text-4xl font-semibold"> {{ courseName }}</h1>
+         <h3 class="text-xl">Period {{ coursePeriod }}</h3>
        </div>
 
 
        <div class="flex items-center justify-center gap-4">
            <TeacherCourseActionButton type="link" :to="`/teacher/course/{classCodePlaceholder}/roster`" img="https://cdn2.iconfinder.com/data/icons/instagram-ui/48/jee-74-512.png" text="View Students"/>
-           <TeacherCourseActionButton type="link" :to="`/teacher/create-assignment?course={classCodePlaceholder}`" img="https://png.pngtree.com/png-clipart/20230405/original/pngtree-assignment-line-icon-png-image_9025828.png" text="Create Assignment"/>
-           <TeacherCourseActionButton type="button" img="https://www.freeiconspng.com/uploads/trash-can-icon-18.png" text="Delete Course" class="hover:bg-red-400" @on-click="" />
-          <!--on-click=deleteCourse()-->
+           <TeacherCourseActionButton type="link" :to="`/teacher/create-assignment`" img="https://png.pngtree.com/png-clipart/20230405/original/pngtree-assignment-line-icon-png-image_9025828.png" text="Create Assignment"/>
+           <TeacherCourseActionButton type="button" img="https://www.freeiconspng.com/uploads/trash-can-icon-18.png" text="Delete Course" class="hover:bg-red-400" @on-click="deleteCourse()" />
           </div>
      </div>
 
@@ -55,27 +54,25 @@
 <script setup lang="ts">
 const data = ref<TeacherCourse | null>(null);
 
-//data.value = await requestEndpoint<TeacherCourse>(`/courses/${teacherCurrentCourse.id}/`);
-//1 needs to be replaced for the course ID, currently testing with course ID 1)
-data.value = await requestEndpoint<TeacherCourse>(`/courses/1/`);
+const data = ref<TeacherCourse | null>(null);
+data.value = await requestEndpoint<TeacherCourse>(`/courses/${courseId}/`);
+const courseName = computed(() => data.value?.name ?? "Course Name");
+const coursePeriod = computed(() => data.value?.period ?? "Course Period");
 
 const assignments = computed(() => data.value?.assignments ?? []);
-
 const currentDate = new Date();
 
 async function removeAssignment() {
-  const newData = await requestEndpoint<TeacherCourse>(`/courses/1/`);
+  const newData = await requestEndpoint<TeacherCourse>(`/courses/${courseId}/`);
   data.value = newData;
   console.log("Assignment removed.", data.value.assignments);
 }
 
-/* async function deleteCourse(){
-  const { error } = await tryRequestEndpoint(`/courses/${course.id}/`, `DELETE`);
+ async function deleteCourse(){
+  const { error } = await tryRequestEndpoint(`/courses/${courseId}/`, `DELETE`);
   if (error) return console.error("Failed to delete course:", error);
-  //redirect to teacher dashboard after deletion
   navigateTo('/teacher/dashboard');
 }
-*/
 
 //const generalClassType = getGeneralClassType(course.classType) as classType
 const generalClassType = "Regular" 
