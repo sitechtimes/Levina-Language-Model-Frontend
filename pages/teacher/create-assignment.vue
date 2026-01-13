@@ -7,7 +7,7 @@
       <h1 class="mt-10 mb-5 text-2xl font-bold">Create Assignment</h1>
         <div class="flex flex-col gap-4">
             <label title="Required" class="flex flex-col gap-1">
-                <span class="font-medium">Assignment Name</span>
+                <p class="font-medium">Assignment Name<span class="text-red-500">*</span></p>
                 <input 
                 type="text"
                 v-model="assignmentInfo.name"
@@ -16,17 +16,8 @@
                 required
                 />
             </label>
-            <!-- <label class="flex flex-col gap-1">
-                <span class="font-medium">Assignment Topic</span>
-                <input 
-                type="text" 
-                class="du-input w-full border-neutral-400 bg-neutral-200 text-black hover:border-neutral-500 dark:border-neutral-600 dark:bg-neutral-900 dark:text-white dark:placeholder:text-neutral-300 dark:hover:border-neutral-300/50" 
-                placeholder="Grammar Rules" 
-                required
-                />
-            </label> -->
             <label title="Required" class="flex flex-col gap-1">
-                <span class="font-medium">Time Limit</span>
+                <p class="font-medium">Time Limit<span class="text-red-500">*</span></p>
                 <input 
                 type="number"
                 v-model="assignmentInfo.time_limit" 
@@ -36,7 +27,7 @@
                 />
             </label>
             <div class="mb-2 flex w-full grow flex-col">
-        <p class="fo-label fo-label-text pointer-events-none flex-none shrink-0 font-bold text-black dark:text-white">Questions<span title="Required" class="text-red-500">*</span></p>
+        <p class="font-medium">Questions<span title="Required" class="text-red-500">*</span></p>
         <div
           class="flex h-0 max-h-full min-h-60 w-full grow items-center justify-center rounded-lg border border-neutral-400 bg-white hover:border-neutral-500 dark:border-neutral-600 dark:bg-neutral-900 dark:hover:border-neutral-300/50"
         >
@@ -50,7 +41,7 @@
               <li v-for="(question, index) in assignmentInfo.questions" :key="question" class="flex w-full items-center justify-start gap-3">
 
                 <span>{{ index + 1 }}.</span>
-                <span class="truncate">Question ID:{{ question }}</span>
+                <span class="truncate">{{ questions.find(q => q.id === question)?.name }}</span>
                 </li>
               </ol>
                 <div class="flex items-center justify-center gap-2">
@@ -87,8 +78,11 @@ const route = useRoute();
 const router = useRouter();
 const userStore = useUserStore();
 
-const questions = await requestEndpoint(`/questions/`);
-console.log(questions)
+type Question = {
+  id: number
+  name: string
+};
+const questions = await requestEndpoint<Question[]>(`/questions/`);
 
 const assignmentInfo = reactive({
   name: ref<string>(""),
@@ -114,9 +108,9 @@ function addQuestion(questionId: number) {
 
 function removeQuestion(questionId: number) {
   // prettier-ignore
-  const idx = assignmentInfo.questions.findIndex((q: number) => q === questionId);
-  if (idx !== -1) {
-    assignmentInfo.questions.splice(idx, 1);
+  const index = assignmentInfo.questions.findIndex((q: number) => q === questionId);
+  if (index !== -1) {
+    assignmentInfo.questions.splice(index, 1);
   }
 }
 
