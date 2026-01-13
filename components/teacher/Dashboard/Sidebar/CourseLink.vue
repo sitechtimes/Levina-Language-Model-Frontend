@@ -4,7 +4,7 @@
     :class="{ 'bg-neutral-100 dark:bg-neutral-700': route.path.includes(`/teacher/course/${course.id}/`) || route.path === `/teacher/course/${course.id}` }"
     :to="`/teacher/course/${course.id}`"
   >
-    <div class="flex h-8 w-2 items-center justify-center rounded-full" :style="{ backgroundColor: classColors[course.classType as keyof typeof classColors] }"></div>
+    <div class="flex h-8 w-2 items-center justify-center rounded-full" :style="generalClassType? { backgroundColor: classColors[generalClassType] }: {}" ></div>
     <div class="flex w-full flex-col items-start justify-start">
       <p class="w-56 overflow-hidden overflow-ellipsis text-nowrap">{{ course.name }}</p>
       <p class="text-xs">Period {{ course.period }}</p>
@@ -13,9 +13,12 @@
 </template>
 
 <script setup lang="ts">
-defineProps<{ course: TeacherCourseNoAssignment }>();
+const props = defineProps<{ course: TeacherCourseNoAssignment }>();
 
 const route = useRoute();
+
+const generalClassType = getGeneralClassType(props.course.classType) as classType
+
 </script>
 
 <style scoped></style>

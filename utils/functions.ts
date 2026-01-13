@@ -34,4 +34,7 @@ export async function changeRouteQuery<T extends string | number>(query: Record<
   await router.push({ query: { ...route.query, ...query } });
 }
 
+
+
 export * from "./functions/fetch";
+export * from "./functions/classTypes"
