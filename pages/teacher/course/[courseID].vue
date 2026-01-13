@@ -55,9 +55,11 @@
 definePageMeta({
   layout: "teacher",
   requiresAuth: true,
-  redirectIfAuth: false
-});
-const data = ref<TeacherCourse | null>(null);
+  redirectIfAuth : false
+})
+
+const route = useRoute();
+const courseId = route.params.courseID as string
 
 const data = ref<TeacherCourse | null>(null);
 data.value = await requestEndpoint<TeacherCourse>(`/courses/${courseId}/`);
