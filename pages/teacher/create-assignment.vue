@@ -17,12 +17,22 @@
                 />
             </label>
             <label title="Required" class="flex flex-col gap-1">
+              <div class="flex items-center gap-2">
+                <p class="font-medium">Timed</p>
+                <input 
+                type="checkbox"
+                v-model="assignmentInfo.timed" 
+                class="h-4 w-4 rounded border-neutral-400 text-blue-600 focus:ring-blue-500 dark:border-neutral-600 dark:bg-neutral-900"
+                />
+              </div>
+            </label>
+            <label v-if="assignmentInfo.timed" title="Required" class="flex flex-col gap-1">
                 <p class="font-medium">Time Limit<span class="text-red-500">*</span></p>
                 <input 
                 type="number"
                 v-model="assignmentInfo.time_limit" 
                 class="du-input w-full border-neutral-400 bg-neutral-200 text-black hover:border-neutral-500 dark:border-neutral-600 dark:bg-neutral-900 dark:text-white dark:placeholder:text-neutral-300 dark:hover:border-neutral-300/50" 
-                placeholder="0 = Unlimited" 
+                placeholder="Example: 50" 
                 required 
                 />
             </label>
@@ -91,7 +101,7 @@ const assignmentInfo = reactive({
   name: ref<string>(""),
   timed: ref<boolean>(false),
     /** In minutes */
-  time_limit: ref<number>(0),
+  time_limit: ref<number>(45),
   questions: ref<number[]>([]),
 });
 
@@ -122,8 +132,12 @@ async function handleSubmit(){
     createAssignmentResult.error = "Please select at least one question.";
     return;
   }
-  if (assignmentInfo.time_limit <= 0) {
-    assignmentInfo.timed = false;
+  if (!assignmentInfo.timed) {
+    assignmentInfo.time_limit = 0;
+  }
+  else if (assignmentInfo.timed && assignmentInfo.time_limit <= 0) {
+    createAssignmentResult.error = "Please provide a valid time limit.";
+    return;
   }
   const { error } = await tryCatch(
     submitCreateAssignment(
