@@ -73,15 +73,15 @@ export async function requestEndpoint<T>(endpoint: string, method?: string, body
   //   headers.Authorization = `Bearer ${userStore.accessToken}`;
   // }
 
+  const headers: HeadersInit = { "Content-Type": "application/json" };
+
   const options: RequestInit = {
     credentials: "include",
-    headers: {
-      "Content-Type": "application/json",
-    },
+    headers: headers,
   };
 
   if (userStore.accessToken) {
-    (options.headers as HeadersInit).Authorization =
+    headers.Authorization =
       `Bearer ${userStore.accessToken}`;
   }
 
