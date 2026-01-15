@@ -125,6 +125,16 @@ export async function submitCreateAssignment(
   });
 }
 
+export async function submitCreateQuestion(
+  question_type: string,
+  name: string,
+) {
+  await requestEndpoint<void>(`assignment-templates/`, "POST", {
+    question_type,
+    name
+  });
+}
+
 /** **Serves as a wrapper for `tryCatch(requestEndpoint())`.**
  * @param endpoint - the endpoint to request. It will be automatically appended to the base URL, **so it should NOT start with a `/`**.
  * @param method - the HTTP method to use for the request. Defaults to `"GET"`.

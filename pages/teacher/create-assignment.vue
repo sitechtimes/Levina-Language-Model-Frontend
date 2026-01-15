@@ -2,7 +2,7 @@
     <div class="-m-4 flex w-auto flex-col px-4 lg:h-[calc(100vh-4rem)] lg:max-h-[calc(100vh-4rem)] lg:flex-row lg:overflow-y-hidden">
         <form
       class="flex h-full w-full shrink-0 flex-col gap-2 p-4 lg:w-[35rem] lg:overflow-y-scroll"
-      @submit.prevent="handleSubmit"
+      @submit.prevent="handleAssignmentSubmit"
     >
       <h1 class="mt-10 mb-5 text-2xl font-bold">Create Assignment</h1>
         <div class="flex flex-col gap-4">
@@ -75,10 +75,39 @@
         </li>
       </ul>
     </div>
-    <div class="flex h-full flex-1 flex-col p-4 lg:overflow-y-scroll">
-      <h2 class="mt-10 mb-5 text-2xl font-bold">Create Questions</h2>
+    <form
+      class="flex h-full w-full shrink-0 flex-col gap-2 p-4 lg:w-[35rem] lg:overflow-y-scroll"
+      @submit.prevent="handleQuestionSubmit"
+    >
+      <div class="flex h-full flex-1 flex-col p-4 lg:overflow-y-scroll">
+        <h2 class="mt-10 mb-5 text-2xl font-bold">Create Questions</h2>
+        <label title="Required" class="flex flex-col gap-1">
+            <p class="font-medium">Question Text<span class="text-red-500">*</span></p>
+            <input 
+          type="text"
+          v-model="questionInfo.name"
+           class="du-input w-full border-neutral-400 bg-neutral-200 text-black hover:border-neutral-500 dark:border-neutral-600 dark:bg-neutral-900 dark:text-white dark:placeholder:text-neutral-300 dark:hover:border-neutral-300/50" 
+          placeholder="Enter question text" 
+          required
+          />
+      </label>
+      <label title="Required" class="flex flex-col gap-1">
+          <p class="font-medium">Input Type<span class="text-red-500">*</span></p>
+          <select 
+          v-model="questionInfo.question_type"
+           class="du-input w-full border-neutral-400 bg-neutral-200 text-black hover:border-neutral-500 dark:border-neutral-600 dark:bg-neutral-900 dark:text-white dark:placeholder:text-neutral-300 dark:hover:border-neutral-300/50" 
+          required
+          >
+            <option value="" disabled>Select input type</option>
+            <option value="MCQ">Multiple Choice</option>
+            <option value="AQ">Audio</option>
+            <option value="EQ">Essay</option>
+          </select>
+      </label>
     </div>
-  </div>
+    <button type="submit" class="mt-5 rounded bg-green-500 px-4 py-2 text-white hover:bg-green-600" >Create Question</button>
+  </form>
+</div>
 </template>
 
 <script setup lang="ts">
@@ -105,6 +134,11 @@ const assignmentInfo = reactive({
   questions: ref<number[]>([]),
 });
 
+const questionInfo = reactive({
+  question_type: ref<string>(""),
+  name: ref<string>(""),
+});
+
 const createAssignmentResult = reactive({
   isLoading: false,
   error: "",
@@ -127,7 +161,7 @@ function removeQuestion(questionId: number) {
   }
 }
 
-async function handleSubmit(){
+async function handleAssignmentSubmit(){
   if (assignmentInfo.questions.length === 0) {
     createAssignmentResult.error = "Please select at least one question.";
     return;
@@ -157,4 +191,9 @@ async function handleSubmit(){
     router.push("/teacher/dashboard");
   }
 }
+
+function handleQuestionSubmit(){
+  console.log("Question Submitted:", questionInfo.name, questionInfo.question_type);
+}
+
 </script>
