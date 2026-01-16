@@ -28,7 +28,14 @@
               <td class="py-3 pl-10">{{ student.firstName }}</td>
               <td class="py-3 pl-10">{{ student.lastName }}</td>
               <td class="flex items-center justify-center py-3">
-                <button class="btn btn-sm transition-200 flex h-8 items-center justify-center rounded-xl bg-red-500 p-3 hover:brightness-125" type="button" @click="removeStudent(student)">✕</button>
+                <button class="btn btn-sm transition-200 flex h-8 items-center justify-center rounded-xl hover:brightness-125" type="button" @click="removeStudent(student)">
+                  <img
+                    src="/ui/close.svg"
+                    aria-hidden="true"
+                    draggable="false"
+                    class="size-5 dark:invert"
+                  />
+                </button>
               </td>
             </tr>
             <tr v-if="students.length === 0" class="border-t">
@@ -37,7 +44,7 @@
           </tbody>
         </table>
       </div>
-      <button class="mt-6 rounded-xl bg-[var(--primary)] px-6 py-2 text-[var(text-color)]" type="button" @click="router.push(`/teacher/course/${route.params.classID}`)">
+      <button class="mt-6 rounded-xl bg-[var(--primary)] px-6 py-2 text-[var(text-color)]" type="button" @click="router.push(`/teacher/course/${route.params.courseID}`)">
         Return To Class Page
       </button>
     </div>
@@ -46,31 +53,6 @@
 
 
 <script setup lang="ts">
-
-// /courses/1/students/ returns:
-// [
-//    {
-//     "id": 1,
-//      "email": "student1@example.com",
-//      "firstName": "Student",
-//      "lastName": "One",
-//      "userType": 0
-//    },
-//    {
-//      "id": 2,
-//      "email": "student2@example.com",
-//      "firstName": "Student",
-//      "lastName": "Two",
-//      "userType": 0
-//    },
-//    {
-//      "id": 3,
-//      "email": "sam.kipnis@gmail.com",
-//      "firstName": "Sam",
-//      "lastName": "Kipnis",
-//      "userType": 0
-//    }
-// ]
 
 interface Student {
     id: number
