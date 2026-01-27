@@ -78,8 +78,10 @@ async function getStudents() {
 async function removeStudent(student:Student){
     const confirmed = window.confirm("Are you sure you want to delete this student?");
     if (!confirmed) return
-    const { error } = await tryRequestEndpoint(`courses/${courseID}/remove_student`,'DELETE',{student: student.id})
+
+    const { error } = await tryRequestEndpoint(`courses/${courseID}/remove_student/`,'DELETE',{student: student.id})
     if (error) return console.error("Failed to delete student:", error)
+    students.value.splice(students.value.indexOf(student), 1);
 }
 
 onMounted(getStudents)
