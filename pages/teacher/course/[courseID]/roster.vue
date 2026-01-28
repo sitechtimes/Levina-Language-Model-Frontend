@@ -1,16 +1,4 @@
 <template>
-  <!-- <div class="max-w-3xl mx-auto p-6">
-    <h1 class="text-2xl font-semibold mb-4">Class Roster</h1>
-
-    <div class="space-y-3">
-      <TeacherStudentCard
-        v-for="student in students"
-        :key="student.id"
-        :student="student"
-        :courseID="Number(courseID)"
-      />
-    </div>
-  </div> -->
   <div class="flex w-full flex-col items-center py-12">
     <div class="relative flex w-full flex-col items-center justify-center gap-1">
 
@@ -53,6 +41,11 @@
 
 
 <script setup lang="ts">
+definePageMeta({
+  layout: "teacher",
+  requiresAuth: true,
+  redirectIfAuth: false
+});
 
 interface Student {
     id: number
