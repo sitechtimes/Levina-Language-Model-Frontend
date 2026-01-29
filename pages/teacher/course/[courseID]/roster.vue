@@ -73,6 +73,7 @@ async function removeStudent(student:Student){
     if (!confirmed) return
 
     const { error } = await tryRequestEndpoint(`courses/${courseID}/remove_student/`,'DELETE',{student: student.id})
+    window.alert(error)
     if (error) return console.error("Failed to delete student:", error)
     students.value.splice(students.value.indexOf(student), 1);
 }
