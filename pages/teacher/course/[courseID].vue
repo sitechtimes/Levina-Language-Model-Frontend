@@ -45,9 +45,20 @@
           :key="assignment.id"
           :assignment="assignment"
           :current-date="currentDate"
-          @delete-assignment="removeAssignment()"
+          @delete-assignment="deleteAssignment()"
           />
    </div>
+   <FullScreenModal transition-name="scale-75" :show-modal="showDeleteModal" @close="showDeleteModal = false">
+        <div class="flex flex-col items-center justify-center">
+          <h2 class="mb-2 text-xl font-semibold">Confirm Deletion</h2>
+          <p class="mb-4 text-gray-600">{{ deleteStep === 1 ? `Are you sure you want to delete this ${deleteType}?` : "Are you really sure?" }}</p>
+          <div class="flex justify-center gap-4">
+            <TeacherCourseActionButton v-if="deleteStep === 1" type="button" img="/ui/trash.svg" text="Confirm" class="!bg-red-200 hover:!bg-red-400" @on-click="deleteStep++" />
+            <TeacherCourseActionButton v-else type="button" img="/ui/trash.svg" text="Yes, Delete" class="!bg-red-200 hover:!bg-red-400" @on-click="confirmDelete" />
+            <TeacherCourseActionButton type="button" img="/ui/close.svg" text="Cancel" @on-click="showDeleteModal = false" />
+          </div>
+        </div>
+      </FullScreenModal>
  </div>
 </template>
 
@@ -69,7 +80,22 @@ const coursePeriod = computed(() => data.value?.period ?? "Course Period");
 const assignments = computed(() => data.value?.assignments ?? []);
 const currentDate = new Date();
 
-async function removeAssignment() {
+const showDeleteModal = ref(false);
+const deleteStep = ref<1 | 2>(1);
+const deleteType = ref<"course" | "assignment">();
+const currentDeleteAssignmentId = ref<number>();
+watch(deleteType, (type) => {
+  if (type) return (showDeleteModal.value = true);
+});
+watch(showDeleteModal, (val) => {
+  if (!val) {
+    deleteStep.value = 1;
+    deleteType.value = undefined;
+    currentDeleteAssignmentId.value = undefined;
+  }
+});
+
+async function deleteAssignment() {
   const newData = await requestEndpoint<TeacherCourse>(`/courses/${courseId}/`);
   data.value = newData;
   console.log("Assignment removed.", data.value.assignments);
@@ -79,6 +105,11 @@ async function removeAssignment() {
   const { error } = await tryRequestEndpoint(`/courses/${courseId}/`, `DELETE`);
   if (error) return console.error("Failed to delete course:", error);
   navigateTo('/teacher/dashboard');
+}
+
+function confirmDelete() {
+  if (deleteType.value === "course") void deleteCourse();
+  else if (deleteType.value === "assignment") void deleteAssignment();
 }
 
 //const generalClassType = getGeneralClassType(course.classType) as classType
