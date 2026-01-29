@@ -124,7 +124,8 @@ type Question = {
   id: number
   name: string
 };
-const questions = await requestEndpoint<Question[]>(`/questions/`);
+
+const questions = ref(await requestEndpoint<Question[]>(`/questions/`));
 
 const assignmentInfo = reactive({
   name: ref<string>(""),
@@ -139,7 +140,7 @@ const questionInfo = reactive({
   name: ref<string>(""),
 });
 
-const createAssignmentResult = reactive({
+const createResult = reactive({
   isLoading: false,
   error: "",
   success: false
@@ -163,14 +164,14 @@ function removeQuestion(questionId: number) {
 
 async function handleAssignmentSubmit(){
   if (assignmentInfo.questions.length === 0) {
-    createAssignmentResult.error = "Please select at least one question.";
+    createResult.error = "Please select at least one question.";
     return;
   }
   if (!assignmentInfo.timed) {
     assignmentInfo.time_limit = 0;
   }
   else if (assignmentInfo.timed && assignmentInfo.time_limit <= 0) {
-    createAssignmentResult.error = "Please provide a valid time limit.";
+    createResult.error = "Please provide a valid time limit.";
     return;
   }
   const { error } = await tryCatch(
@@ -181,19 +182,35 @@ async function handleAssignmentSubmit(){
       assignmentInfo.questions
     )
   );
-  createAssignmentResult.isLoading = false;
+  createResult.isLoading = false;
 
   if (error) {
-    createAssignmentResult.error = error.message;
+    createResult.error = error.message;
     console.error(error);
   } else {
-    createAssignmentResult.success = true;
+    createResult.success = true;
     router.push("/teacher/dashboard");
   }
 }
 
-function handleQuestionSubmit(){
-  console.log("Question Submitted:", questionInfo.name, questionInfo.question_type);
+async function handleQuestionSubmit(){
+  if (!questionInfo.name || !questionInfo.question_type) {
+    createResult.error = "Please fill in all fields.";
+    return;
+  }
+  const { error } = await tryCatch(
+    submitCreateQuestion(
+      questionInfo.question_type,
+      questionInfo.name
+    )
+  );
+  if (error) {
+    createResult.error = error.message;
+    console.error(error);
+  } else {
+    createResult.success = true;
+    questions.value = await requestEndpoint<Question[]>(`/questions/`);
+  }
 }
 
 </script>

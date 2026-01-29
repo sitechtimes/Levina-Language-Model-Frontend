@@ -129,7 +129,7 @@ export async function submitCreateQuestion(
   question_type: string,
   name: string,
 ) {
-  await requestEndpoint<void>(`assignment-templates/`, "POST", {
+  await requestEndpoint<void>(`questions/`, "POST", {
     question_type,
     name
   });
