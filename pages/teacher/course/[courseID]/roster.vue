@@ -16,7 +16,7 @@
               <td class="py-3 pl-10">{{ student.firstName }}</td>
               <td class="py-3 pl-10">{{ student.lastName }}</td>
               <td class="flex items-center justify-center py-3">
-                <button class="btn btn-sm transition-200 flex h-8 items-center justify-center rounded-xl hover:brightness-125" type="button" @click="removeStudent(student)">
+                <button class="btn btn-sm transition-200 flex h-8 items-center justify-center rounded-xl hover:brightness-125" type="button" @click="showModal=true">
                   <img
                     src="/ui/close.svg"
                     aria-hidden="true"
@@ -37,6 +37,11 @@
       </button>
     </div>
   </div>
+  <FullScreenModal :show-modal="showModal" transition-name="scale-75" @close="showModal = false">
+    <h2 class="mb-2 text-xl font-semibold">Confirm Student Removal</h2>
+    <p class="mb-4 text-neutral-600 dark:text-neutral-400">Are you sure you want to remove this student from the class?</p>
+    <button class="du-btn du-btn-md bg-green-accent text-white" type="button" @click="removeStudent(student)">OK</button>
+  </FullScreenModal>
 </template>
 
 
@@ -46,6 +51,13 @@ definePageMeta({
   requiresAuth: true,
   redirectIfAuth: false
 });
+
+const route = useRoute();
+const router = useRouter();
+const courseID = route.params.courseID
+
+const showModal = ref(false);
+
 
 interface Student {
     id: number
@@ -57,10 +69,6 @@ interface Student {
 
 const students = ref<Student[]>([])
 
-const route = useRoute();
-const router = useRouter();
-const courseID = route.params.courseID
-
 async function getStudents() {
     const {data, error} = await tryRequestEndpoint<Student[]>(`courses/${courseID}/students/`)
     console.log(data)
@@ -68,10 +76,9 @@ async function getStudents() {
     students.value = data
 }
 
-async function removeStudent(student:Student){
-    const confirmed = window.confirm("Are you sure you want to delete this student?");
-    if (!confirmed) return
 
+
+async function removeStudent(student:Student){
     const { error } = await tryRequestEndpoint(`courses/${courseID}/remove_student/`,'DELETE',{student: student.id})
     window.alert(error)
     if (error) return console.error("Failed to delete student:", error)
