@@ -6,10 +6,11 @@
       </button>
     </div>
 
-    <div class="flex items-center justify-center">
+    <div class="flex items-center justify-center" @click="levinaTakeover()">
       <NuxtLink to="/teacher/dashboard" class="group flex items-center justify-center gap-2">
-        <img class="size-12 select-none rounded-full group-hover:scale-105 group-active:scale-95" src="/seagull.png" aria-hidden="true" draggable="false" />
-        <span class="hidden text-2xl font-semibold group-hover:translate-x-0.5 sm:block">Levina Language Model</span>
+        <img v-if="!redMode" class="size-12 select-none rounded-full group-hover:scale-105 group-active:scale-95" src="/seagull.png" aria-hidden="true" draggable="false" />
+        <img v-else class="size-12 select-none rounded-full group-hover:scale-105 group-active:scale-95" src="https://tse2.mm.bing.net/th/id/OIP.KFm_ZhbHZzCM69nyORZwEgHaHa?cb=ucfimg2&ucfimg=1&rs=1&pid=ImgDetMain&o=7&rm=3" aria-hidden="true" draggable="false" />
+        <span class="hidden text-2xl font-semibold group-hover:translate-x-0.5 sm:block" >Levina Language Model</span>
       </NuxtLink>
     </div>
 
@@ -37,6 +38,17 @@ const emit = defineEmits<{ toggleSideMenu: [void] }>();
 const route = useRoute();
 
 const showClassModal = ref(false);
+const seagullClicks = ref(0);
+const redMode = ref(false);
+
+function levinaTakeover(){
+  seagullClicks.value += 1;
+  if (seagullClicks.value >= 5) {
+    redMode.value = !redMode.value;
+    seagullClicks.value = 0;
+  }
+  console.log(`Seagull clicked ${seagullClicks.value} times.`);
+}
 </script>
 
 <style scoped></style>

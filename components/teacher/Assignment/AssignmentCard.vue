@@ -12,7 +12,6 @@
       <Transition name="slide-up">
         <ul v-show="isOpen" tabindex="0" class="absolute right-0 z-20 mt-2 w-52 rounded-lg border border-[var(--border-color)] bg-body p-2 shadow-lg" @click.stop>
           <li>
-            <!--@click="deleteAssignmentFunction"-->
             <button @click="deleteAssignment" class="h-10 w-full rounded-lg pl-4 text-left transition-all hover:bg-red-400/70" type="button">Delete</button>
           </li>
         </ul>

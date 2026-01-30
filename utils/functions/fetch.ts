@@ -115,6 +115,20 @@ export async function requestEndpoint<T>(endpoint: string, method?: string, body
 
 }
 
+export async function submitCreateAssignment(
+  name: string,
+  timed: boolean,
+  time_limit: number,
+  questions: number[]
+) {
+  await requestEndpoint<void>(`assignment-templates/`, "POST", {
+    name,
+    timed,
+    time_limit,
+    questions
+  });
+}
+
 /** **Serves as a wrapper for `tryCatch(requestEndpoint())`.**
  * @param endpoint - the endpoint to request. It will be automatically appended to the base URL, **so it should NOT start with a `/`**.
  * @param method - the HTTP method to use for the request. Defaults to `"GET"`.
