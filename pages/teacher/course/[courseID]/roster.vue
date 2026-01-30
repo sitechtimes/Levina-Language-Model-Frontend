@@ -16,7 +16,7 @@
               <td class="py-3 pl-10">{{ student.firstName }}</td>
               <td class="py-3 pl-10">{{ student.lastName }}</td>
               <td class="flex items-center justify-center py-3">
-                <button class="btn btn-sm transition-200 flex h-8 items-center justify-center rounded-xl hover:brightness-125" type="button" @click="showModal=true">
+                <button class="btn btn-sm transition-200 flex h-8 items-center justify-center rounded-xl hover:brightness-125" type="button" @click="handleConfirmDelete(student)">
                   <img
                     src="/ui/close.svg"
                     aria-hidden="true"
@@ -40,7 +40,10 @@
   <FullScreenModal :show-modal="showModal" transition-name="scale-75" @close="showModal = false">
     <h2 class="mb-2 text-xl font-semibold">Confirm Student Removal</h2>
     <p class="mb-4 text-neutral-600 dark:text-neutral-400">Are you sure you want to remove this student from the class?</p>
-    <button class="du-btn du-btn-md bg-green-accent text-white" type="button" @click="removeStudent(student)">OK</button>
+    <div class="flex w-full items-center justify-center gap-2">
+      <button class="du-btn du-btn-md bg-green-accent text-white" type="button" @click="showModal=false">Cancel</button>
+      <button class="du-btn du-btn-md bg-green-accent text-white" type="button" @click="removeStudent(studentToDelete)">OK</button>
+    </div>
   </FullScreenModal>
 </template>
 
@@ -68,21 +71,28 @@ interface Student {
 }
 
 const students = ref<Student[]>([])
+const studentToDelete = ref()
 
 async function getStudents() {
     const {data, error} = await tryRequestEndpoint<Student[]>(`courses/${courseID}/students/`)
-    console.log(data)
     if (error) return console.error("Failed to fetch students:", error);
     students.value = data
 }
 
-
+function handleConfirmDelete(student:Student){
+  showModal.value = true
+  studentToDelete.value = student
+}
 
 async function removeStudent(student:Student){
-    const { error } = await tryRequestEndpoint(`courses/${courseID}/remove_student/`,'DELETE',{student: student.id})
+  const { error } = await tryRequestEndpoint(`courses/${courseID}/remove_student/`,'DELETE',{student: student.id})
+  if (error) {
     window.alert(error)
-    if (error) return console.error("Failed to delete student:", error)
-    students.value.splice(students.value.indexOf(student), 1);
+    return console.error("Failed to delete student:", error)
+  }
+  students.value.splice(students.value.indexOf(student), 1);
+  studentToDelete.value = ''
+  showModal.value=false
 }
 
 onMounted(getStudents)
