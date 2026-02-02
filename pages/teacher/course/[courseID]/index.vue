@@ -10,7 +10,7 @@
 
 
        <div class="flex items-center justify-center gap-4">
-           <TeacherCourseActionButton type="link" :to="`/teacher/course/{classCodePlaceholder}/roster`" img="https://cdn2.iconfinder.com/data/icons/instagram-ui/48/jee-74-512.png" text="View Students"/>
+           <TeacherCourseActionButton type="link" :to="`/teacher/course/${courseId}/roster`" img="https://cdn2.iconfinder.com/data/icons/instagram-ui/48/jee-74-512.png" text="View Students"/>
            <TeacherCourseActionButton type="link" :to="`/teacher/create-assignment`" img="https://png.pngtree.com/png-clipart/20230405/original/pngtree-assignment-line-icon-png-image_9025828.png" text="Create Assignment"/>
            <TeacherCourseActionButton type="button" img="https://www.freeiconspng.com/uploads/trash-can-icon-18.png" text="Delete Course" class="hover:bg-red-400" @on-click="deleteCourse()" />
           </div>
@@ -55,13 +55,13 @@
 definePageMeta({
   layout: "teacher",
   requiresAuth: true,
-  redirectIfAuth : false
-})
+  redirectIfAuth: false
+});
 
+const data = ref<TeacherCourse | null>(null);
 const route = useRoute();
 const courseId = route.params.courseID as string
 
-const data = ref<TeacherCourse | null>(null);
 data.value = await requestEndpoint<TeacherCourse>(`/courses/${courseId}/`);
 const courseName = computed(() => data.value?.name ?? "Course Name");
 const coursePeriod = computed(() => data.value?.period ?? "Course Period");
@@ -75,7 +75,7 @@ async function removeAssignment() {
   console.log("Assignment removed.", data.value.assignments);
 }
 
- async function deleteCourse(){
+async function deleteCourse(){
   const { error } = await tryRequestEndpoint(`/courses/${courseId}/`, `DELETE`);
   if (error) return console.error("Failed to delete course:", error);
   navigateTo('/teacher/dashboard');
