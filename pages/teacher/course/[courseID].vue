@@ -12,7 +12,7 @@
        <div class="flex items-center justify-center gap-4">
            <TeacherCourseActionButton type="link" :to="`/teacher/course/{classCodePlaceholder}/roster`" img="/ui/users.svg" text="View Students"/>
            <TeacherCourseActionButton type="link" :to="`/teacher/create-assignment`" img="/ui/document.svg" text="Create Assignment"/>
-           <TeacherCourseActionButton type="button" img="/ui/trash.svg" text="Delete Course" class="hover:bg-red-400" @on-click="deleteCourse()" />
+           <TeacherCourseActionButton type="button" img="/ui/trash.svg" text="Delete Course" class="hover:bg-red-400" @on-click="deleteType= 'course'" />
           </div>
      </div>
 
@@ -45,7 +45,7 @@
           :key="assignment.id"
           :assignment="assignment"
           :current-date="currentDate"
-          @delete-assignment="deleteAssignment()"
+          @delete-assignment="(deleteType = 'assignment'), (currentDeleteAssignmentId = assignment.id)"
           />
    </div>
    <FullScreenModal transition-name="scale-75" :show-modal="showDeleteModal" @close="showDeleteModal = false">
@@ -70,6 +70,8 @@ definePageMeta({
 })
 
 const route = useRoute();
+const userStore = useUserStore();
+const { teacherCourses, teacherCurrentCourse } = storeToRefs(userStore);
 const courseId = route.params.courseID as string
 
 const data = ref<TeacherCourse | null>(null);
@@ -99,11 +101,15 @@ async function deleteAssignment() {
   const newData = await requestEndpoint<TeacherCourse>(`/courses/${courseId}/`);
   data.value = newData;
   console.log("Assignment removed.", data.value.assignments);
+  teacherCurrentCourse.value.assignments = teacherCurrentCourse.value.assignments.filter((assignment) => assignment.id !== currentDeleteAssignmentId.value);
+  showDeleteModal.value = false;
 }
 
  async function deleteCourse(){
   const { error } = await tryRequestEndpoint(`/courses/${courseId}/`, `DELETE`);
   if (error) return console.error("Failed to delete course:", error);
+  userStore.teacherCourses = userStore.teacherCourses.filter((course) => course.id !== teacherCurrentCourse.value?.id);
+  teacherCurrentCourse.value = undefined;
   navigateTo('/teacher/dashboard');
 }
 
