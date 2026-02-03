@@ -80,9 +80,12 @@ async function deleteCourse(){
   if (error) return console.error("Failed to delete course:", error);
   navigateTo('/teacher/dashboard');
 }
+const generalClassType = computed(() => {
+  if (!data.value) return "Regular"
+  return getGeneralClassType(data.value.classType) as classType
+})
 
-//const generalClassType = getGeneralClassType(course.classType) as classType
-const generalClassType = "Regular" 
+//const generalClassType = getGeneralClassType(data.classType) as classType
 </script>
 
 
