@@ -71,7 +71,7 @@
           class="flex items-center gap-3 rounded border p-2 hover:bg-neutral-100 dark:hover:bg-neutral-800"
           @click="addQuestion(question.id)"
         >
-          {{ question.id }}. {{ question.name }}
+          {{ question.id }}. {{ question.textQuestion }}
         </li>
       </ul>
     </div>
@@ -85,7 +85,7 @@
             <p class="font-medium">Question Text<span class="text-red-500">*</span></p>
             <input 
           type="text"
-          v-model="questionInfo.name"
+          v-model="questionInfo.text_question"
            class="du-input w-full border-neutral-400 bg-neutral-200 text-black hover:border-neutral-500 dark:border-neutral-600 dark:bg-neutral-900 dark:text-white dark:placeholder:text-neutral-300 dark:hover:border-neutral-300/50" 
           placeholder="Enter question text" 
           required
@@ -100,8 +100,7 @@
           >
             <option value="" disabled>Select input type</option>
             <option value="MCQ">Multiple Choice</option>
-            <option value="AQ">Audio</option>
-            <option value="EQ">Essay</option>
+            <option value="FRQ">Audio</option>
           </select>
       </label>
     </div>
@@ -122,10 +121,12 @@ const userStore = useUserStore();
 
 type Question = {
   id: number
-  name: string
+  textQuestion: string
+  questionType: string
 };
 
 const questions = ref(await requestEndpoint<Question[]>(`/questions/`));
+console.log(questions.value)
 
 const assignmentInfo = reactive({
   name: ref<string>(""),
@@ -135,10 +136,24 @@ const assignmentInfo = reactive({
   questions: ref<number[]>([]),
 });
 
+
 const questionInfo = reactive({
+  description: ref<string>(""),
   question_type: ref<string>(""),
-  name: ref<string>(""),
-});
+  question_content_type: ref<string>(""),
+  text_question: ref<string>(""),
+  answer_content_type: ref<string>(""),
+  text_answer: ref<string>(""),
+  false_answers: ref<string[]>([]),
+})
+/*"description": "answer the question gng",
+    "question_type": "MCQ",
+    "question_content_type": "TEXT",
+    "text_question": "What is 3 + 5",
+    "answer_content_type": "TEXT",
+    "text_answer": "13",
+    "false_answers": ["67", "41"]
+*/
 
 const createResult = reactive({
   isLoading: false,
