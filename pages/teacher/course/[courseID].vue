@@ -43,6 +43,7 @@
        <TeacherAssignmentCard
        v-for="assignment in assignments"
           :key="assignment.id"
+          :course="teacherCurrentCourse"
           :assignment="assignment"
           :current-date="currentDate"
           @delete-assignment="(deleteType = 'assignment'), (currentDeleteAssignmentId = assignment.id)"
@@ -101,7 +102,6 @@ async function deleteAssignment() {
   const newData = await requestEndpoint<TeacherCourse>(`/courses/${courseId}/`);
   data.value = newData;
   console.log("Assignment removed.", data.value.assignments);
-  teacherCurrentCourse.value.assignments = teacherCurrentCourse.value.assignments.filter((assignment) => assignment.id !== currentDeleteAssignmentId.value);
   showDeleteModal.value = false;
 }
 
