@@ -2,7 +2,7 @@
  <div class="flex h-full min-h-[calc(100vh-6rem)] w-full flex-col items-center justify-start">
    <div class="flex w-[90%] flex-col items-center justify-center sm:w-[80%] md:w-[70%] xl:w-[60%] 2xl:w-[50%]">
      <div class="flex w-full flex-col items-end justify-center gap-4">
-       <div class="flex h-52 w-full flex-col items-start justify-end rounded-2xl p-6" :style="{ backgroundColor: classColors[generalClassType] }">
+       <div class="flex h-52 w-full flex-col items-start justify-end rounded-2xl p-6" v-if="generalClassType" :style="{ backgroundColor: classColors[generalClassType] }">
         <!--<h1 class="text-4xl font-semibold">{{ course.name / course.period }}</h1>-->
          <h1 class="text-4xl font-semibold"> {{ courseName }}</h1>
          <h3 class="text-xl">Period {{ coursePeriod }}</h3>
@@ -80,12 +80,16 @@ async function deleteCourse(){
   if (error) return console.error("Failed to delete course:", error);
   navigateTo('/teacher/dashboard');
 }
-const generalClassType = computed(() => {
-  if (!data.value) return "Regular"
-  return getGeneralClassType(data.value.classType) as classType
-})
+/* const generalClassType = computed(() => {
+  if (data.value) return getGeneralClassType(data.value.classType) as classType
+}) */
 
 //const generalClassType = getGeneralClassType(data.classType) as classType
+
+const generalClassType = computed<classType>(() =>
+  getGeneralClassType(data.value?.classType) ?? 'default'
+)
+
 </script>
 
 
