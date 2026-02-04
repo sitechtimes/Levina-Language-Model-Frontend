@@ -51,7 +51,7 @@
               <li v-for="(question, index) in assignmentInfo.questions" :key="question" class="flex w-full items-center justify-start gap-3">
 
                 <span>{{ index + 1 }}.</span>
-                <span class="truncate">{{ questions.find(q => q.id === question)?.name }}</span>
+                <span class="truncate">{{ questions.find(q => q.id === question)?.textQuestion }}</span>
                 </li>
               </ol>
                 <div class="flex items-center justify-center gap-2">
@@ -102,6 +102,16 @@
             <option value="MCQ">Multiple Choice</option>
             <option value="FRQ">Audio</option>
           </select>
+      </label>
+      <label v-if="questionInfo.question_type === 'MCQ'" title="Required" class="flex flex-col gap-1">
+          <p class="font-medium">Answer Choices<span class="text-red-500">*</span></p>
+          <input 
+          type="text"
+          v-model="questionInfo.false_answers[0]"
+           class="du-input w-full border-neutral-400 bg-neutral-200 text-black hover:border-neutral-500 dark:border-neutral-600 dark:bg-neutral-900 dark:text-white dark:placeholder:text-neutral-300 dark:hover:border-neutral-300/50" 
+          placeholder="Enter answer choice"
+          required
+          />
       </label>
     </div>
     <button type="submit" class="mt-5 rounded bg-green-500 px-4 py-2 text-white hover:bg-green-600" >Create Question</button>
@@ -209,14 +219,14 @@ async function handleAssignmentSubmit(){
 }
 
 async function handleQuestionSubmit(){
-  if (!questionInfo.name || !questionInfo.question_type) {
+  if (!questionInfo.text_question || !questionInfo.question_type) {
     createResult.error = "Please fill in all fields.";
     return;
   }
   const { error } = await tryCatch(
     submitCreateQuestion(
       questionInfo.question_type,
-      questionInfo.name
+      questionInfo.text_question
     )
   );
   if (error) {

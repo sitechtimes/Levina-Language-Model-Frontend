@@ -36,8 +36,7 @@
 
       <div class="flex w-5/6 flex-col items-center justify-center gap-1">
         <p class="text-xl font-medium">
-          Submissions: {{ submitted(assignment) }}/{{ assignment.assignment_instances.length }}
-          
+          Submissions: {{ submitted(assignment) }}/{{ assignment.assignmentInstances.length }}
           <span class="text-sm">students</span>
         </p>
         <div class="relative h-2 w-full overflow-hidden rounded-full border border-neutral-300 bg-neutral-100/25">
@@ -53,8 +52,10 @@ const props = defineProps<{
   currentDate: Date;
  }>();
 
+console.log(props.assignment)
+
 function submitted(assignment: TeacherAssignment) {
-   const instances = (assignment as any).assignment_instances;
+   const instances = (assignment as any).assignmentInstances;
    if (!Array.isArray(instances)) return 0;
    return instances.filter((instance: any) => !!instance && !!instance.submitted).length;
  }

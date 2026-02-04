@@ -50,7 +50,7 @@ export interface TeacherAssignment extends Assignment {
   readonly id: number;
   time_limit: number;
   timed: boolean;
-  assignment_instances: AssignmentInstance;
+  assignmentInstances: AssignmentInstance;
   /** @readonly Name of the assignment. */
   readonly name: string;
   /** Date the assignment was submitted (Date(UTC)) */
