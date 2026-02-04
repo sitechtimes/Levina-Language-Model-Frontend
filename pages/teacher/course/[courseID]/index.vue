@@ -65,6 +65,7 @@ const courseId = route.params.courseID as string
 data.value = await requestEndpoint<TeacherCourse>(`/courses/${courseId}/`);
 const courseName = computed(() => data.value?.name ?? "Course Name");
 const coursePeriod = computed(() => data.value?.period ?? "Course Period");
+const generalClassType = computed
 
 const assignments = computed(() => data.value?.assignments ?? []);
 const currentDate = new Date();
