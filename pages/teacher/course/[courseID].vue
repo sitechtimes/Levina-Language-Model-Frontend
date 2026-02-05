@@ -71,15 +71,16 @@ definePageMeta({
 })
 
 const route = useRoute();
+const router = useRouter();
 const userStore = useUserStore();
 const { teacherCourses, teacherCurrentCourse } = storeToRefs(userStore);
 const courseId = route.params.courseID as string
 
 const data = ref<TeacherCourse | null>(null);
 data.value = await requestEndpoint<TeacherCourse>(`/courses/${courseId}/`);
+teacherCurrentCourse.value = data.value;
 const courseName = computed(() => data.value?.name ?? "Course Name");
 const coursePeriod = computed(() => data.value?.period ?? "Course Period");
-
 const assignments = computed(() => data.value?.assignments ?? []);
 const currentDate = new Date();
 
@@ -99,18 +100,32 @@ watch(showDeleteModal, (val) => {
 });
 
 async function deleteAssignment() {
-  const newData = await requestEndpoint<TeacherCourse>(`/courses/${courseId}/`);
-  data.value = newData;
-  console.log("Assignment removed.", data.value.assignments);
+  if (!data.value || !currentDeleteAssignmentId.value) return;
+
+  await tryRequestEndpoint(`/assignments/${currentDeleteAssignmentId.value}/`, "DELETE");
+
+  data.value.assignments = data.value.assignments.filter(
+    (a) => a.id !== currentDeleteAssignmentId.value
+  );
+
+  if (teacherCurrentCourse.value)
+    teacherCurrentCourse.value.assignments = data.value.assignments;
+
   showDeleteModal.value = false;
 }
 
  async function deleteCourse(){
   const { error } = await tryRequestEndpoint(`/courses/${courseId}/`, `DELETE`);
   if (error) return console.error("Failed to delete course:", error);
-  userStore.teacherCourses = userStore.teacherCourses.filter((course) => course.id !== teacherCurrentCourse.value?.id);
+
+  const index = userStore.teacherCourses.findIndex(
+    (c) => c.id === teacherCurrentCourse.value?.id
+  );
+  if (index !== -1) userStore.teacherCourses.splice(index, 1);
+
   teacherCurrentCourse.value = undefined;
-  navigateTo('/teacher/dashboard');
+
+  void router.push('/teacher/dashboard');
 }
 
 function confirmDelete() {
@@ -121,6 +136,7 @@ function confirmDelete() {
 //const generalClassType = getGeneralClassType(course.classType) as classType
 const generalClassType = "Regular" 
 </script>
+
 
 
 <style scoped></style>
