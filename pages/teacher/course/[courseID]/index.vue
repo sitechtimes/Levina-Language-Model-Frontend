@@ -10,9 +10,9 @@
 
 
        <div class="flex items-center justify-center gap-4">
-           <TeacherCourseActionButton type="link" :to="`/teacher/course/${courseId}/roster`" img="https://cdn2.iconfinder.com/data/icons/instagram-ui/48/jee-74-512.png" text="View Students"/>
-           <TeacherCourseActionButton type="link" :to="`/teacher/create-assignment`" img="https://png.pngtree.com/png-clipart/20230405/original/pngtree-assignment-line-icon-png-image_9025828.png" text="Create Assignment"/>
-           <TeacherCourseActionButton type="button" img="https://www.freeiconspng.com/uploads/trash-can-icon-18.png" text="Delete Course" class="hover:bg-red-400" @on-click="deleteCourse()" />
+           <TeacherCourseActionButton type="link" :to="`/teacher/course/{classCodePlaceholder}/roster`" img="/ui/users.svg" text="View Students"/>
+           <TeacherCourseActionButton type="link" :to="`/teacher/create-assignment`" img="/ui/document.svg" text="Create Assignment"/>
+           <TeacherCourseActionButton type="button" img="/ui/trash.svg" text="Delete Course" class="hover:bg-red-400" @on-click="deleteType= 'course'" />
           </div>
      </div>
 
@@ -43,11 +43,23 @@
        <TeacherAssignmentCard
        v-for="assignment in assignments"
           :key="assignment.id"
+          :course="teacherCurrentCourse"
           :assignment="assignment"
           :current-date="currentDate"
-          @delete-assignment="removeAssignment()"
+          @delete-assignment="(deleteType = 'assignment'), (currentDeleteAssignmentId = assignment.id)"
           />
    </div>
+   <FullScreenModal transition-name="scale-75" :show-modal="showDeleteModal" @close="showDeleteModal = false">
+        <div class="flex flex-col items-center justify-center">
+          <h2 class="mb-2 text-xl font-semibold">Confirm Deletion</h2>
+          <p class="mb-4 text-gray-600">{{ deleteStep === 1 ? `Are you sure you want to delete this ${deleteType}?` : "Are you really sure?" }}</p>
+          <div class="flex justify-center gap-4">
+            <TeacherCourseActionButton v-if="deleteStep === 1" type="button" img="/ui/trash.svg" text="Confirm" class="!bg-red-200 hover:!bg-red-400" @on-click="deleteStep++" />
+            <TeacherCourseActionButton v-else type="button" img="/ui/trash.svg" text="Yes, Delete" class="!bg-red-200 hover:!bg-red-400" @on-click="confirmDelete" />
+            <TeacherCourseActionButton type="button" img="/ui/close.svg" text="Cancel" @on-click="showDeleteModal = false" />
+          </div>
+        </div>
+      </FullScreenModal>
  </div>
 </template>
 
@@ -60,30 +72,71 @@ definePageMeta({
 
 const data = ref<TeacherCourse | null>(null);
 const route = useRoute();
+const router = useRouter();
+const userStore = useUserStore();
+const { teacherCourses, teacherCurrentCourse } = storeToRefs(userStore);
 const courseId = route.params.courseID as string
 
 data.value = await requestEndpoint<TeacherCourse>(`/courses/${courseId}/`);
+teacherCurrentCourse.value = data.value;
 const courseName = computed(() => data.value?.name ?? "Course Name");
 const coursePeriod = computed(() => data.value?.period ?? "Course Period");
-
 const assignments = computed(() => data.value?.assignments ?? []);
 const currentDate = new Date();
 
-async function removeAssignment() {
-  const newData = await requestEndpoint<TeacherCourse>(`/courses/${courseId}/`);
-  data.value = newData;
-  console.log("Assignment removed.", data.value.assignments);
+const showDeleteModal = ref(false);
+const deleteStep = ref<1 | 2>(1);
+const deleteType = ref<"course" | "assignment">();
+const currentDeleteAssignmentId = ref<number>();
+watch(deleteType, (type) => {
+  if (type) return (showDeleteModal.value = true);
+});
+watch(showDeleteModal, (val) => {
+  if (!val) {
+    deleteStep.value = 1;
+    deleteType.value = undefined;
+    currentDeleteAssignmentId.value = undefined;
+  }
+});
+
+async function deleteAssignment() {
+  if (!data.value || !currentDeleteAssignmentId.value) return;
+
+  await tryRequestEndpoint(`/assignments/${currentDeleteAssignmentId.value}/`, "DELETE");
+
+  data.value.assignments = data.value.assignments.filter(
+    (a) => a.id !== currentDeleteAssignmentId.value
+  );
+
+  if (teacherCurrentCourse.value)
+    teacherCurrentCourse.value.assignments = data.value.assignments;
+
+  showDeleteModal.value = false;
 }
 
 async function deleteCourse(){
   const { error } = await tryRequestEndpoint(`/courses/${courseId}/`, `DELETE`);
   if (error) return console.error("Failed to delete course:", error);
-  navigateTo('/teacher/dashboard');
+
+  const index = userStore.teacherCourses.findIndex(
+    (c) => c.id === teacherCurrentCourse.value?.id
+  );
+  if (index !== -1) userStore.teacherCourses.splice(index, 1);
+
+  teacherCurrentCourse.value = undefined;
+
+  void router.push('/teacher/dashboard');
+}
+
+function confirmDelete() {
+  if (deleteType.value === "course") void deleteCourse();
+  else if (deleteType.value === "assignment") void deleteAssignment();
 }
 
 //const generalClassType = getGeneralClassType(course.classType) as classType
 const generalClassType = "Regular" 
 </script>
+
 
 
 <style scoped></style>
