@@ -80,24 +80,23 @@ async function deleteCourse(){
   if (error) return console.error("Failed to delete course:", error);
   navigateTo('/teacher/dashboard');
 }
-/* const generalClassType = computed(() => {
-  if (data.value) return getGeneralClassType(data.value.classType) as classType
-}) */
-
-//const generalClassType = getGeneralClassType(data.classType) as classType
-
-// const generalClassType = computed<classType>(() =>
-//   getGeneralClassType(data.value?.classType) ?? 'default'
-// )
 
 const userStore = useUserStore()
 const {teacherCurrentCourse} = storeToRefs(userStore)
 console.log(teacherCurrentCourse.value)
 
-const generalClassType = getGeneralClassType(teacherCurrentCourse.value?.classType) as classType
+const generalClassType = computed(()=> {
+  teacherCurrentCourse.value ? 
+  if (teacherCurrentCourse.value) {
+    return getGeneralClassType(teacherCurrentCourse.value.classType) as classType
+  }
+  return "Regular"
+} )
 
 const loaded = ref(false)
-onMounted(() => (loaded.value = true));
+onMounted(() => {
+  
+  loaded.value = true});
 
 </script>
 
