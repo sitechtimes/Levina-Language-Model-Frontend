@@ -67,16 +67,16 @@
 definePageMeta({
   layout: "teacher",
   requiresAuth: true,
-  redirectIfAuth : false
-})
+  redirectIfAuth: false
+});
 
+const data = ref<TeacherCourse | null>(null);
 const route = useRoute();
 const router = useRouter();
 const userStore = useUserStore();
 const { teacherCourses, teacherCurrentCourse } = storeToRefs(userStore);
 const courseId = route.params.courseID as string
 
-const data = ref<TeacherCourse | null>(null);
 data.value = await requestEndpoint<TeacherCourse>(`/courses/${courseId}/`);
 teacherCurrentCourse.value = data.value;
 const courseName = computed(() => data.value?.name ?? "Course Name");
@@ -114,7 +114,7 @@ async function deleteAssignment() {
   showDeleteModal.value = false;
 }
 
- async function deleteCourse(){
+async function deleteCourse(){
   const { error } = await tryRequestEndpoint(`/courses/${courseId}/`, `DELETE`);
   if (error) return console.error("Failed to delete course:", error);
 
