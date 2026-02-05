@@ -1,7 +1,7 @@
 <template>
   <NuxtLink
     :to="`/teacher/course/${course.id}`"
-    class="flex w-115 flex-col items-center justify-center overflow-hidden rounded-xl border border-neutral-300 hover:border-neutral-600/50 hover:shadow-lg dark:border-neutral-600 dark:hover:border-neutral-300/50"
+    class="flex w-115 flex-col items-center justify-center overflow-hidden rounded-xl border border-neutral-300 hover:border-neutral-600/50 hover:shadow-lg dark:border-neutral-600 dark:hover:border-neutral-300/50" @click="teacherCurrentCourse = course"
   >
     <!-- course information -->
     <div class="flex h-24 w-full flex-col items-center justify-end p-2" :style="{ backgroundColor: classColors[generalClassType] }">
@@ -32,6 +32,7 @@
 <script setup lang="ts">
 const props = defineProps<{ course: TeacherCourse }>();
 const userStore = useUserStore();
+const { teacherCurrentCourse } = storeToRefs(userStore)
 
 const generalClassType = getGeneralClassType(props.course.classType) as classType
 </script>
