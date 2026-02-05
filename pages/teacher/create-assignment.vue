@@ -103,16 +103,38 @@
             <option value="FRQ">Audio</option>
           </select>
       </label>
-      <label v-if="questionInfo.question_type === 'MCQ'" title="Required" class="flex flex-col gap-1">
+      <label v-if="questionInfo.question_type === 'MCQ'" class="flex flex-col gap-1">
           <p class="font-medium">Answer Choices<span class="text-red-500">*</span></p>
-          <input 
-          type="text"
-          v-model="questionInfo.false_answers[0]"
-           class="du-input w-full border-neutral-400 bg-neutral-200 text-black hover:border-neutral-500 dark:border-neutral-600 dark:bg-neutral-900 dark:text-white dark:placeholder:text-neutral-300 dark:hover:border-neutral-300/50" 
-          placeholder="Enter answer choice"
-          required
-          />
+          <div
+            v-for="(choice, index) in questionInfo.false_answers"
+            :key="index"
+            class="flex items-center gap-2"
+          >
+            <input
+              type="text"
+              v-model="questionInfo.false_answers[index]"
+              class="du-input w-full border-neutral-400 bg-neutral-200 text-black hover:border-neutral-500 dark:border-neutral-600 dark:bg-neutral-900 dark:text-white"
+              :placeholder="`Option ${index + 1}`"
+              required
+            />
+            <button
+              type="button"
+              v-if="questionInfo.false_answers.length > 2"
+              @click="removeChoice(index)"
+              class="text-red-500 hover:text-red-600"
+            >
+              ✕
+            </button>
+          </div>
+          <button
+            type="button"
+            @click="addChoice"
+            class="mt-2 w-fit text-sm text-blue-600 hover:underline"
+          >
+            + Add option
+          </button>
       </label>
+       <audio :src="questionInfo.audio_src" controls/>
     </div>
     <button type="submit" class="mt-5 rounded bg-green-500 px-4 py-2 text-white hover:bg-green-600" >Create Question</button>
   </form>
@@ -152,6 +174,7 @@ const questionInfo = reactive({
   question_type: ref<string>(""),
   question_content_type: ref<string>(""),
   text_question: ref<string>(""),
+  audio_question: ref<File | null>(null),
   answer_content_type: ref<string>(""),
   text_answer: ref<string>(""),
   false_answers: ref<string[]>([]),
@@ -170,6 +193,28 @@ const createResult = reactive({
   error: "",
   success: false
 });
+
+watch(
+  () => questionInfo.question_type,
+  (newType) => {
+    if (newType === "MCQ" && questionInfo.false_answers.length === 0) {
+      questionInfo.false_answers.push("", "")
+    }
+
+    if (newType !== "MCQ") {
+      questionInfo.false_answers = []
+    }
+  }
+)
+
+function addChoice(){
+  questionInfo.false_answers.push("")
+}
+function removeChoice(index: number){
+  if (questionInfo.false_answers.length > 2) {
+    questionInfo.false_answers.splice(index, 1)
+  }
+}
 
 function addQuestion(questionId: number) {
   if (!assignmentInfo.questions.find((q: number) => q === questionId)) {
@@ -223,7 +268,13 @@ async function handleQuestionSubmit(){
     createResult.error = "Please fill in all fields.";
     return;
   }
-  const { error } = await tryCatch(
+
+  if (questionInfo.question_type === "MCQ") {
+    questionInfo.answer_content_type = "TEXT";
+  }
+
+  console.log(questionInfo.answer_content_type, questionInfo.false_answers, questionInfo.text_question, questionInfo.question_type)
+  /* const { error } = await tryCatch(
     submitCreateQuestion(
       questionInfo.question_type,
       questionInfo.text_question
@@ -235,7 +286,7 @@ async function handleQuestionSubmit(){
   } else {
     createResult.success = true;
     questions.value = await requestEndpoint<Question[]>(`/questions/`);
-  }
+  } */
 }
 
 </script>
