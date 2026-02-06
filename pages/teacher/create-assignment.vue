@@ -81,13 +81,34 @@
     >
       <div class="flex h-full flex-1 flex-col p-4 lg:overflow-y-scroll">
         <h2 class="mt-10 mb-5 text-2xl font-bold">Create Questions</h2>
-        <label title="Required" class="flex flex-col gap-1">
-            <p class="font-medium">Question Text<span class="text-red-500">*</span></p>
-            <input 
+        <label></label>
+          <p class="font-medium">Question Content Type</p>
+          <select 
+          v-model="questionInfo.question_content_type"
+           class="du-input w-full border-neutral-400 bg-neutral-200 text-black hover:border-neutral-500 dark:border-neutral-600 dark:bg-neutral-900 dark:text-white dark:placeholder:text-neutral-300 dark:hover:border-neutral-300/50" 
+          required
+          >
+            <option value="" disabled>Select content type</option>
+            <option value="TEXT">Text</option>
+            <option value="AUDIO">Audio</option>
+          </select>
+        <label v-if="questionInfo.question_content_type === `TEXT`" title="Required" class="flex flex-col gap-1">
+          <p class="font-medium">Question Text<span class="text-red-500">*</span></p>
+          <input 
           type="text"
           v-model="questionInfo.text_question"
            class="du-input w-full border-neutral-400 bg-neutral-200 text-black hover:border-neutral-500 dark:border-neutral-600 dark:bg-neutral-900 dark:text-white dark:placeholder:text-neutral-300 dark:hover:border-neutral-300/50" 
           placeholder="Enter question text" 
+          required
+          />
+      </label>
+      <label v-if="questionInfo.question_content_type === `AUDIO`" title="Required" class="flex flex-col gap-1">
+          <p class="font-medium">Question Upload<span class="text-red-500">*</span></p>
+          <input 
+          type="file"
+          @change="onChange"
+           class="du-input w-full border-neutral-400 bg-neutral-200 text-black hover:border-neutral-500 dark:border-neutral-600 dark:bg-neutral-900 dark:text-white dark:placeholder:text-neutral-300 dark:hover:border-neutral-300/50" 
+          placeholder="Enter question file" 
           required
           />
       </label>
@@ -106,7 +127,7 @@
       <label v-if="questionInfo.question_type === 'MCQ'" class="flex flex-col gap-1">
           <p class="font-medium">Answer Choices<span class="text-red-500">*</span></p>
           <div
-            v-for="(choice, index) in questionInfo.false_answers"
+            v-for="(choice , index) in questionInfo.false_answers"
             :key="index"
             class="flex items-center gap-2"
           >
@@ -134,7 +155,7 @@
             + Add option
           </button>
       </label>
-       <audio :src="questionInfo.audio_src" controls/>
+       <!--<audio :file-src="questionInfo.audio_question" controls/>-->
     </div>
     <button type="submit" class="mt-5 rounded bg-green-500 px-4 py-2 text-white hover:bg-green-600" >Create Question</button>
   </form>
@@ -194,18 +215,24 @@ const createResult = reactive({
   success: false
 });
 
-watch(
-  () => questionInfo.question_type,
+watch(() => questionInfo.question_type,
   (newType) => {
     if (newType === "MCQ" && questionInfo.false_answers.length === 0) {
       questionInfo.false_answers.push("", "")
     }
-
     if (newType !== "MCQ") {
       questionInfo.false_answers = []
     }
   }
 )
+
+function onChange(event: Event){
+  let input = event.target as HTMLInputElement;
+  if (!input.files || !input.files.length){
+    return
+  }
+  questionInfo.audio_question = input.files[0]
+}
 
 function addChoice(){
   questionInfo.false_answers.push("")
@@ -269,11 +296,7 @@ async function handleQuestionSubmit(){
     return;
   }
 
-  if (questionInfo.question_type === "MCQ") {
-    questionInfo.answer_content_type = "TEXT";
-  }
 
-  console.log(questionInfo.answer_content_type, questionInfo.false_answers, questionInfo.text_question, questionInfo.question_type)
   /* const { error } = await tryCatch(
     submitCreateQuestion(
       questionInfo.question_type,
