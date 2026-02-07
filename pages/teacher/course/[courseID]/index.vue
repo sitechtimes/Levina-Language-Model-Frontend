@@ -54,6 +54,7 @@
 <script setup lang="ts">
 definePageMeta({
   layout: "teacher",
+  middleware: "teacher-get-course",
   requiresAuth: true,
   redirectIfAuth: false
 });
@@ -83,19 +84,13 @@ async function deleteCourse(){
 
 const userStore = useUserStore()
 const {teacherCurrentCourse} = storeToRefs(userStore)
-console.log(teacherCurrentCourse.value)
 
 const generalClassType = computed(()=> {
-  teacherCurrentCourse.value ? 
-  if (teacherCurrentCourse.value) {
-    return getGeneralClassType(teacherCurrentCourse.value.classType) as classType
-  }
-  return "Regular"
+  return teacherCurrentCourse.value ? getGeneralClassType(teacherCurrentCourse.value.classType) as classType : "Regular"
 } )
 
 const loaded = ref(false)
 onMounted(() => {
-  
   loaded.value = true});
 
 </script>
