@@ -81,7 +81,7 @@
     >
       <div class="flex h-full flex-1 flex-col p-4 lg:overflow-y-scroll">
         <h2 class="mt-10 mb-5 text-2xl font-bold">Create Questions</h2>
-        <label></label>
+        <label class="flex flex-col gap-2 mt-4">
           <p class="font-medium">Question Content Type</p>
           <select 
           v-model="questionInfo.question_content_type"
@@ -92,8 +92,9 @@
             <option value="TEXT">Text</option>
             <option value="AUDIO">Audio</option>
           </select>
-        <label v-if="questionInfo.question_content_type === `TEXT`" title="Required" class="flex flex-col gap-1">
-          <p class="font-medium">Question Text<span class="text-red-500">*</span></p>
+        </label>
+        <label v-if="questionInfo.question_content_type === `TEXT`" title="Required" class="flex flex-col gap-2 mt-4">
+          <p class="font-medium">Question Text <span class="text-red-500">*</span></p>
           <input 
           type="text"
           v-model="questionInfo.text_question"
@@ -102,18 +103,26 @@
           required
           />
       </label>
-      <label v-if="questionInfo.question_content_type === `AUDIO`" title="Required" class="flex flex-col gap-1">
-          <p class="font-medium">Question Upload<span class="text-red-500">*</span></p>
-          <input 
-          type="file"
-          @change="onChange"
+      <label v-if="questionInfo.question_content_type === 'AUDIO'" class="flex flex-col gap-2 mt-4">
+        <p class="font-medium">Upload audio file <span class="text-red-500">*</span></p>
+        <input
+        type="file"
+        @change="onChange"
+        required
+        class="w-full rounded-md border border-neutral-300 bg-white px-3 py-2 text-neutral-800 focus:outline-none focus:ring-2 focus:ring-neutral-400 dark:border-neutral-600 dark:bg-neutral-900
+      dark:text-neutral-100"
+        />
+        <p class="font-medium">Question Description <span class="text-red-500">*</span></p>
+        <input 
+          type="text"
+          v-model="questionInfo.description"
            class="du-input w-full border-neutral-400 bg-neutral-200 text-black hover:border-neutral-500 dark:border-neutral-600 dark:bg-neutral-900 dark:text-white dark:placeholder:text-neutral-300 dark:hover:border-neutral-300/50" 
-          placeholder="Enter question file" 
+          placeholder="Enter question description" 
           required
           />
       </label>
-      <label title="Required" class="flex flex-col gap-1">
-          <p class="font-medium">Input Type<span class="text-red-500">*</span></p>
+      <label title="Required" class="flex flex-col gap-2 mt-4">
+          <p class="font-medium">Input Type <span class="text-red-500">*</span></p>
           <select 
           v-model="questionInfo.question_type"
            class="du-input w-full border-neutral-400 bg-neutral-200 text-black hover:border-neutral-500 dark:border-neutral-600 dark:bg-neutral-900 dark:text-white dark:placeholder:text-neutral-300 dark:hover:border-neutral-300/50" 
@@ -124,8 +133,8 @@
             <option value="FRQ">Audio</option>
           </select>
       </label>
-      <label v-if="questionInfo.question_type === 'MCQ'" class="flex flex-col gap-1">
-          <p class="font-medium">Answer Choices<span class="text-red-500">*</span></p>
+      <label v-if="questionInfo.question_type === 'MCQ'" class="flex flex-col gap-2 mt-4">
+          <p class="font-medium">Answer Choices <span class="text-red-500">*</span></p>
           <div
             v-for="(choice , index) in questionInfo.false_answers"
             :key="index"
@@ -237,6 +246,7 @@ function onChange(event: Event){
 function addChoice(){
   questionInfo.false_answers.push("")
 }
+
 function removeChoice(index: number){
   if (questionInfo.false_answers.length > 2) {
     questionInfo.false_answers.splice(index, 1)
@@ -296,11 +306,33 @@ async function handleQuestionSubmit(){
     return;
   }
 
-
-  /* const { error } = await tryCatch(
+  if (questionInfo.question_content_type === "TEXT") {
+  const { error } = await tryCatch(
     submitCreateQuestion(
       questionInfo.question_type,
-      questionInfo.text_question
+      questionInfo.question_content_type,
+      questionInfo.text_question,
+      questionInfo.answer_content_type,
+      questionInfo.text_answer,
+      questionInfo.false_answers
+    )
+  );
+  if (error) {
+    createResult.error = error.message;
+    console.error(error);
+  } else {
+    createResult.success = true;
+    questions.value = await requestEndpoint<Question[]>(`/questions/`);
+  }
+  } else if (questionInfo.question_content_type === "AUDIO") {
+    /* const { error } = await tryCatch(
+    submitCreateQuestion(
+      questionInfo.question_type,
+      questionInfo.question_content_type,
+      questionInfo.text_question,
+      questionInfo.answer_content_type,
+      questionInfo.text_answer,
+      questionInfo.false_answers
     )
   );
   if (error) {
@@ -310,6 +342,9 @@ async function handleQuestionSubmit(){
     createResult.success = true;
     questions.value = await requestEndpoint<Question[]>(`/questions/`);
   } */
+  }
+
+  
 }
 
 </script>

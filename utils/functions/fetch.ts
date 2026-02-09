@@ -125,15 +125,44 @@ export async function submitCreateAssignment(
   });
 }
 
-export async function submitCreateQuestion(
+export async function submitCreateTextQuestion(
   question_type: string,
-  name: string,
+  question_content: string,
+  text_question: string,
+  answer_content_type: string,
+  text_answer: string,
+  false_answers: string[]
 ) {
   await requestEndpoint<void>(`questions/`, "POST", {
     question_type,
-    name
+    question_content,
+    text_question,
+    answer_content_type,
+    text_answer,
+    false_answers
   });
 }
+
+export async function submitCreateAudioQuestion(
+  question_type: string,
+  question_content: string,
+  audio_question: File,
+  description: string,
+  answer_content_type: string,
+  text_answer: string,
+  false_answers: string[]
+) {
+  await requestEndpoint<void>(`questions/`, "POST", {
+    question_type,
+    question_content,
+    audio_question,
+    description,
+    answer_content_type,
+    text_answer,
+    false_answers
+  });
+}
+
 
 /** **Serves as a wrapper for `tryCatch(requestEndpoint())`.**
  * @param endpoint - the endpoint to request. It will be automatically appended to the base URL, **so it should NOT start with a `/`**.
