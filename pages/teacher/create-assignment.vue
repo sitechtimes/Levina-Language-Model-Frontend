@@ -71,7 +71,7 @@
           class="flex items-center gap-3 rounded border p-2 hover:bg-neutral-100 dark:hover:bg-neutral-800"
           @click="addQuestion(question.id)"
         >
-          {{ question.id }}. {{ question.textQuestion }}
+          {{ question.id }}. {{ question.textQuestion }}{{ question.description }}
         </li>
       </ul>
     </div>
@@ -185,6 +185,7 @@ type Question = {
   id: number
   textQuestion: string
   questionType: string
+  description: string
 };
 
 const questions = ref(await requestEndpoint<Question[]>(`/questions/`));
@@ -200,14 +201,14 @@ const assignmentInfo = reactive({
 
 
 const questionInfo = reactive({
-  description: ref<string>(""),
-  question_type: ref<string>(""),
-  question_content_type: ref<string>(""),
-  text_question: ref<string>(""),
-  audio_question: ref<File | null>(null),
-  answer_content_type: ref<string>(""),
-  text_answer: ref<string>(""),
-  false_answers: ref<string[]>([]),
+  description: <string>(""),
+  question_type: <string>(""),
+  question_content_type: <string>(""),
+  text_question: <string>(""),
+  audio_question: <File>({} as File),
+  answer_content_type: <string>(""),
+  text_answer: <string>("d"),
+  false_answers: <string[]>([]),
 })
 /*"description": "answer the question gng",
     "question_type": "MCQ",
@@ -241,6 +242,7 @@ function onChange(event: Event){
     return
   }
   questionInfo.audio_question = input.files[0]
+  console.log(questionInfo.audio_question)
 }
 
 function addChoice(){
@@ -301,14 +303,16 @@ async function handleAssignmentSubmit(){
 }
 
 async function handleQuestionSubmit(){
-  if (!questionInfo.text_question || !questionInfo.question_type) {
+  if (questionInfo.question_type==="MCQ") {
+    questionInfo.answer_content_type = "TEXT"
+  }
+  if (questionInfo.question_content_type === "TEXT") {
+    if (!questionInfo.text_question || !questionInfo.question_type) {
     createResult.error = "Please fill in all fields.";
     return;
-  }
-
-  if (questionInfo.question_content_type === "TEXT") {
+    }
   const { error } = await tryCatch(
-    submitCreateQuestion(
+    submitCreateTextQuestion(
       questionInfo.question_type,
       questionInfo.question_content_type,
       questionInfo.text_question,
@@ -325,11 +329,17 @@ async function handleQuestionSubmit(){
     questions.value = await requestEndpoint<Question[]>(`/questions/`);
   }
   } else if (questionInfo.question_content_type === "AUDIO") {
-    /* const { error } = await tryCatch(
-    submitCreateQuestion(
+    if (!questionInfo.audio_question || !questionInfo.description) {
+      createResult.error = "Please fill in all fields.";
+      return;
+    }
+    console.log("trying to submit audio")
+    const { error } = await tryCatch(
+    submitCreateAudioQuestion(
       questionInfo.question_type,
       questionInfo.question_content_type,
-      questionInfo.text_question,
+      questionInfo.audio_question,
+      questionInfo.description,
       questionInfo.answer_content_type,
       questionInfo.text_answer,
       questionInfo.false_answers
@@ -341,10 +351,7 @@ async function handleQuestionSubmit(){
   } else {
     createResult.success = true;
     questions.value = await requestEndpoint<Question[]>(`/questions/`);
-  } */
   }
-
-  
+  }
 }
-
 </script>

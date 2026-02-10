@@ -126,7 +126,7 @@ export async function submitCreateAssignment(
 }
 
 export async function submitCreateTextQuestion(
-  question_type: string,
+  question_content_type: string,
   question_content: string,
   text_question: string,
   answer_content_type: string,
@@ -134,7 +134,7 @@ export async function submitCreateTextQuestion(
   false_answers: string[]
 ) {
   await requestEndpoint<void>(`questions/`, "POST", {
-    question_type,
+    question_content_type,
     question_content,
     text_question,
     answer_content_type,
@@ -145,7 +145,7 @@ export async function submitCreateTextQuestion(
 
 export async function submitCreateAudioQuestion(
   question_type: string,
-  question_content: string,
+  question_content_type: string,
   audio_question: File,
   description: string,
   answer_content_type: string,
@@ -154,7 +154,7 @@ export async function submitCreateAudioQuestion(
 ) {
   await requestEndpoint<void>(`questions/`, "POST", {
     question_type,
-    question_content,
+    question_content_type,
     audio_question,
     description,
     answer_content_type,
