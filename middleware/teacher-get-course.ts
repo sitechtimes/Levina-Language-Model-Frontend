@@ -9,12 +9,7 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
   const courseID = Number(to.params.courseID);
 
   teacherCurrentCourse.value = teacherCourses.value.find((course) => course.id === courseID);
-  console.log(teacherCurrentCourse.value)
   if (!teacherCurrentCourse.value) return await navigateTo(`/teacher/dashboard?course=${courseID}`);
 
   if (from.name === "teacher-dashboard" && to.name !== "teacher-course-courseID") return; // if we're not going to course page from dashboard
-  if (teacherCurrentCourse.value.assignmentsFetched) return;
-  //teacherCurrentCourse.value.assignments = await getAssignments<TeacherAssignment[]>(Number(to.params.courseID));
-  console.log("test")
-  teacherCurrentCourse.value.assignmentsFetched = true;
 });

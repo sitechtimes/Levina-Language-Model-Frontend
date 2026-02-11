@@ -91,7 +91,8 @@ const generalClassType = computed(()=> {
 
 const loaded = ref(false)
 onMounted(() => {
-  loaded.value = true});
+  loaded.value = true
+});
 
 </script>
 
