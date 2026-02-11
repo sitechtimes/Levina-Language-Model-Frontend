@@ -164,7 +164,6 @@
             + Add option
           </button>
       </label>
-       <!--<audio :file-src="questionInfo.audio_question" controls/>-->
     </div>
     <button type="submit" class="mt-5 rounded bg-green-500 px-4 py-2 text-white hover:bg-green-600" >Create Question</button>
   </form>
@@ -192,11 +191,11 @@ const questions = ref(await requestEndpoint<Question[]>(`/questions/`));
 console.log(questions.value)
 
 const assignmentInfo = reactive({
-  name: ref<string>(""),
-  timed: ref<boolean>(false),
+  name: <string>(""),
+  timed: <boolean>(false),
     /** In minutes */
-  time_limit: ref<number>(45),
-  questions: ref<number[]>([]),
+  time_limit: <number>(45),
+  questions: <number[]>([]),
 });
 
 
@@ -333,7 +332,7 @@ async function handleQuestionSubmit(){
       createResult.error = "Please fill in all fields.";
       return;
     }
-    console.log("trying to submit audio")
+    console.log(questionInfo.audio_question)
     const { error } = await tryCatch(
     submitCreateAudioQuestion(
       questionInfo.question_type,

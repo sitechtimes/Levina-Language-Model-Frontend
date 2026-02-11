@@ -75,8 +75,14 @@ export async function requestEndpoint<T>(endpoint: string, method?: string, body
 
   if (method) {
     options.method = method;
-    options.headers = headers
-    options.body = JSON.stringify(body);
+    if (body instanceof FormData) {
+      options.body = body;
+      options.headers = headers;
+    } else {
+      headers["Content-Type"] = "application/json";
+      options.body = JSON.stringify(body);
+      options.headers = headers;
+    }
   }
 
   let res = await fetch(config.public.backend + endpoint, options);
@@ -152,15 +158,20 @@ export async function submitCreateAudioQuestion(
   text_answer: string,
   false_answers: string[]
 ) {
-  await requestEndpoint<void>(`questions/`, "POST", {
-    question_type,
-    question_content_type,
-    audio_question,
-    description,
-    answer_content_type,
-    text_answer,
-    false_answers
+const formData = new FormData();
+
+  formData.append("question_type", question_type);
+  formData.append("question_content_type", question_content_type);
+  formData.append("audio_question", audio_question);
+  formData.append("description", description);
+  formData.append("answer_content_type", answer_content_type);
+  formData.append("text_answer", text_answer);
+
+  false_answers.forEach((answer, index) => {
+    formData.append(`false_answers[${index}]`, answer);
   });
+
+  await requestEndpoint<void>("questions/", "POST", formData);
 }
 
 
