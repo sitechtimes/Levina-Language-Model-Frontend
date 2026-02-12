@@ -51,6 +51,7 @@
 <script setup lang="ts">
 definePageMeta({
   layout: "teacher",
+  middleware: "teacher-get-course",
   requiresAuth: true,
   redirectIfAuth: false
 });
