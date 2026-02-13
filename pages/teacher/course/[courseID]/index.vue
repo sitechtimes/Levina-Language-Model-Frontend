@@ -134,9 +134,6 @@ function confirmDelete() {
   else if (deleteType.value === "assignment") void deleteAssignment();
 }
 
-const userStore = useUserStore()
-const {teacherCurrentCourse} = storeToRefs(userStore)
-
 const generalClassType = computed(()=> {
   return teacherCurrentCourse.value ? getGeneralClassType(teacherCurrentCourse.value.classType) as classType : "Regular"
 } )

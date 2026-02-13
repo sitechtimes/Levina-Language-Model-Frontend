@@ -40,7 +40,7 @@ type LoginSuccess = {
 } & (
   | {
       userType: "Student";
-    //   courses: StudentCourse[];
+      courses: StudentCourse[];
     }
   | {
       userType: "Teacher";
@@ -95,8 +95,8 @@ export const useUserStore = defineStore("userStore", () => {
     return true;
   }
 
-//   const studentCourses = ref<StudentCourse[]>([]);
-//   const studentCurrentCourse = ref<StudentCourse>();
+const studentCourses = ref<StudentCourse[]>([]);
+const studentCurrentCourse = ref<StudentCourse>();
 
 //   const currentQuestion = ref<StaticQuestionInterface | DynamicQuestionInterface>();
 
@@ -208,10 +208,10 @@ export const useUserStore = defineStore("userStore", () => {
     refreshToken,
     init,
     refreshAccessToken,
-    // studentCourses,
-     teacherCourses,
-    // studentCurrentCourse,
-     teacherCurrentCourse,
+    studentCourses,
+    teacherCourses,
+    studentCurrentCourse,
+    teacherCurrentCourse,
     // currentQuestion,
     // loadedTopics,
     // loadedTopicPaths,
