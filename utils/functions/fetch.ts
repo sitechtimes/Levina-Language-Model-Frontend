@@ -77,8 +77,12 @@ export async function requestEndpoint<T>(endpoint: string, method?: string, body
     options.method = method;
     if (body instanceof FormData) {
       options.body = body;
-      options.headers = headers;
-    } else {
+      const formHeaders: HeadersInit = {};
+      if (userStore.accessToken) {
+        formHeaders.Authorization = `Bearer ${userStore.accessToken}`;
+      }
+      options.headers = formHeaders;
+    } else { 
       headers["Content-Type"] = "application/json";
       options.body = JSON.stringify(body);
       options.headers = headers;
@@ -167,9 +171,7 @@ const formData = new FormData();
   formData.append("answer_content_type", answer_content_type);
   formData.append("text_answer", text_answer);
 
-  false_answers.forEach((answer, index) => {
-    formData.append(`false_answers[${index}]`, answer);
-  });
+  formData.append("false_answers", JSON.stringify(false_answers));
 
   await requestEndpoint<void>("questions/", "POST", formData);
 }
