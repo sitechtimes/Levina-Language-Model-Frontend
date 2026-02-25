@@ -16,4 +16,6 @@ export default defineNuxtRouteMiddleware(async (to) => {
 
   if (!userStore.isAuth && to.meta.requiresAuth) return await navigateTo("/login", { redirectCode: 301 });
   else if (userStore.isAuth && to.meta.redirectIfAuth) return await navigateTo(`/${userStore.userType}/dashboard`, { redirectCode: 301 });
+
+  //if (userStore.userType !== to.meta.role) return await navigateTo(`/${userStore.userType}/dashboard`, { redirectCode: 301 })
 });
