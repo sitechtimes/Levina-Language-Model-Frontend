@@ -7,3 +7,7 @@ export default defineNuxtRouteMiddleware((to) => {
 
   if (userStore.userType !== to.meta.role) return navigateTo(`/${userStore.userType}/dashboard`, { redirectCode: 301 });
 });
+
+
+//see what happens if i add a thing that checks if the route begins w "/student" or "/teacher" and then redirect
+// and do stuff for admin role too - find better way
