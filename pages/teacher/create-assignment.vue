@@ -71,8 +71,10 @@
 <script setup lang="ts">
 definePageMeta({
   layout: "teacher",
+  middleware: "role",
   requiresAuth: true,
-  redirectIfAuth: false
+  redirectIfAuth: false,
+  role: "teacher"
 })
 const route = useRoute();
 const router = useRouter();
