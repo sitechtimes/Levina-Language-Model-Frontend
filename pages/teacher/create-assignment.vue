@@ -74,7 +74,6 @@ definePageMeta({
   middleware: "role",
   requiresAuth: true,
   redirectIfAuth: false,
-  role: "teacher"
 })
 const route = useRoute();
 const router = useRouter();

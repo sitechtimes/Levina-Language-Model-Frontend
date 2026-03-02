@@ -69,7 +69,6 @@ definePageMeta({
   middleware: ["role","teacher-get-course"],
   requiresAuth: true,
   redirectIfAuth: false,
-  role: "teacher"
 });
 
 const data = ref<TeacherCourse | null>(null);

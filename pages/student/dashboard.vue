@@ -6,8 +6,7 @@
 definePageMeta({
   middleware: "role",
   requiresAuth: true,
-  redirectIfAuth: false,
-  role: "student"
+  redirectIfAuth: false
 });
 
 </script>
