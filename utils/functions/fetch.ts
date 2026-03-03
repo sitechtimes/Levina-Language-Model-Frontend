@@ -174,7 +174,6 @@ const formData = new FormData();
   formData.append("description", description);
   formData.append("answer_content_type", answer_content_type);
   formData.append("text_answer", text_answer);
-
   formData.append("false_answers", JSON.stringify(false_answers));
 
   await requestEndpoint<void>("questions/", "POST", formData);

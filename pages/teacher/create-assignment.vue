@@ -193,7 +193,7 @@ const assignmentInfo = reactive({
   name: <string>(""),
   timed: <boolean>(false),
     /** In minutes */
-  time_limit: <number>(45),
+  time_limit: <number>(0),
   questions: <number[]>([]),
 });
 
@@ -208,14 +208,6 @@ const questionInfo = reactive({
   text_answer: <string>("d"),
   false_answers: <string[]>([]),
 })
-/*"description": "answer the question gng",
-    "question_type": "MCQ",
-    "question_content_type": "TEXT",
-    "text_question": "What is 3 + 5",
-    "answer_content_type": "TEXT",
-    "text_answer": "13",
-    "false_answers": ["67", "41"]
-*/
 
 const createResult = reactive({
   isLoading: false,
