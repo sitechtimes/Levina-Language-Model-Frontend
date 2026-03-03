@@ -1,12 +1,14 @@
-export default defineNuxtRouteMiddleware((to) => {
+export default defineNuxtRouteMiddleware(async (to) => {
   const userStore = useUserStore();
 
-  if (!to.meta.role) return;
-
-  if (!userStore.isAuth) return navigateTo("/login", { redirectCode: 301 });
-
+  const { error } = await tryCatch(userStore.init());
+  if (error) console.error(error);
   const basePath = to.path.split('/')[1]; // 'student', 'teacher'
-  console.log(basePath)
+  console.log('basepath',basePath)
 
   if ((to.path.startsWith('/student') && userStore.userType !== 'student') || (to.path.startsWith('/teacher') && userStore.userType !== 'teacher')) return navigateTo(`/${userStore.userType}/dashboard`, { redirectCode: 301 });
+
 });
+
+
+//why does the student page load before redirecting when going from teacher--> student dashboard

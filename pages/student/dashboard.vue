@@ -6,7 +6,7 @@
 definePageMeta({
   middleware: "role",
   requiresAuth: true,
-  redirectIfAuth: false
+  redirectIfAuth: false,
 });
 
 </script>
