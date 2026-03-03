@@ -188,7 +188,6 @@ type Question = {
 };
 
 const questions = ref(await requestEndpoint<Question[]>(`/questions/`));
-console.log(questions.value)
 
 const assignmentInfo = reactive({
   name: <string>(""),
@@ -241,7 +240,6 @@ function onChange(event: Event){
     return
   }
   questionInfo.audio_question = input.files[0]
-  console.log(questionInfo.audio_question)
 }
 
 function addChoice(){
