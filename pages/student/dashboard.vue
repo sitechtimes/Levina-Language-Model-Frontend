@@ -4,9 +4,9 @@
 
 <script setup lang="ts">
 definePageMeta({
-  middleware: "role",
   requiresAuth: true,
   redirectIfAuth: false,
+  allowedRoles: ['student']
 });
 
 </script>
