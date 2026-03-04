@@ -31,6 +31,7 @@
 <script setup lang="ts">
 definePageMeta({
   layout: "teacher",
+  middleware: 'role-check',
   requiresAuth: true,
   redirectIfAuth: false,
   allowedRoles: ['teacher']
