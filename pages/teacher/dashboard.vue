@@ -2,7 +2,7 @@
   <div class="flex w-full flex-col items-start justify-start">
     <div v-if="loaded" class="w-full">
       <NotFound :show-modal="showNotFound" user-type="teacher" :message="route.query.course ? 'class' : 'assignment'" />
-
+      <NuxtLink :to="`/student/dashboard/`">test</NuxtLink>
       <div class="flex w-full flex-col">
         <div v-if="teacherCourses && teacherCourses.length > 0" class="flex flex-wrap content-start items-start justify-around gap-8">
           <!--prettier-ignore-->
