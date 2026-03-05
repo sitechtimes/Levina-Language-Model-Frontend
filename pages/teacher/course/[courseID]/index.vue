@@ -66,9 +66,10 @@
 <script setup lang="ts">
 definePageMeta({
   layout: "teacher",
-  middleware: ["role","teacher-get-course"],
+  middleware: ["teacher-get-course"],
   requiresAuth: true,
   redirectIfAuth: false,
+  allowedRoles: ['teacher']
 });
 
 const data = ref<TeacherCourse | null>(null);
