@@ -174,7 +174,8 @@
 definePageMeta({
   layout: "teacher",
   requiresAuth: true,
-  redirectIfAuth: false
+  redirectIfAuth: false,
+  allowedRoles: ['teacher']
 })
 const route = useRoute();
 const router = useRouter();

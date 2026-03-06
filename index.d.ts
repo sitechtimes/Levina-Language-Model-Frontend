@@ -5,6 +5,8 @@ declare module "#app" {
     requiresAuth: boolean;
     /** If the user is authenticated, whether or not to redirect the user to dashboard. */
     redirectIfAuth: boolean;
+    /** The user role(s) allowed to access this page. */
+    allowedRoles?: ("student" | "teacher")[];
   }
 }
 
