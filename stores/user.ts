@@ -62,15 +62,13 @@ export const useUserStore = defineStore("userStore", () => {
   const isDarkMode = ref(false);
   const showSideMenu = ref(true);
   const name = ref("");
-  const userType = ref<"student" | "teacher"|null>(null);
-
-  const initialized = ref(false)
+  const userType = ref<"student" | "teacher">("student");
 
   const teacherCourses = ref<TeacherCourseNoAssignment[]>([]);
   const teacherCurrentCourse = ref<TeacherCourse>();
 
-  const accessToken = useCookie<string | null>("access_token")
-  const refreshToken = useCookie<string | null>("refresh_token")
+  const accessToken = ref<string | null>(null);
+  const refreshToken = ref<string | null>(null);
   // const sessionToken = ref<string | null>(null);
 
   async function refreshAccessToken() {
@@ -140,7 +138,6 @@ const studentCurrentCourse = ref<StudentCourse>();
     if (!refreshToken.value) {
       console.log("No refresh token found, user is not authenticated.");
       isAuth.value = false;
-      initialized.value = true
       return;
     }
 
@@ -152,32 +149,30 @@ const studentCurrentCourse = ref<StudentCourse>();
       console.warn("Failed to refresh token — logging out.");
       isAuth.value = false;
       await logout();
-      initialized.value = true
       return;
     }
 
     await handleLoginData();
-    initialized.value = true
   }
 
   async function login(email: string, password: string) {
-    const { data, error } = await tryRequestEndpoint<LoginResponse>(
-      "api/token/",
-      "POST",
-      { email, password },
-      true
-    )
+    const { data, error } = await tryRequestEndpoint<LoginResponse | LoginFailure>("api/token/","POST",{ email, password },true);
 
-    if (error || !data) {
-      return { success: false, error }
+    if (error) {
+      console.error("Login error:", error);
+      return { success: false, data: undefined, error };
     }
 
-    accessToken.value = data.access
-    refreshToken.value = data.refresh
+    if ("access" in data) {
+      accessToken.value = data.access;
+      refreshToken.value = data.refresh;
 
-    await handleLoginData()
+      await handleLoginData();
 
-    return { success: true }
+      return { success: true, data };
+    }
+
+    return { success: false, data };
   }
 
   async function logout() {
@@ -226,7 +221,6 @@ const studentCurrentCourse = ref<StudentCourse>();
     login,
     logout,
     // startSession,
-    initialized
   }; 
 }, 
 {
