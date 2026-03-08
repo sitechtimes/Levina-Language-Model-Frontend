@@ -32,3 +32,7 @@ export interface TeacherCourseNoAssignment extends Course {
 export interface TeacherCourse extends TeacherCourseNoAssignment {
   assignments: TeacherAssignment[];
 }
+
+export interface StudentCourse extends Course {
+  assignments: StudentAssignment[];
+}

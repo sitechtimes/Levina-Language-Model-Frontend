@@ -79,8 +79,18 @@ export async function requestEndpoint<T>(endpoint: string, method?: string, body
 
   if (method) {
     options.method = method;
-    options.headers = headers
-    options.body = JSON.stringify(body);
+    if (body instanceof FormData) {
+      options.body = body;
+      const formHeaders: HeadersInit = {};
+      if (userStore.accessToken) {
+        formHeaders.Authorization = `Bearer ${userStore.accessToken}`;
+      }
+      options.headers = formHeaders;
+    } else { 
+      headers["Content-Type"] = "application/json";
+      options.body = JSON.stringify(body);
+      options.headers = headers;
+    }
   }
 
   let res = await fetch(config.public.backend + endpoint, options);
@@ -128,6 +138,47 @@ export async function submitCreateAssignment(
     questions
   });
 }
+
+export async function submitCreateTextQuestion(
+  question_content_type: string,
+  question_content: string,
+  text_question: string,
+  answer_content_type: string,
+  text_answer: string,
+  false_answers: string[]
+) {
+  await requestEndpoint<void>(`questions/`, "POST", {
+    question_content_type,
+    question_content,
+    text_question,
+    answer_content_type,
+    text_answer,
+    false_answers
+  });
+}
+
+export async function submitCreateAudioQuestion(
+  question_type: string,
+  question_content_type: string,
+  audio_question: File,
+  description: string,
+  answer_content_type: string,
+  text_answer: string,
+  false_answers: string[]
+) {
+const formData = new FormData();
+
+  formData.append("question_type", question_type);
+  formData.append("question_content_type", question_content_type);
+  formData.append("audio_question", audio_question);
+  formData.append("description", description);
+  formData.append("answer_content_type", answer_content_type);
+  formData.append("text_answer", text_answer);
+  formData.append("false_answers", JSON.stringify(false_answers));
+
+  await requestEndpoint<void>("questions/", "POST", formData);
+}
+
 
 /** **Serves as a wrapper for `tryCatch(requestEndpoint())`.**
  * @param endpoint - the endpoint to request. It will be automatically appended to the base URL, **so it should NOT start with a `/`**.
