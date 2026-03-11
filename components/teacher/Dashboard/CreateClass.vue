@@ -80,6 +80,7 @@ async function createCourse() {
   console.log(courseName.value,coursePeriod.value, courseSubject.value);
   const { data: course, error } = await tryRequestEndpoint<CreateCourse>("courses/","POST",{name: courseName.value, period: coursePeriod.value, class_type: courseSubject.value }
   );
+//add in generating join code bc it doesnt automatically make one
 
   if (error) return console.error("Failed to create course:", error);
   createdCourseName.value = courseName.value;

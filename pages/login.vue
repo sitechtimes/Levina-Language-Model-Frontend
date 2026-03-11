@@ -83,7 +83,7 @@ async function loginWithEmail() {
 
   if (result.success) {
     if (userStore.userType === "teacher") {void router.push(`/${userStore.userType}/dashboard`);}  // change this in the future
-    else {void router.push(`/success`); }
+    else if (userStore.userType === "student") {void router.push(`/${userStore.userType}/dashboard`); }
   } else {
     const data = result.data;
 
