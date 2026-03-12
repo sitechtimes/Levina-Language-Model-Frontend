@@ -4,7 +4,7 @@
     class="flex w-115 flex-col items-center justify-center overflow-hidden rounded-xl border border-neutral-300 bg-body hover:border-neutral-600/50 hover:shadow-lg hover:transition dark:border-neutral-600 dark:hover:border-neutral-300/50"
   >
     <!-- course information -->
-    <div class="flex h-24 w-full flex-col items-center justify-end p-2" :style="{ backgroundColor: subjectColors[course.subject] }">
+    <div class="flex h-24 w-full flex-col items-center justify-end p-2" :style="{ backgroundColor: classColors[generalClassType] }">
       <h2 :title="course.name" class="w-72 overflow-hidden overflow-ellipsis text-nowrap text-center text-2xl font-semibold">{{ course.name }}</h2>
       <p class="text-sm">Period {{ course.period }}</p>
       <p>{{ course.teacher }}</p>
@@ -31,7 +31,7 @@
             <div class="flex w-full items-center justify-between gap-2">
               <span class="shrink-0">Progress: {{ assignment.questionsCompleted }}/{{ assignment.assignment.numQuestions }}</span>
               <div class="flex h-4 w-full items-start overflow-hidden rounded-full border border-neutral-300 dark:border-neutral-600">
-                <div class="h-full" :style="{ width: (assignment.questionsCompleted / assignment.assignment.numQuestions) * 100 + '%', backgroundColor: subjectColors[course.subject] }"></div>
+                <div class="h-full" :style="{ width: (assignment.questionsCompleted / assignment.assignment.numQuestions) * 100 + '%', backgroundColor: classColors[generalClassType] }"></div>
               </div>
             </div>
           </div>
@@ -53,6 +53,9 @@ const assignments = computed(() =>
     .sort((a, b) => a.assignment.dueDate.getTime() - b.assignment.dueDate.getTime())
     .slice(0, 2)
 );
+
+const generalClassType = getGeneralClassType(props.course.classType) as classType
+console.log(props.course)
 </script>
 
 <style scoped>
