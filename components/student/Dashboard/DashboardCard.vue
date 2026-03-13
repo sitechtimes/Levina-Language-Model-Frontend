@@ -13,7 +13,7 @@
     <div class="flex h-full min-h-36 w-full flex-col items-center justify-start p-2">
       <h3 class="pb-2 pt-1 text-xl font-bold">Assignments</h3>
 
-      <div v-if="assignments.length > 0" class="flex h-full w-full flex-wrap items-start justify-around gap-3 px-3 pb-3">
+      <!-- <div v-if="assignments.length > 0" class="flex h-full w-full flex-wrap items-start justify-around gap-3 px-3 pb-3">
         <NuxtLink
           v-for="assignment in assignments"
           :key="assignment.id"
@@ -38,7 +38,7 @@
         </NuxtLink>
       </div>
 
-      <p v-else>No assignments</p>
+      <p v-else>No assignments</p> -->
     </div>
   </NuxtLink>
 </template>
@@ -55,7 +55,24 @@ const assignments = computed(() =>
 );
 
 const generalClassType = getGeneralClassType(props.course.classType) as classType
-console.log(props.course)
+
+console.log([...props.course.assignments])
+/* returns this:
+[{assignmentInstances: (3) [{…}, {…}, {…}]
+  course:1
+  dateAssigned:"2026-02-12T15:34:35.966276Z"
+  dueDate:"2025-12-15T23:59:00Z"
+  id:1
+  isActive:false
+  name: "Test Assignment"
+  questions: [{…}]
+  teacher: 4
+  timeLimit: 3600
+  timed: true}] */
+
+
+console.log([...props.course.assignments].filter((assignment) => !assignment.dateSubmitted && assignment.dueDate >= currentTime))
+
 </script>
 
 <style scoped>
