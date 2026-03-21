@@ -187,16 +187,29 @@ const warn = computed(() => null);
 const allowedToSubmit = computed(() => assignmentInfo.name && courseIds.length);
 
 const createAssignmentResult = reactive({ isLoading: false, success: false, error: "" });
+const assignments = ref<TeacherAssignmentTemplate[]>([]);
 
-const fakeAssignments = ref([
-  { id: 1, name: "Unit 1 Review", questions: [1,2], open: false },
-  { id: 2, name: "Unit 2 Practice", questions: [3,4,5], open: false },
-  { id: 3, name: "Unit 3 Quiz", questions: [6,7,8], open: false }
-]);
+
+onMounted(async () => {
+  try {
+    const data = await requestEndpoint<TeacherAssignmentTemplate[]>("assignment-templates/");
+    assignments.value = data.map(a => ({
+      ...a,
+      open: false
+    }));
+  } catch (err) {
+    console.error("Failed to fetch assignments:", err);
+  }
+});
 
 function addAssignment(assignment: any) {
   if (!assignmentInfo.questions.find(q => q.questionId === assignment.id)) {
-    assignmentInfo.questions.push({ questionId: assignment.id, name: assignment.name, questions: assignment.questions, open: false });
+    assignmentInfo.questions.push({
+      questionId: assignment.id,
+      name: assignment.name,
+      questions: assignment.questions,
+      open: false
+    });
   }
 }
 function removeAssignment(assignment: any) {
@@ -215,6 +228,21 @@ function toggleCourse(courseID: number, event: Event) {
 async function handleSubmit() {
   if (!allowedToSubmit.value) return;
   alert("Submit logic goes here");
+  try {
+    createAssignmentResult.isLoading = true;
+    const questions = assignmentInfo.questions.map(q => q.questionId);
+    await submitCreateAssignment(
+      assignmentInfo.name,
+      false, 
+      assignmentInfo.timeAllotted || 0,
+      questions
+    );
+    createAssignmentResult.success = true;
+  } catch (err: any) {
+    console.error(err);
+    createAssignmentResult.error = err?.message || "Failed to create assignment";
+  }
+    createAssignmentResult.isLoading = false;
 }
 </script>
 
