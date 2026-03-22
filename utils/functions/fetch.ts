@@ -157,6 +157,24 @@ export async function submitCreateTextQuestion(
   });
 }
 
+export async function submitCreateAssignmentPost(
+  name: string,
+  timed: boolean,
+  time_limit: number,
+  questions: number[],
+  due_date: string,
+  course: number
+) {
+  await requestEndpoint<void>("assignments/", "POST", {
+    name,
+    timed,
+    time_limit,
+    questions,
+    due_date,
+    course
+  });
+}
+
 export async function submitCreateAudioQuestion(
   question_type: string,
   question_content_type: string,

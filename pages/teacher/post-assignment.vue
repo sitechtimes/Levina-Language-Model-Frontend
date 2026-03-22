@@ -88,7 +88,7 @@
           <label class="fo-label fo-label-text shrink-0 translate-y-0.5 text-base text-black dark:text-white" for="late-submissions">Allow late submissions</label>
         </div>
         <div
-          :data-tip="!assignmentInfo.name ? 'Assignment must have a name' : !courseIds.length ? 'Select at least one course' : 'You must have at least one question or topic'"
+          :data-tip="!courseIds.length ? 'Select at least one course' : 'You must have at least one question or topic'"
           :class="{ 'du-tooltip': !allowedToSubmit }"
         >
           <button
@@ -101,7 +101,7 @@
             type="submit"
           >
             <span v-if="createAssignmentResult.isLoading" class="loading du-loading du-loading-sm mt-1"></span>
-            <span v-else>{{ isPrinting ? "Print" : "Create" }}</span>
+            <span v-else>{{ isPrinting ? "Print" : "Post" }}</span>
           </button>
         </div>
       </div>
@@ -173,11 +173,14 @@ const assignmentInfo = reactive({
 });
 
 const warn = computed(() => null);
-const allowedToSubmit = computed(() => assignmentInfo.name && courseIds.length);
+
+const allowedToSubmit = computed(() =>
+  courseIds.length > 0 &&
+  assignmentInfo.questions.length > 0
+);
 
 const createAssignmentResult = reactive({ isLoading: false, success: false, error: "" });
 const assignments = ref<TeacherAssignmentTemplate[]>([]);
-
 
 onMounted(async () => {
   try {
@@ -216,22 +219,32 @@ function toggleCourse(courseID: number, event: Event) {
 
 async function handleSubmit() {
   if (!allowedToSubmit.value) return;
-  alert("Submit logic goes here");
+
   try {
     createAssignmentResult.isLoading = true;
+
     const questions = assignmentInfo.questions.map(q => q.questionId);
-    await submitCreateAssignment(
-      assignmentInfo.name,
-      false, 
-      assignmentInfo.timeAllotted || 0,
-      questions
-    );
+
+    for (const course of courseIds) {
+      for (const template of assignmentInfo.questions) {
+        await submitCreateAssignmentPost(
+          template.name,
+          true,
+          assignmentInfo.timeAllotted || 0,
+          questions,
+          `${assignmentInfo.dueDate.date}T${assignmentInfo.dueDate.time}:00Z`,
+          course
+        );
+      }
+    }
+
     createAssignmentResult.success = true;
   } catch (err: any) {
     console.error(err);
     createAssignmentResult.error = err?.message || "Failed to create assignment";
   }
-    createAssignmentResult.isLoading = false;
+
+  createAssignmentResult.isLoading = false;
 }
 </script>
 
