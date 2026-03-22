@@ -45,40 +45,15 @@
           min="0"
           step="1"
           label="Attempts per question"
-          :placeholder="guaranteedLength === assignmentInfo.numOfQuestions ? `1` : `Unlimited`"
-          :disabled="guaranteedLength === assignmentInfo.numOfQuestions"
         />
       </div>
 
-      <div class="flex w-full flex-col gap-4 lg:flex-row lg:items-center lg:gap-2 lg:px-10" :class="isPrinting ? 'justify-end' : 'justify-between'">
-        <div v-if="!isPrinting" class="flex items-center gap-1">
-          <input id="late-submissions" v-model="assignmentInfo.lateSubmissions" type="checkbox" class="du-checkbox border-neutral-400 dark:bg-neutral-900" />
-          <label class="fo-label fo-label-text shrink-0 translate-y-0.5 text-base text-black dark:text-white" for="late-submissions">Allow late submissions</label>
-        </div>
-
-        <div
-          :data-tip="!assignmentInfo.name ? 'Assignment must have a name' : !courseIds.length ? 'Select at least one course' : 'You must have at least one question or topic'"
-          :class="{ 'du-tooltip': !allowedToSubmit }"
-        >
-          <button
-            class="w-full grow rounded-lg border px-8 py-1.5 text-xl font-medium text-black lg:w-fit"
-            :class="
-              allowedToSubmit
-                ? 'border-green-500 bg-green-500 hover:brightness-110'
-                : 'cursor-not-allowed border-none border-neutral-300 bg-neutral-200 p-0 hover:border-neutral-400 dark:bg-neutral-600/50'
-            "
-            type="submit"
-          >
-            <span v-if="createAssignmentResult.isLoading" class="loading du-loading du-loading-sm mt-1"></span>
-            <span v-else>{{ isPrinting ? "Print" : "Create" }}</span>
-          </button>
-        </div>
-      </div>
       <div class="mb-2 flex w-full grow flex-col">
-        <p class="fo-label fo-label-text pointer-events-none flex-none shrink-0 font-bold text-black dark:text-white">Assignments Added <span title="Required" class="text-red-500">*</span></p>
-        <div
-          class="flex h-0 max-h-full min-h-60 w-full grow items-center justify-center rounded-lg border border-neutral-400 bg-white hover:border-neutral-500 dark:border-neutral-600 dark:bg-neutral-900 dark:hover:border-neutral-300/50"
-        >
+        <p class="fo-label fo-label-text pointer-events-none flex-none shrink-0 font-bold text-black dark:text-white">
+          Assignments Added <span title="Required" class="text-red-500">*</span>
+        </p>
+
+        <div class="flex h-0 max-h-full min-h-60 w-full grow items-center justify-center rounded-lg border border-neutral-400 bg-white hover:border-neutral-500 dark:border-neutral-600 dark:bg-neutral-900 dark:hover:border-neutral-300/50">
           <div v-if="!assignmentInfo.questions.length" class="mb-6 flex h-fit flex-col items-center justify-center">
             <img class="pointer-events-none size-40 select-none opacity-65 dark:invert" src="/ui/plus.svg" aria-hidden="true" />
             <p class="text-center text-xl font-bold text-neutral-500 dark:text-white">No Assignments Selected</p>
@@ -106,26 +81,41 @@
           </div>
         </div>
       </div>
+
+      <div class="flex w-full flex-col gap-4 lg:flex-row lg:items-center lg:gap-2 lg:px-10" :class="isPrinting ? 'justify-end' : 'justify-between'">
+        <div v-if="!isPrinting" class="flex items-center gap-1">
+          <input id="late-submissions" v-model="assignmentInfo.lateSubmissions" type="checkbox" class="du-checkbox border-neutral-400 dark:bg-neutral-900" />
+          <label class="fo-label fo-label-text shrink-0 translate-y-0.5 text-base text-black dark:text-white" for="late-submissions">Allow late submissions</label>
+        </div>
+        <div
+          :data-tip="!assignmentInfo.name ? 'Assignment must have a name' : !courseIds.length ? 'Select at least one course' : 'You must have at least one question or topic'"
+          :class="{ 'du-tooltip': !allowedToSubmit }"
+        >
+          <button
+            class="w-full grow rounded-lg border px-8 py-1.5 text-xl font-medium text-black lg:w-fit"
+            :class="
+              allowedToSubmit
+                ? 'border-green-500 bg-green-500 hover:brightness-110'
+                : 'cursor-not-allowed border-none border-neutral-300 bg-neutral-200 p-0 hover:border-neutral-400 dark:bg-neutral-600/50'
+            "
+            type="submit"
+          >
+            <span v-if="createAssignmentResult.isLoading" class="loading du-loading du-loading-sm mt-1"></span>
+            <span v-else>{{ isPrinting ? "Print" : "Create" }}</span>
+          </button>
+        </div>
+      </div>
     </form>
+
     <div class="flex w-full flex-col border-neutral-600/50 px-4 lg:-mr-4 lg:max-h-full lg:overflow-y-auto lg:border-l dark:border-neutral-300/50">
       <h2 class="text-2xl font-bold mb-4 mt-4 lg:mt-0">Assignment Bank</h2>
       <div class="flex flex-col gap-2">
-        <div
-          v-for="assignment in fakeAssignments"
+        <TeacherAssignmentBankCard
+          v-for="assignment in assignments"
           :key="assignment.id"
-          class="flex flex-col rounded-lg border border-neutral-400 bg-white p-3 hover:border-green-500 cursor-pointer"
-        >
-          <div class="flex w-full items-center justify-between" @click="addAssignment(assignment)">
-            <p class="text-black dark:text-white font-bold">{{ assignment.name }}</p>
-            <span class="text-sm text-neutral-500 dark:text-neutral-300">{{ assignment.questions.length }} questions</span>
-          </div>
-          <ul v-if="assignment.open" class="ml-4 mt-2 flex flex-col gap-1">
-            <li v-for="q in assignment.questions" :key="q" class="text-sm text-black dark:text-white">Question ID: {{ q }}</li>
-          </ul>
-          <button class="text-neutral-500 dark:text-neutral-300 mt-1 self-start" @click.stop="assignment.open = !assignment.open">
-            <img :src="assignment.open ? '/ui/chevron-up.svg' : '/ui/chevron-down.svg'" class="h-4 w-4" />
-          </button>
-        </div>
+          :assignment="assignment"
+          @add="addAssignment"
+        />
       </div>
     </div>
 
@@ -133,8 +123,7 @@
       <p>Assignment successfully created!</p>
       <TeacherCourseActionButton type="button" img="/ui/close.svg" text="Close" @on-click="createAssignmentResult.success = false" />
     </FullScreenModal>
-
-    <LazyTeacherAssignmentPrintAssignment :question-ids="assignmentInfo.printQuestionIds" />
+    <!-- <LazyTeacherAssignmentPrintAssignment :question-ids="assignmentInfo.printQuestionIds" /> -->
   </div>
 </template>
 
