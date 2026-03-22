@@ -7,8 +7,8 @@
     >
       <div class="flex w-full flex-col items-center justify-center px-2 dark:border-neutral-600">
         <TeacherDashboardSidebarPageLink to="/teacher/dashboard" img-src="/ui/home.svg" text="Dashboard" />
-        <!-- <TeacherDashboardSidebarPageLink to="/teacher/create-assignment" img-src="/ui/todo.svg" text="New Assignment" />
-        <TeacherDashboardSidebarPageLink to="/teacher/create-assignment?print=true" img-src="/ui/document.svg" text="Print Worksheet" /> -->
+        <TeacherDashboardSidebarPageLink to="/teacher/create-assignment" img-src="/ui/todo.svg" text="Create Assignment" />  
+        <TeacherDashboardSidebarPageLink to="/teacher/post-assignment" img-src="/ui/todo.svg" text="Post Assignment" />
       </div>
 
       <div class="my-4 h-px w-full bg-neutral-300 dark:bg-neutral-600"></div>
