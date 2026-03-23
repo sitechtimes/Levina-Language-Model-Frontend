@@ -6,9 +6,10 @@
 </template>
 
 <script setup lang="ts">
-
+const assignment = ref();
+const assignmentId = 2;
+assignment.value = await requestEndpoint(`/assignments/${assignmentId}`);
 </script>
 
 <style scoped>
-
 </style>
