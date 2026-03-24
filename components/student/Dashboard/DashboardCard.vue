@@ -13,32 +13,32 @@
     <div class="flex h-full min-h-36 w-full flex-col items-center justify-start p-2">
       <h3 class="pb-2 pt-1 text-xl font-bold">Assignments</h3>
 
-      <div v-if="assignments.length > 0" class="flex h-full w-full flex-wrap items-start justify-around gap-3 px-3 pb-3">
+      <!-- <div v-if="assignments.length > 0" class="flex h-full w-full flex-wrap items-start justify-around gap-3 px-3 pb-3">
         <NuxtLink
           v-for="assignment in assignments"
           :key="assignment.id"
-          :to="`/student/course/${course.id}/${assignment.id}?q=${Math.min(assignment.questionsCompleted, assignment.numQuestions)}`"
+          :to="`/student/course/${course.id}/${assignment.id}?q=${Math.min(assignment.questionsCompleted, assignment.assignmentnumQuestions)}`"
           class="flex h-full w-full flex-col items-center justify-center rounded-xl border border-neutral-300 p-3 hover:shadow-lg hover:transition dark:border-neutral-600 dark:hover:border-neutral-300/50"
           @click.stop
         >
-          <p class="text-center text-sm text-neutral-700 dark:text-neutral-300" :title="assignment.dueDate.toLocaleString()">
-            Due <!-- {{ formatDate(assignment.dueDate, currentTime) }} -->
+          <p class="text-center text-sm text-neutral-700 dark:text-neutral-300" :title="assignment.assignment.dueDate.toLocaleString()">
+            Due {{ formatDate(assignment.dueDate, currentTime) }}
           </p>
 
           <div class="flex h-full w-full flex-col items-center justify-start gap-3">
-            <p class="w-64 overflow-hidden overflow-ellipsis text-nowrap text-center text-xl font-semibold">{{ assignment.name }}</p>
+            <p class="w-64 overflow-hidden overflow-ellipsis text-nowrap text-center text-xl font-semibold">{{ assignment.assignment.name }}</p>
 
             <div class="flex w-full items-center justify-between gap-2">
-              <span class="shrink-0">Progress: {{ assignment.questionsCompleted }}/{{ assignment.numQuestions }}</span>
+              <span class="shrink-0">Progress: {{ assignment.questionsCompleted }}/{{ assignment.assignment.numQuestions }}</span>
               <div class="flex h-4 w-full items-start overflow-hidden rounded-full border border-neutral-300 dark:border-neutral-600">
-                <div class="h-full" :style="{ width: (assignment.questionsCompleted / assignment.numQuestions) * 100 + '%', backgroundColor: classColors[generalClassType] }"></div>
+                <div class="h-full" :style="{ width: (assignment.questionsCompleted / assignment.assignment.numQuestions) * 100 + '%', backgroundColor: classColors[generalClassType] }"></div>
               </div>
             </div>
           </div>
         </NuxtLink>
       </div>
 
-      <p v-else>No assignments</p>
+      <p v-else>No assignments</p> -->
     </div>
   </NuxtLink>
 </template>
@@ -47,32 +47,14 @@
 const props = defineProps<{ course: StudentCourse }>();
 const currentTime = new Date();
 
-const assignments = computed(() =>
-  [...props.course.assignments]
-    // .filter((assignment) => !assignment.dateSubmitted && assignment.assignment.dueDate >= currentTime)
-    // .sort((a, b) => a.assignment.dueDate.getTime() - b.assignment.dueDate.getTime())
-    // .slice(0, 2)
-);
+// const assignments = computed(() =>
+//   [...props.course.assignments]
+//     .filter((assignment) => !assignment.dateSubmitted && assignment.assignment.dueDate >= currentTime)
+//     .sort((a, b) => a.assignment.dueDate.getTime() - b.assignment.dueDate.getTime())
+//     .slice(0, 2)
+// );
 
 const generalClassType = getGeneralClassType(props.course.classType) as classType
-
-console.log([...props.course.assignments])
-/* returns this:
-[{assignmentInstances: (3) [{…}, {…}, {…}]
-  course:1
-  dateAssigned:"2026-02-12T15:34:35.966276Z"
-  dueDate:"2025-12-15T23:59:00Z"
-  id:1
-  isActive:false
-  name: "Test Assignment"
-  questions: [{…}]
-  teacher: 4
-  timeLimit: 3600
-  timed: true}] */
-// but interface doesnt match
-
-console.log([...props.course.assignments].filter((assignment) => !assignment.dateSubmitted && assignment.dueDate >= currentTime))
-
 </script>
 
 <style scoped>
