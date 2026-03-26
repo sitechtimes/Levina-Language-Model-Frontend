@@ -1,49 +1,50 @@
 interface Assignment {
-  /** @readonly ID of the question. */
+  /** @readonly ID of the assignment. */
   readonly id: number;
+  /** @readonly Name of the assignment. */
+  readonly name: string;
+  /** @readonly Date string of when the assignment is due (ISO 8601 UTC). */
+  readonly due_date: string;
 }
 
 export interface StudentAssignment extends Assignment {
-  /**Date object of when the assignment was submitted. */
-  dateSubmitted: Date | null;
-  /** Number of questions completed. */
-  questionsCompleted: number;
-  /** Number of correct questions in the assignment */
-  questionsCorrect: number;
-  /** @readonly assignment object for assignment properties. */
-  readonly assignment: {
-    /** @readonly Number of attempts allowed, if assignment is dynamic */
-    readonly attemptsAllowed: number;
-    /** @readonly Name of the assignment. */
-    readonly name: string;
-    /** @readonly Number of questions in the assignment */
-    readonly numQuestions: number;
-    /** @readonly Whether or not the assignment can be turned in late. */
-    readonly lateSubmissions: boolean;
-    /**Date object of when the assignment is due (Date(UTC)). */
-    dueDate: Date;
-    /**Date object of when the assignment was assigned (Date(UTC)). */
-    dateAssigned: Date;
-    /** @readonly If the assignment is a static assignment.*/
-    readonly isStatic: boolean;
-    /** @readonly Object identifying the course assignment belongs to.
-     * @warning Only present if assignment is fetched for all courses.
-     */
-    readonly course?: {
-      /** @readonly Id of the course assignment belongs to */
+  /** @readonly List of assignment instances for the student. */
+  readonly assignment_instances: {
+    /** @readonly ID of the assignment instance. */
+    readonly id: number;
+    /** @readonly Whether the assignment has been submitted. */
+    readonly submitted: boolean;
+    /** @readonly List of question instances for the assignment. */
+    readonly question_instances: {
+      /** @readonly ID of the question instance. */
       readonly id: number;
-      /** @readonly Name of the course assignment belongs to */
-      readonly name: string;
-  };
-    /**
-     * Used to store already-fetched `QuestionInterface`s for easy access when going back and forth.
-     *
-     * Each key is the index of the question in the assignment.
-     * @warning Must be manually added to `StudentAssignment`; this field is not returned from the API.
-     * @warning **Questions at certain indices may not exist yet**; the question must be fetched from the API first before being added.
-     */
-    /* questionInterfaces: Record<number, QuestionInterface>; */
-  };
+      /** @readonly Text answer for the question, if any. */
+      readonly text_answer: string | null;
+      /** @readonly Audio answer for the question, if any. */
+      readonly audio_answer: string | null;
+      /** @readonly Whether the question has been submitted. */
+      readonly submitted: boolean;
+      /** @readonly ID of the question this instance belongs to. */
+      readonly question: number;
+    }[];
+  }[];
+  /** @readonly List of questions attached to the assignment. */
+  readonly questions: {
+    /** @readonly ID of the question. */
+    readonly id: number;
+    /** @readonly Description of the question. */
+    readonly description: string;
+    /** @readonly Type of the question (e.g. FRQ). */
+    readonly question_type: string;
+    /** @readonly Content type of the question (e.g. AUDIO, TEXT). */
+    readonly question_content_type: string;
+    /** @readonly Text content of the question, if any. */
+    readonly text_question: string | null;
+    /** @readonly Audio content of the question, if any. */
+    readonly audio_question: string | null;
+    /** @readonly Content type of the answer (e.g. AUDIO, TEXT). */
+    readonly answer_content_type: string;
+  }[];
 }
 
 export interface TeacherAssignment extends Assignment {
@@ -51,12 +52,8 @@ export interface TeacherAssignment extends Assignment {
   timeLimit: number;
   timed: boolean;
   assignmentInstances: AssignmentInstance;
-  /** @readonly Name of the assignment. */
-  readonly name: string;
   /** Date the assignment was submitted (Date(UTC)) */
   dateAssigned: Date;
-  /** Date the assignment is due (Date(UTC)) */
-  dueDate: Date;
   /** @readonly Number of questions in the assignment */
   readonly numQuestions: number;
   /** @readonly Whether or not the assignment can be turned in late. */
@@ -66,13 +63,9 @@ export interface TeacherAssignment extends Assignment {
 }
 
 export interface TeacherAssignmentTemplate extends Assignment {
-  /** @readonly Name of the assignment. */
-  readonly name: string;
   timed: boolean;
   time_limit: number;
   questions: number[];
-  /** Date the assignment is due (Date(UTC)) */
-  due_date: Date;
   course: number;
 }
 
