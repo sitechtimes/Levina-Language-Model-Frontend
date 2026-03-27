@@ -1,7 +1,10 @@
 <template>
     <div>
         <h1>Student Assignment</h1>
-        <p>question stuff goes here</p>
+        <p>question sidebar goes here, the title of each question</p>
+        <div v-for="question in assignment?.questions" :key="question.id" class="p-6">
+            <h2 v-if="question.description">{{ question.description }}</h2>
+        </div>
     </div>
 </template>
 
