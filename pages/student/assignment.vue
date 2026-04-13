@@ -1,4 +1,4 @@
-<template>
+<!-- <template>
     <div>
         <h1>Student Assignment</h1>
         <p>question sidebar goes here, the title of each question</p>
@@ -16,8 +16,8 @@ assignment.value = result;
 console.log(assignment.value?.questions)
 
 </script>
-
-<!-- <template>
+ -->
+ <template>
   <div>
     <h1>Student Assignment</h1>
     <p>question sidebar goes here, the title of each question</p>
@@ -34,19 +34,14 @@ console.log(assignment.value?.questions)
         </button>
 
         <div v-if="recordings[question.id]" class="flex items-center gap-3">
-  <audio :src="recordings[question.id].url" controls class="h-8" />
-  
-    :href="recordings[question.id].url"
-    :download="`question-${question.id}.webm`"
-    class="text-sm underline"
-  >
-            Save
+            <audio :src="recordings[question.id].url" controls class="h-8" />
+            <a :href="recordings[question.id].url" :download="`question-${question.id}.webm`" class="text-sm underline"> Save </a>
         </div>
       </div>
     </div>
   </div>
 </template>
-
+<!-- need to make this kinda look like the newl's, where you can stop and resume audios -->
 <script setup lang="ts">
 interface Recording {
   blob: Blob
@@ -76,9 +71,22 @@ async function toggleRecording(questionId: number) {
 }
 
 async function startRecording(questionId: number) {
-  if (activeRecorder.value) stopRecording()
-
-  const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
+if (activeRecorder.value) stopRecording()
+  let stream: MediaStream
+  try {
+    stream = await navigator.mediaDevices.getUserMedia({ audio: true })
+  } catch (err) {
+    if (err instanceof DOMException) {
+      if (err.name === 'NotFoundError') {
+        alert('No microphone found. Please plug one in and try again.')
+      } else if (err.name === 'NotAllowedError') {
+        alert('Microphone access was denied. Please allow it in your browser settings.')
+      } else {
+        alert(`Microphone error: ${err.message}`)
+      }
+    }
+    return
+  }
   const recorder = new MediaRecorder(stream)
   const chunks: BlobPart[] = []
 
@@ -96,7 +104,7 @@ async function startRecording(questionId: number) {
     recordings[questionId] = { blob, url, file }
 
     stream.getTracks().forEach(t => t.stop())
-    activeRecorder.value    = null
+    activeRecorder.value = null
     activeQuestionId.value  = null
   }
 
@@ -108,7 +116,7 @@ async function startRecording(questionId: number) {
 function stopRecording() {
   activeRecorder.value?.stop()
 }
-</script> -->
+</script>
 
 <style scoped>
 </style>
