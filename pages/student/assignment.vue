@@ -1,22 +1,3 @@
-<!-- <template>
-    <div>
-        <h1>Student Assignment</h1>
-        <p>question sidebar goes here, the title of each question</p>
-        <div v-for="question in assignment?.questions" :key="question.id" class="p-6">
-            <h2 v-if="question.description">{{ question.description }}</h2>
-        </div>
-    </div>
-</template>
-
-<script setup lang="ts">
-const assignment = ref<StudentAssignment | null>(null);
-const assignmentId = 2;
-const result = await requestEndpoint<StudentAssignment>(`/assignments/${assignmentId}`);
-assignment.value = result;
-console.log(assignment.value?.questions)
-
-</script>
- -->
  <template>
   <div>
     <h1>Student Assignment</h1>
@@ -35,7 +16,8 @@ console.log(assignment.value?.questions)
 
         <div v-if="recordings[question.id]" class="flex items-center gap-3">
             <audio :src="recordings[question.id].url" controls class="h-8" />
-            <a :href="recordings[question.id].url" :download="`question-${question.id}.webm`" class="text-sm underline"> Save </a>
+             <a :href="recordings[question.id].url" :download="`question-${question.id}.webm`" class="text-sm underline"> Save </a>
+           <!--  <a :href="recordings[question.id].url" @click="submitAudioAnswer(recordings[question.id].file, question.id)" class="text-sm underline"> Save </a> -->
         </div>
       </div>
     </div>
@@ -116,6 +98,7 @@ if (activeRecorder.value) stopRecording()
 function stopRecording() {
   activeRecorder.value?.stop()
 }
+
 </script>
 
 <style scoped>

@@ -125,6 +125,16 @@ export async function requestEndpoint<T>(endpoint: string, method?: string, body
 
 }
 
+export async function submitAudioAnswer(
+  audio_answer:File,
+  questionId: number
+) {
+  /* await requestEndpoint<void>(`question-instances/${questionId}/`, "POST", {
+    audio_answer
+  }); */
+  console.log("this might be working", audio_answer, questionId);
+}
+
 export async function submitCreateAssignment(
   name: string,
   timed: boolean,
