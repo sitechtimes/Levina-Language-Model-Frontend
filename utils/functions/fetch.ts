@@ -129,9 +129,9 @@ export async function submitAudioAnswer(
   audio_answer:File,
   questionId: number
 ) {
-  /* await requestEndpoint<void>(`question-instances/${questionId}/`, "POST", {
+   await requestEndpoint<void>(`question-instances/${questionId}/`, "POST", {
     audio_answer
-  }); */
+  });
   console.log("this might be working", audio_answer, questionId);
 }
 
@@ -201,6 +201,7 @@ const formData = new FormData();
   formData.append("answer_content_type", answer_content_type);
 
   await requestEndpoint<void>("questions/", "POST", formData);
+  console.log("i'm trying to actually submit an audio q")
 }
 
 

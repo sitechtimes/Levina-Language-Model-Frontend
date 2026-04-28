@@ -23,7 +23,12 @@
     </div>
   </div>
 </template>
-<!-- need to make this kinda look like the newl's, where you can stop and resume audios -->
+<!-- need to make this kinda look like the newl's, where you can stop and resume audios 
+ the audio recording is done, it currently downloads a file. for whoever continues this process:
+ 1. if you want, instead of downloading the file, you can upload it directly to the server using the submitAudioAnswer function. 
+ 2. if you want to stop and resume recordings (like how the newl used to do it), take a look at MediaRecorder on mdn web docs
+ 3. make sure that the student goes through like two different steps to make sure they submit this audio, because it realistically should be final
+ 4. for audio questions, there's going to either be text or audio prompts that just need to be displayed-->
 <script setup lang="ts">
 interface Recording {
   blob: Blob
