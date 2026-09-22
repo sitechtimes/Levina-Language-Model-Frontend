@@ -64,6 +64,8 @@ export const useUserStore = defineStore("userStore", () => {
   const name = ref("");
   const userType = ref<"student" | "teacher">("student");
 
+  const studentCourses = ref<StudentCourse[]>([]);
+  const studentCurrentCourse = ref<StudentCourse>();
   const teacherCourses = ref<TeacherCourseNoAssignment[]>([]);
   const teacherCurrentCourse = ref<TeacherCourse>();
 
@@ -94,9 +96,6 @@ export const useUserStore = defineStore("userStore", () => {
     console.log("Access token refreshed.");
     return true;
   }
-
-const studentCourses = ref<StudentCourse[]>([]);
-const studentCurrentCourse = ref<StudentCourse>();
 
 //   const currentQuestion = ref<StaticQuestionInterface | DynamicQuestionInterface>();
 
@@ -129,6 +128,7 @@ const studentCurrentCourse = ref<StudentCourse>();
       teacherCourses.value = await tryRequestEndpoint<TeacherCourseNoAssignment[]>("courses/","GET").then(res => res.data || []);
     } else {
       userType.value = "student"
+      studentCourses.value = await tryRequestEndpoint<StudentCourse[]>("courses/","GET").then(res => res.data || []);
     } 
 
     return { success: true, data };
