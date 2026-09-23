@@ -3,6 +3,26 @@ interface Assignment {
   readonly id: number;
 }
 
+export interface AssignmentQuestion {
+  /** @readonly ID of the question. */
+  readonly id: number;
+  readonly description: string | null;
+  readonly questionType: "MCQ" | "FRQ";
+  readonly answerContentType: "TEXT" | "AUDIO";
+  readonly textAnswer: string | null;
+  readonly falseAnswers: string[] | null;
+}
+
+export interface AssignmentQuestionInstance {
+  /** @readonly ID of the question instance. */
+  readonly id: number;
+  /** @readonly ID of the question represented by this instance. */
+  readonly question: number;
+  readonly textAnswer: string | null;
+  readonly audioAnswer: string | null;
+  readonly submitted: boolean;
+}
+
 export interface StudentAssignment extends Assignment {
   /**Date object of when the assignment was submitted. */
   dateSubmitted: Date | null;
@@ -50,7 +70,8 @@ export interface TeacherAssignment extends Assignment {
   readonly id: number;
   timeLimit: number;
   timed: boolean;
-  assignmentInstances: AssignmentInstance;
+  assignmentInstances: AssignmentInstance[];
+  questions: AssignmentQuestion[];
   /** @readonly Name of the assignment. */
   readonly name: string;
   /** Date the assignment was submitted (Date(UTC)) */
@@ -77,15 +98,13 @@ export interface TeacherAssignmentTemplate extends Assignment {
 }
 
 export interface AssignmentInstance {
-  filter(arg0: (instance: { submitted: any; }) => any): unknown;
   /** @readonly ID of the assignment instance. */
   readonly assignment: number;
   /** @readonly ID of the student. */
   readonly student: number;
   submitted: boolean;
   time_used: number;
-  /** @readonly Length of AssignmentInstances */
-  readonly length: number;
+  questionInstances: AssignmentQuestionInstance[];
 }
 
 export interface AssignmentResults {
