@@ -6,12 +6,11 @@
       :assignment="assignment"
       :currentQuestionIndex="currentQuestionIndex" 
       :triggerSubmit="triggerSubmit" 
-      :isSaved="isSaved" />-->
+      :isSaved="isSaved" />   -->
     <StudentAssignmentQuestion
       v-for="question in assignment?.questions"
       :key="question.id"
       :question="question"
-
     />
   </div>
 </template>

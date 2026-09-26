@@ -1,10 +1,12 @@
 <!-- components/StudentQuestionCard.vue -->
 <template>
-  <div>
+  <div class="p-6 border border-neutral-300 bg-body w-1/2 m-auto hover:border-neutral-600/50 hover:shadow-lg hover:transition dark:border-neutral-600 dark:hover:border-neutral-300/50">
     <h2 v-if="question.description">{{ question.description }}</h2>
 
-    <!-- recording section -->
-    <section class="mt-3 flex items-center justify-center gap-3">
+    <h2 v-if="question.questionContentType === 'TEXT'" class="text-center">{{ question.textQuestion }}</h2>
+    <h2 v-else class="text-center">{{ question.audioQuestion }}</h2>
+    <!-- recording answer section -->
+    <section v-if="question.questionContentType === 'AUDIO'" class="mt-3 flex items-center justify-center gap-3">
       <button
         @click="toggleRecording"
         :class="isRecording ? 'bg-red-500' : 'bg-blue-500'"
@@ -19,11 +21,16 @@
         <!-- <a :href="recording.url" @click="submitAudioAnswer(recording.file, question.id)" class="text-sm underline"> Save </a> -->
       </div>
     </section>
-      <!-- to do: text answer section -->
+    <!-- text answer section -->
+    <section v-else class="flex flex-col items-center">
+        <textarea v-model="textAnswer" class="w-full mt-2 p-2 border border-neutral-300 rounded" rows="4" placeholder="Type your answer here..."></textarea>
+        <button @click="submitTextAnswer" class="mt-2 m-auto px-4 py-2 bg-blue-500 text-white rounded ">Submit</button>
+    </section>
   </div>
 </template>
 
 <script setup lang="ts">
+
 const props = defineProps<{
   question: StudentAssignment['questions'][number]
 }>()
@@ -37,6 +44,20 @@ interface Recording {
 const activeRecorder = ref<MediaRecorder | null>(null)
 const isRecording = ref(false)
 const recording = ref<Recording | null>(null)
+
+    
+const textAnswer = ref('')
+
+async function submitTextAnswer() {
+  const result = await requestEndpoint<StudentAssignment>(
+    `assignment-instances/${props.question.id}/submit/`, 
+    'POST',
+    {
+      textAnswer: textAnswer.value
+    }
+  )
+//to do: send to new page probably after successful submission
+}
 
 function toggleRecording() {
   if (isRecording.value) {
