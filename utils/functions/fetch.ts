@@ -75,6 +75,7 @@ export async function requestEndpoint<T>(endpoint: string, method?: string, body
 
   if (userStore.accessToken) {
     headers.Authorization = `Bearer ${userStore.accessToken}`;
+    console.log(userStore.accessToken)
   }
 
   if (method) {
