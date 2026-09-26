@@ -9,19 +9,19 @@ interface Assignment {
 
 export interface StudentAssignment extends Assignment {
   /** @readonly List of assignment instances for the student. */
-  readonly assignment_instances: {
+  readonly assignmentInstances: {
     /** @readonly ID of the assignment instance. */
     readonly id: number;
     /** @readonly Whether the assignment has been submitted. */
     readonly submitted: boolean;
     /** @readonly List of question instances for the assignment. */
-    readonly question_instances: {
+    readonly questionInstances: {
       /** @readonly ID of the question instance. */
       readonly id: number;
       /** @readonly Text answer for the question, if any. */
-      readonly text_answer: string | null;
+      readonly textAnswer: string | null;
       /** @readonly Audio answer for the question, if any. */
-      readonly audio_answer: string | null;
+      readonly audioAnswer: string | null;
       /** @readonly Whether the question has been submitted. */
       readonly submitted: boolean;
       /** @readonly ID of the question this instance belongs to. */
@@ -35,15 +35,15 @@ export interface StudentAssignment extends Assignment {
     /** @readonly Description of the question. */
     readonly description: string;
     /** @readonly Type of the question (e.g. FRQ). */
-    readonly question_type: string;
+    readonly questionType: string;
     /** @readonly Content type of the question (e.g. AUDIO, TEXT). */
-    readonly question_content_type: string;
+    readonly questionContentType: string;
     /** @readonly Text content of the question, if any. */
-    readonly text_question: string | null;
+    readonly textQuestion: string | null;
     /** @readonly Audio content of the question, if any. */
-    readonly audio_question: string | null;
+    readonly audioQuestion: string | null;
     /** @readonly Content type of the answer (e.g. AUDIO, TEXT). */
-    readonly answer_content_type: string;
+    readonly answerContentType: string;
   }[];
 }
 
