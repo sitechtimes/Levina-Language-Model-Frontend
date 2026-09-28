@@ -12,12 +12,12 @@
       <!-- <div class="list-overlay pointer-events-none absolute left-0 top-0 h-full w-full border-y border-neutral-300 dark:border-neutral-600"></div> -->
       <ul class="flex h-[65dvh] w-full shrink-0 flex-col items-start justify-start overflow-y-scroll border-neutral-300 px-4 xl:h-[70dvh]">
         <li
-          v-for="(num, index) in assignment.assignment.numQuestions"
+          v-for="(num, index) in totalQuestions"
           :key="index"
           class="w-full border-l-4 border-neutral-300 py-0.5 pl-4 first:mt-6 last:mb-6"
           :class="{
-            'border-neutral-400 hover:border-neutral-500': currentQuestionIndex === index, // current
-            'cursor-not-allowed grayscale': !assignment.assignment.isStatic //if dynamic, disable
+            'border-neutral-400 hover:border-neutral-500': currentQuestionIndex === index,
+            'cursor-not-allowed grayscale': !assignmentIsStatic
           }"
         >
           <!-- button for question number -->
@@ -26,10 +26,10 @@
             :class="{
               'bg-neutral-200 dark:bg-neutral-500/25': currentQuestionIndex === index,
               'text-neutral-400': currentQuestionIndex < index,
-              'hover:bg-neutral-200 dark:hover:bg-neutral-700': assignment.assignment.isStatic
+              'hover:bg-neutral-200 dark:hover:bg-neutral-700': assignmentIsStatic
             }"
             type="button"
-            :disabled="!assignment.assignment.isStatic"
+            :disabled="!assignmentIsStatic"
             @click="changeRouteQuery({ q: index + 1 }, 'push')"
           >
             Question {{ num }}
@@ -39,9 +39,9 @@
     </div>
 
     <div class="flex h-full w-full flex-col items-start justify-end p-4 lg:bg-neutral-100/25 dark:bg-none lg:dark:bg-neutral-800">
-      <h4 class="w-64 overflow-hidden overflow-ellipsis text-nowrap text-2xl font-medium" :title="assignment.assignment.name">{{ assignment.assignment.name }}</h4>
-      <p class="hidden text-sm font-bold sm:block">Due {{ formatDate(assignment.assignment.dueDate, currentDate) }}</p>
-      <p class="hidden text-sm text-neutral-700 sm:block dark:text-white">Assigned {{ formatDate(assignment.assignment.dateAssigned, currentDate) }}</p>
+      <h4 class="w-64 overflow-hidden overflow-ellipsis text-nowrap text-2xl font-medium" :title="assignmentName">{{ assignmentName }}</h4>
+      <p class="hidden text-sm font-bold sm:block">Due {{ formatDate(dueDate, currentDate) }}</p>
+      <p class="hidden text-sm text-neutral-700 sm:block dark:text-white">Assigned {{ formatDate(assignedDate, currentDate) }}</p>
 
       <div class="w-full sm:mt-4 lg:mt-auto" :class="{ 'du-tooltip': !assignmentIsComplete }" data-tip="Complete all questions first!">
         <button
@@ -91,6 +91,7 @@ const props = defineProps<{
   triggerSubmit: boolean;
   isSaved: boolean;
 }>();
+
 const emit = defineEmits<{
   close: [void];
   submitted: [void];
@@ -101,18 +102,53 @@ const userStore = useUserStore();
 const { studentCurrentCourse } = storeToRefs(userStore);
 const currentDate = new Date();
 
+function formatDate(dateValue: string | Date | null | undefined, referenceDate: Date = new Date()) {
+  if (!dateValue) return "No date";
+
+  const date = new Date(dateValue);
+  if (Number.isNaN(date.getTime())) return "Invalid date";
+
+  const today = new Date(referenceDate);
+  const tomorrow = new Date(today);
+  tomorrow.setDate(today.getDate() + 1);
+
+  if (date.toDateString() === today.toDateString()) return "Today";
+  if (date.toDateString() === tomorrow.toDateString()) return "Tomorrow";
+
+  return new Intl.DateTimeFormat("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  }).format(date);
+}
+
+const assignmentData = computed(() => props.assignment as LegacyAssignmentShape);
+const assignmentName = computed(() => assignmentData.value.name ?? assignmentData.value.assignment?.name ?? "Assignment");
+const dueDate = computed(() => assignmentData.value.dueDate ?? assignmentData.value.assignment?.dueDate ?? new Date());
+const assignedDate = computed(() => assignmentData.value.dateAssigned ?? assignmentData.value.assignment?.dateAssigned ?? new Date());
+const totalQuestions = computed(() => assignmentData.value.assignment?.numQuestions ?? assignmentData.value.questions.length ?? 0);
+const assignmentIsStatic = computed(() => assignmentData.value.isStatic ?? assignmentData.value.assignment?.isStatic ?? true);
+const completedQuestions = computed(() => assignmentData.value.questionsCompleted ?? assignmentData.value.assignment?.questionsCompleted ?? 0);
+
 const submitState = reactive({
   isLoading: false,
   result: ref<boolean>()
 });
 
 const assignmentIsComplete = computed(() => {
-  const questionInterfaces = Object.values(props.assignment.assignment.questionInterfaces);
+  const legacyQuestionInterfaces = props.assignment.assignmentInstances.flatMap((instance) => instance.questionInstances as Array<{
+    question?: { answers?: Array<{ selected?: unknown }> };
+  }>);
+
+  const eachQuestionAnswered = legacyQuestionInterfaces.every((questionInterface) =>
+    (questionInterface.question?.answers ?? []).some((answer) => Boolean(answer.selected))
+  );
+
   return (
-    (props.assignment.assignment.isStatic && // only for statics
-      questionInterfaces.length === props.assignment.assignment.numQuestions && // every question has been loaded
-      questionInterfaces.every((questionInterface) => questionInterface.question.answers.some((answer) => answer.selected))) || // every question has been answered
-    props.assignment.questionsCompleted >= props.assignment.assignment.numQuestions // not all questions loaded but everything still answered
+    (assignmentIsStatic.value &&
+      legacyQuestionInterfaces.length >= totalQuestions.value &&
+      eachQuestionAnswered) ||
+    completedQuestions.value >= totalQuestions.value
   );
 });
 

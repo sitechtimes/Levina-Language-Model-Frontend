@@ -2,11 +2,11 @@
   <div>
     <h1 class="text-2xl font-bold mb-4 text-center p-4">Student Assignment</h1>
     <!--to do:question sidebar goes here, have each item be the title of each question -->
-     <!-- <StudentAssignmentSidebar 
+     <StudentAssignmentSidebar 
       :assignment="assignment"
       :currentQuestionIndex="currentQuestionIndex" 
       :triggerSubmit="triggerSubmit" 
-      :isSaved="isSaved" />   -->
+      :isSaved="isSaved" />   
     <StudentAssignmentQuestion
       v-for="question in assignment?.questions"
       :key="question.id"

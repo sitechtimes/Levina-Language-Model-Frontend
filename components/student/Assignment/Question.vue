@@ -4,7 +4,7 @@
     <h2 v-if="question.description">{{ question.description }}</h2>
 
     <h2 v-if="question.questionContentType === 'TEXT'" class="text-center">{{ question.textQuestion }}</h2>
-    <h2 v-else class="text-center">{{ question.audioQuestion }}</h2>
+    <audio v-else :src="question.audioQuestion || undefined" controls class="m-auto"/>
     <!-- recording answer section -->
     <section v-if="question.questionContentType === 'AUDIO'" class="mt-3 flex items-center justify-center gap-3">
       <button
