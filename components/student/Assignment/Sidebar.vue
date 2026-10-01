@@ -40,8 +40,8 @@
 
     <div class="flex h-full w-full flex-col items-start justify-end p-4 lg:bg-neutral-100/25 dark:bg-none lg:dark:bg-neutral-800">
       <h4 class="w-64 overflow-hidden overflow-ellipsis text-nowrap text-2xl font-medium" :title="assignment.assignment.name">{{ assignment.assignment.name }}</h4>
-      <p class="hidden text-sm font-bold sm:block">Due {{ formatDate(assignment.assignment.dueDate, currentDate) }}</p>
-      <p class="hidden text-sm text-neutral-700 sm:block dark:text-white">Assigned {{ formatDate(assignment.assignment.dateAssigned, currentDate) }}</p>
+      <!-- <p class="hidden text-sm font-bold sm:block">Due {{ formatDate(assignment.assignment.dueDate, currentDate) }}</p>
+      <p class="hidden text-sm text-neutral-700 sm:block dark:text-white">Assigned {{ formatDate(assignment.assignment.dateAssigned, currentDate) }}</p> -->
 
       <div class="w-full sm:mt-4 lg:mt-auto" :class="{ 'du-tooltip': !assignmentIsComplete }" data-tip="Complete all questions first!">
         <button
