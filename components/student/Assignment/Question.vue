@@ -34,6 +34,9 @@
 const props = defineProps<{
   question: StudentAssignment['questions'][number]
 }>()
+interface TextAnswer {
+
+}
 
 interface Recording {
   blob: Blob
@@ -45,11 +48,26 @@ const activeRecorder = ref<MediaRecorder | null>(null)
 const isRecording = ref(false)
 const recording = ref<Recording | null>(null)
 
-    
 const textAnswer = ref('')
 
+onMounted(() => {
+    if (localStorage.getItem(`question-${props.question.id}-textAnswer`)) {
+        textAnswer.value = localStorage.getItem(`question-${props.question.id}-textAnswer`) || ''
+    }
+    if (localStorage.getItem(`question-${props.question.id}-recording`)) {
+      recording.value = JSON.parse(localStorage.getItem(`question-${props.question.id}-recording`) || 'null')
+    }
+}
+)
+watch(textAnswer, (newVal) => {
+    localStorage.setItem(`question-${props.question.id}-textAnswer`, newVal)
+})
+watch(recording, (newVal) => {
+    localStorage.setItem(`question-${props.question.id}-recording`, JSON.stringify(newVal))
+})
+
 async function submitTextAnswer() {
-  const result = await requestEndpoint<StudentAssignment>(
+  const result = await request  <StudentAssignment>(
     `assignment-instances/${props.question.id}/submit/`, 
     'POST',
     {
