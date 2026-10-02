@@ -13,7 +13,7 @@
     <div class="flex h-full min-h-36 w-full flex-col items-center justify-start p-2">
       <h3 class="pb-2 pt-1 text-xl font-bold">Assignments</h3>
 
-      <div v-if="assignments.length > 0" class="flex h-full w-full flex-wrap items-start justify-around gap-3 px-3 pb-3">
+       <div v-if="assignments.length > 0" class="flex h-full w-full flex-wrap items-start justify-around gap-3 px-3 pb-3">
         <NuxtLink
           v-for="assignment in assignments"
           :key="assignment.id"
@@ -47,12 +47,13 @@
 const props = defineProps<{ course: StudentCourse }>();
 const currentTime = new Date();
 
+// PROBLEM: data format is not matching w backend data
 const assignments = computed(() =>
   [...props.course.assignments]
-    .filter((assignment) => !assignment.dateSubmitted && assignment.assignment.dueDate >= currentTime)
-    .sort((a, b) => a.assignment.dueDate.getTime() - b.assignment.dueDate.getTime())
+    .filter((assignment) => !assignment.dateSubmitted && assignment.dueDate >= currentTime)
+    .sort((a, b) => a.assignment.dueDate.getTime() - b.dueDate.getTime())
     .slice(0, 2)
-);
+); 
 
 const generalClassType = getGeneralClassType(props.course.classType) as classType
 </script>
