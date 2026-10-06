@@ -55,6 +55,88 @@ const assignments = computed(() =>
     .slice(0, 2)
 ); 
 
+//what the type is:
+/* interface Course {
+  readonly id: number;
+  readonly name: string;
+  readonly teacher: string;
+  readonly period: number;
+  readonly classType: string;
+  assignmentsFetched: boolean;
+  assignment: StudentAssignment[];
+}
+export interface StudentAssignment extends Assignment {
+  dateSubmitted: Date | null;
+  questionsCompleted: number;
+  questionsCorrect: number;
+  readonly assignment: {
+    readonly attemptsAllowed: number;
+    readonly name: string;
+    readonly numQuestions: number;
+    readonly lateSubmissions: boolean;
+    dueDate: Date;
+    dateAssigned: Date;
+    readonly isStatic: boolean;
+    readonly course?: {
+      readonly id: number;
+      readonly name: string;
+  };
+  };
+}
+ */
+
+// what we're getting:
+/* [
+  {
+    "id": 1,
+    "name": "Test Course",
+    "period": 1,
+    "class_type": "Freshman Russian",
+    "join_code": "",
+    "teachers": [
+      {
+        "id": 4,
+        "email": "teacher@example.com",
+        "first_name": "Teacher",
+        "last_name": "User",
+        "user_type": 1
+      }
+    ],
+    "students": [
+      1,
+      2,
+      3
+    ],
+    "assignments": [
+      {
+        "id": 1,
+        "name": "Test Assignment",
+        "due_date": "2025-12-15T23:59:00Z",
+        "is_active": false,
+        "timed": true,
+        "time_limit": 3600,
+        "teacher": 4,
+        "course": 1,
+        "date_assigned": "2026-09-16T15:03:12.810770Z",
+        "assignment_instances": [
+          {
+            "id": 1,
+            "assignment": 1,
+            "student": 1,
+            "submitted": false,
+            "time_used": 0,
+            "question_instances": [
+              {
+                "id": 1,
+                "text_answer": null,
+                "audio_answer": null,
+                "submitted": false,
+                "question": 1
+              }
+            ],
+            "dialogue_instances": []
+          }, */
+
 const generalClassType = getGeneralClassType(props.course.classType) as classType
 </script>
 
