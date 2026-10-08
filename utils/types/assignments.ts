@@ -8,7 +8,10 @@ export interface AssignmentQuestion {
   readonly id: number;
   readonly description: string | null;
   readonly questionType: "MCQ" | "FRQ";
+  readonly questionContentType?: "TEXT" | "AUDIO";
   readonly answerContentType: "TEXT" | "AUDIO";
+  readonly textQuestion?: string | null;
+  readonly audioQuestion?: string | null;
   readonly textAnswer: string | null;
   readonly falseAnswers: string[] | null;
 }
@@ -99,12 +102,35 @@ export interface TeacherAssignmentTemplate extends Assignment {
 
 export interface AssignmentInstance {
   /** @readonly ID of the assignment instance. */
+  readonly id?: number;
   readonly assignment: number;
   /** @readonly ID of the student. */
   readonly student: number;
   submitted: boolean;
-  time_used: number;
+  time_used?: number;
+  timeUsed?: number;
   questionInstances: AssignmentQuestionInstance[];
+}
+
+export interface StudentAssignmentResult {
+  studentId: number;
+  firstName: string;
+  lastName: string;
+  hasSubmitted: boolean;
+  correctCount: number;
+  incorrectCount: number;
+  pendingCount: number;
+  totalQuestions: number;
+}
+
+export interface ClassAssignmentStats {
+  totalCorrect: number;
+  totalIncorrect: number;
+  totalPending: number;
+  totalQuestions: number;
+  submittedCount: number;
+  totalStudents: number;
+  accuracyPercentage: number;
 }
 
 export interface AssignmentResults {
