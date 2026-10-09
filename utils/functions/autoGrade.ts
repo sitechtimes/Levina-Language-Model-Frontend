@@ -2,7 +2,7 @@ import type {
   AssignmentQuestion,
   AssignmentQuestionInstance,
   ClassAssignmentStats,
-  StudentAssignmentResult,
+  StudentAssignmentResult
 } from "../types/assignments";
 
 export type QuestionGradeStatus = "correct" | "incorrect" | "pending-review";
@@ -22,7 +22,7 @@ export interface QuestionGrade {
  */
 export function autoGradeQuestion(
   question: AssignmentQuestion,
-  questionInstance: AssignmentQuestionInstance | undefined,
+  questionInstance: AssignmentQuestionInstance | undefined
 ): QuestionGrade {
   if (!questionInstance || !questionInstance.submitted) {
     return { status: "pending-review" };
@@ -52,7 +52,7 @@ export function autoGradeQuestion(
  */
 export function gradeStudentAttempt(
   questions: AssignmentQuestion[],
-  questionInstances: AssignmentQuestionInstance[] = [],
+  questionInstances: AssignmentQuestionInstance[] = []
 ): { correctCount: number; incorrectCount: number; pendingCount: number } {
   let correctCount = 0;
   let incorrectCount = 0;
@@ -78,7 +78,7 @@ export function gradeStudentAttempt(
  * Calculates overall class performance statistics across all student results.
  */
 export function calculateClassStats(
-  results: StudentAssignmentResult[],
+  results: StudentAssignmentResult[]
 ): ClassAssignmentStats {
   const submittedResults = results.filter((r) => r.hasSubmitted);
   const totalCorrect = submittedResults.reduce((acc, r) => acc + r.correctCount, 0);
@@ -97,6 +97,6 @@ export function calculateClassStats(
     totalQuestions,
     submittedCount: submittedResults.length,
     totalStudents: results.length,
-    accuracyPercentage,
+    accuracyPercentage
   };
 }
