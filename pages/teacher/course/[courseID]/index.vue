@@ -10,7 +10,7 @@
 
 
        <div class="flex items-center justify-center gap-4">
-           <TeacherCourseActionButton type="link" :to="`/teacher/course/{classCodePlaceholder}/roster`" img="/ui/users.svg" text="View Students"/>
+           <TeacherCourseActionButton type="link" :to="`/teacher/course/${courseId}/roster`" img="/ui/users.svg" text="View Students"/>
            <TeacherCourseActionButton type="link" :to="`/teacher/create-assignment`" img="/ui/document.svg" text="Create Assignment"/>
            <TeacherCourseActionButton type="button" img="/ui/trash.svg" text="Delete Course" class="hover:bg-red-400" @on-click="deleteType= 'course'" />
           </div>
