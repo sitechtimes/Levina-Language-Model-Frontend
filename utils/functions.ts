@@ -8,14 +8,14 @@ export function delay(ms: number): Promise<void> {
 }
 
 /** Returns a random integer between `min` and `max`, inclusive. */
-export function getRandomInt(min: number, max: number) {
+export function getRandomInt(min: number, max: number): number {
   const minCeiled: number = Math.ceil(min);
   const maxFloored: number = Math.floor(max);
   return Math.floor(Math.random() * (maxFloored - minCeiled + 1) + minCeiled);
 }
 
 /** Returns a random item from an array. */
-export function getRandomItem<T>(arr: T[]) {
+export function getRandomItem<T>(arr: T[]): T {
   return arr[getRandomInt(0, arr.length - 1)];
 }
 
