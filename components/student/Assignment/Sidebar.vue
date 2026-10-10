@@ -1,7 +1,7 @@
 <template>
   <div
     class="fixed left-0 top-0 flex h-full w-72 shrink-0 flex-col items-start justify-start border-neutral-300 transition-shadow lg:sticky lg:border-r dark:border-neutral-600"
-    :class="assignmentIsComplete ? 'lg:shadow-xl' : 'shadow-none'"
+    :class="doneAssignment ? 'lg:shadow-xl' : 'shadow-none'"
   >
     <button class="group my-4 ml-4 flex items-center justify-center gap-2 rounded-xl px-5 py-2 hover:bg-neutral-200 hover:transition dark:hover:bg-neutral-500/25" type="button" @click="emit('close')">
       <img class="size-4 group-hover:-translate-x-1 group-hover:transition dark:invert" src="/ui/arrow-left.svg" aria-hidden="true" />
@@ -43,11 +43,11 @@
       <p class="hidden text-sm font-bold sm:block">Due {{ formatDate(dueDate, currentDate) }}</p>
       <p class="hidden text-sm text-neutral-700 sm:block dark:text-white">Assigned {{ formatDate(assignedDate, currentDate) }}</p>
 
-      <div class="w-full sm:mt-4 lg:mt-auto" :class="{ 'du-tooltip': !assignmentIsComplete }" data-tip="Complete all questions first!">
+      <div class="w-full sm:mt-4 lg:mt-auto" :class="{ 'du-tooltip': !doneAssignment }" data-tip="Complete all questions first!">
         <button
           class="relative w-full rounded-lg bg-green-accent px-5 py-1.5 text-lg font-bold"
-          :class="assignmentIsComplete ? 'submit-button' : 'cursor-not-allowed grayscale'"
-          :disabled="!assignmentIsComplete"
+          :class="doneAssignment ? 'submit-button' : 'cursor-not-allowed grayscale'"
+          :disabled="!doneAssignment"
           type="button"
           @click="submit"
         >
@@ -90,6 +90,7 @@ const props = defineProps<{
   currentQuestionIndex: number;
   triggerSubmit: boolean;
   isSaved: boolean;
+  doneAssignment?: boolean;
 }>();
 
 const emit = defineEmits<{
@@ -122,34 +123,23 @@ function formatDate(dateValue: string | Date | null | undefined, referenceDate: 
   }).format(date);
 }
 
-const assignmentData = computed(() => props.assignment as LegacyAssignmentShape);
+const assignmentData = computed(() => (props.assignment ?? {}) as Partial<LegacyAssignmentShape>);
 const assignmentName = computed(() => assignmentData.value.name ?? assignmentData.value.assignment?.name ?? "Assignment");
 const dueDate = computed(() => assignmentData.value.dueDate ?? assignmentData.value.assignment?.dueDate ?? new Date());
 const assignedDate = computed(() => assignmentData.value.dateAssigned ?? assignmentData.value.assignment?.dateAssigned ?? new Date());
-const totalQuestions = computed(() => assignmentData.value.assignment?.numQuestions ?? assignmentData.value.questions.length ?? 0);
+const totalQuestions = computed(() => {
+  const questionCount = assignmentData.value.assignment?.numQuestions;
+  if (typeof questionCount === "number") return questionCount;
+
+  const questions = assignmentData.value.questions;
+  return Array.isArray(questions) ? questions.length : 0;
+});
 const assignmentIsStatic = computed(() => assignmentData.value.isStatic ?? assignmentData.value.assignment?.isStatic ?? true);
 const completedQuestions = computed(() => assignmentData.value.questionsCompleted ?? assignmentData.value.assignment?.questionsCompleted ?? 0);
 
 const submitState = reactive({
   isLoading: false,
   result: ref<boolean>()
-});
-
-const assignmentIsComplete = computed(() => {
-  const legacyQuestionInterfaces = props.assignment.assignmentInstances.flatMap((instance) => instance.questionInstances as Array<{
-    question?: { answers?: Array<{ selected?: unknown }> };
-  }>);
-
-  const eachQuestionAnswered = legacyQuestionInterfaces.every((questionInterface) =>
-    (questionInterface.question?.answers ?? []).some((answer) => Boolean(answer.selected))
-  );
-
-  return (
-    (assignmentIsStatic.value &&
-      legacyQuestionInterfaces.length >= totalQuestions.value &&
-      eachQuestionAnswered) ||
-    completedQuestions.value >= totalQuestions.value
-  );
 });
 
 const submitTriggered = ref(false);

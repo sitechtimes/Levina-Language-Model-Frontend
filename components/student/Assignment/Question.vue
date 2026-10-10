@@ -6,7 +6,7 @@
     <h2 v-if="question.questionContentType === 'TEXT'" class="text-center">{{ question.textQuestion }}</h2>
     <audio v-else :src="question.audioQuestion || undefined" controls class="m-auto"/>
     <!-- recording answer section -->
-    <section v-if="question.questionContentType === 'AUDIO'" class="mt-3 flex items-center justify-center gap-3">
+    <section v-if="question.questionContentType === 'AUDIO'" class="mt-3 flex flex-col items-center justify-center gap-3">
       <button
         @click="toggleRecording"
         :class="isRecording ? 'bg-red-500' : 'bg-blue-500'"
@@ -24,7 +24,6 @@
     <!-- text answer section -->
     <section v-else class="flex flex-col items-center">
         <textarea v-model="textAnswer" class="w-full mt-2 p-2 border border-neutral-300 rounded" rows="4" placeholder="Type your answer here..."></textarea>
-        <button @click="submitTextAnswer" class="mt-2 m-auto px-4 py-2 bg-blue-500 text-white rounded ">Submit</button>
     </section>
   </div>
 </template>
@@ -32,11 +31,13 @@
 <script setup lang="ts">
 
 const props = defineProps<{
-  question: StudentAssignment['questions'][number]
+  question: StudentAssignment['questions'][number] & { questionInstanceId?: number }
+  questionInstanceId?: number
 }>()
-interface TextAnswer {
 
-}
+const emits = defineEmits<{
+  changedQuestion: [payload: { questionInstanceId: number | string; questionId: number | string; answer: string | File | undefined }]
+}>()
 
 interface Recording {
   blob: Blob
@@ -61,21 +62,20 @@ onMounted(() => {
 )
 watch(textAnswer, (newVal) => {
     localStorage.setItem(`question-${props.question.id}-textAnswer`, newVal)
+    emits("changedQuestion", {
+      questionInstanceId: props.questionInstanceId ?? props.question.id,
+      questionId: props.question.id,
+      answer: newVal
+    })
 })
 watch(recording, (newVal) => {
     localStorage.setItem(`question-${props.question.id}-recording`, JSON.stringify(newVal))
+    emits("changedQuestion", {
+      questionInstanceId: props.questionInstanceId ?? props.question.id,
+      questionId: props.question.id,
+      answer: newVal?.file
+    })
 })
-
-async function submitTextAnswer() {
-  const result = await request  <StudentAssignment>(
-    `assignment-instances/${props.question.id}/submit/`, 
-    'POST',
-    {
-      textAnswer: textAnswer.value
-    }
-  )
-//to do: send to new page probably after successful submission
-}
 
 function toggleRecording() {
   if (isRecording.value) {

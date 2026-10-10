@@ -44,6 +44,7 @@ export interface StudentAssignment extends Assignment {
     readonly audioQuestion: string | null;
     /** @readonly Content type of the answer (e.g. AUDIO, TEXT). */
     readonly answerContentType: string;
+    readonly questionInstanceId: number;
   }[];
 }
 
@@ -97,4 +98,47 @@ export interface AssignmentResults {
     /** @readonly Time spent on the question (in seconds). */
     readonly timeSpent: number;
   }[];
+}export interface QuestionInstanceResponse {
+  /** @readonly ID of the question instance. */
+  readonly id: number;
+  /** @readonly Text answer for the question, if any. */
+  readonly textAnswer: string | null;
+  /** @readonly Audio answer for the question, if any. */
+  readonly audioAnswer: string | null;
+  /** @readonly Whether the question has been submitted. */
+  readonly submitted: boolean;
+  /** @readonly ID of the question this instance belongs to. */
+  readonly question: number;
+}
+
+export interface AssignmentInstanceResponse {
+  /** @readonly ID of the assignment instance. */
+  readonly id: number;
+  /** @readonly ID of the assignment this instance belongs to. */
+  readonly assignment: number;
+  /** @readonly ID of the student. */
+  readonly student: number;
+  /** @readonly Whether the assignment has been submitted. */
+  readonly submitted: boolean;
+  /** @readonly Time used on the assignment so far (in seconds). */
+  readonly timeUsed: number;
+  /** @readonly List of question instances for the assignment. */
+  readonly questionInstances: QuestionInstanceResponse[];
+}
+
+export interface QuestionDetailResponse {
+  /** @readonly ID of the question. */
+  readonly id: number;
+  /** @readonly Description of the question, if any. */
+  readonly description: string | null;
+  /** @readonly Type of the question (e.g. FRQ). */
+  readonly questionType: string;
+  /** @readonly Content type of the question (e.g. AUDIO, TEXT). */
+  readonly questionContentType: string;
+  /** @readonly Text content of the question, if any. */
+  readonly textQuestion: string | null;
+  /** @readonly Audio content of the question, if any. */
+  readonly audioQuestion: string | null;
+  /** @readonly Content type of the answer (e.g. AUDIO, TEXT). */
+  readonly answerContentType: string;
 }
