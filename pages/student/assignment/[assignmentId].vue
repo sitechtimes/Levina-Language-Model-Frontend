@@ -36,8 +36,9 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import { fetchStudentAssignment, submitStudentAssignment } from '~/utils/functions/fetch'
+import { loadAudioAnswer } from '~/utils/functions/assignment-answers'
 import type { StudentAssignmentPageData } from '~/utils/types/assignments'
 
 const answers = ref<Record<string, { textAnswer?: string; audioBlob?: File }>>({})
@@ -99,6 +100,27 @@ const { data: assignment, pending, error } = await useAsyncData<StudentAssignmen
   { server: false }
 )
 
+watch(assignment, async (loadedAssignment) => {
+  if (!loadedAssignment) return
+
+  const restoredAnswers = { ...answers.value }
+  await Promise.all(loadedAssignment.questions.map(async (question) => {
+    const savedAnswer = localStorage.getItem(`question-${question.id}-textAnswer`)
+    if (savedAnswer?.trim()) {
+      restoredAnswers[String(question.id)] = { textAnswer: savedAnswer }
+      return
+    }
+
+    try {
+      const audioBlob = await loadAudioAnswer(question.id)
+      if (audioBlob) restoredAnswers[String(question.id)] = { audioBlob }
+    } catch (error) {
+      console.error(`Unable to restore answer for question ${question.id}:`, error)
+    }
+  }))
+  answers.value = restoredAnswers
+}, { immediate: true })
+
 // 2. Compute the active question based on route.query.q
 const currentQuestion = computed(() => {
   const questions = assignment.value?.questions
@@ -133,11 +155,11 @@ function changeQuestion(questionId: number | string) {
 }
 
 const assignmentIsComplete = computed(() => {
-  const questionAmt = assignment.value?.questions?.length ?? 0
-  const answeredQuestions = Object.keys(answers.value ?? {}).length
-
-  // Returns true only if there are questions and all of them are answered
-  return questionAmt > 0 && answeredQuestions >= questionAmt
+  const questions = assignment.value?.questions ?? []
+  return questions.length > 0 && questions.every((question) => {
+    const answer = answers.value[String(question.id)]
+    return Boolean(answer?.textAnswer?.trim() || answer?.audioBlob)
+  })
 })
 
 </script>

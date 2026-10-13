@@ -50,6 +50,7 @@
 </template>
 
 <script setup lang="ts">
+import { loadAudioAnswer, saveAudioAnswer } from '~/utils/functions/assignment-answers'
 
 const props = defineProps<{
   question: StudentAssignment['questions'][number] & { questionInstanceId?: number }
@@ -61,7 +62,6 @@ const emits = defineEmits<{
 }>()
 
 interface Recording {
-  blob: Blob
   url: string
   file: File
 }
@@ -77,14 +77,29 @@ const multipleChoiceOptions = computed(() =>
 )
 
 onMounted(() => {
-    if (localStorage.getItem(`question-${props.question.id}-textAnswer`)) {
-        textAnswer.value = localStorage.getItem(`question-${props.question.id}-textAnswer`) || ''
-    }
-    if (localStorage.getItem(`question-${props.question.id}-recording`)) {
-      recording.value = JSON.parse(localStorage.getItem(`question-${props.question.id}-recording`) || 'null')
-    }
-}
-)
+  const storedTextAnswer = localStorage.getItem(`question-${props.question.id}-textAnswer`)
+  if (storedTextAnswer) {
+    textAnswer.value = storedTextAnswer
+    emits("changedQuestion", {
+      questionInstanceId: props.questionInstanceId ?? props.question.id,
+      questionId: props.question.id,
+      answer: storedTextAnswer
+    })
+  }
+
+  void loadAudioAnswer(props.question.id)
+    .then((file) => {
+      if (!file) return
+      const url = URL.createObjectURL(file)
+      recording.value = { url, file }
+      emits("changedQuestion", {
+        questionInstanceId: props.questionInstanceId ?? props.question.id,
+        questionId: props.question.id,
+        answer: file
+      })
+    })
+    .catch((error: unknown) => console.error("Unable to restore saved audio answer:", error))
+})
 watch(textAnswer, (newVal) => {
     localStorage.setItem(`question-${props.question.id}-textAnswer`, newVal)
     emits("changedQuestion", {
@@ -94,7 +109,12 @@ watch(textAnswer, (newVal) => {
     })
 })
 watch(recording, (newVal) => {
-    localStorage.setItem(`question-${props.question.id}-recording`, JSON.stringify(newVal))
+    if (newVal) {
+      void saveAudioAnswer(props.question.id, newVal.file)
+        .catch((error: unknown) => console.error("Unable to save audio answer:", error))
+    } else {
+      localStorage.removeItem(`question-${props.question.id}-recording`)
+    }
     emits("changedQuestion", {
       questionInstanceId: props.questionInstanceId ?? props.question.id,
       questionId: props.question.id,
@@ -143,7 +163,7 @@ async function startRecording() {
 
     if (recording.value) URL.revokeObjectURL(recording.value.url)
 
-    recording.value = { blob, url, file }
+    recording.value = { url, file }
 
     stream.getTracks().forEach(t => t.stop())
     activeRecorder.value = null
