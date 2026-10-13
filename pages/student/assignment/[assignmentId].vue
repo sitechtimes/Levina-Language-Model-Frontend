@@ -107,7 +107,7 @@ async function submitAssignment() {
 
 definePageMeta({
   layout: 'default',
-  middleware: 'role-check',
+  middleware: ['role-check', 'student-assignment'],
   requiresAuth: true,
   redirectIfAuth: false,
   allowedRoles: ['student']
