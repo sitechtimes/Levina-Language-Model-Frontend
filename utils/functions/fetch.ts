@@ -140,6 +140,8 @@ export async function fetchStudentAssignment(assignmentInstanceId: number): Prom
         questionContentType: question.questionContentType,
         textQuestion: question.textQuestion,
         audioQuestion: question.audioQuestion,
+        textAnswer: question.textAnswer,
+        falseAnswers: question.falseAnswers,
         answerContentType: question.answerContentType,
         questionInstanceId: questionInstance.id,
       };

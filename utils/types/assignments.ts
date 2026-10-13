@@ -42,6 +42,9 @@ export interface StudentAssignment extends Assignment {
     readonly textQuestion: string | null;
     /** @readonly Audio content of the question, if any. */
     readonly audioQuestion: string | null;
+    /** @readonly Correct answer and distractors for multiple-choice questions. */
+    readonly textAnswer?: string | null;
+    readonly falseAnswers?: string[];
     /** @readonly Content type of the answer (e.g. AUDIO, TEXT). */
     readonly answerContentType: string;
     readonly questionInstanceId: number;
@@ -146,6 +149,9 @@ export interface QuestionDetailResponse {
   readonly textQuestion: string | null;
   /** @readonly Audio content of the question, if any. */
   readonly audioQuestion: string | null;
+  /** @readonly Correct answer and distractors for multiple-choice questions. */
+  readonly textAnswer?: string | null;
+  readonly falseAnswers?: string[];
   /** @readonly Content type of the answer (e.g. AUDIO, TEXT). */
   readonly answerContentType: string;
 }

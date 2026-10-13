@@ -12,8 +12,8 @@
       <!-- <div class="list-overlay pointer-events-none absolute left-0 top-0 h-full w-full border-y border-neutral-300 dark:border-neutral-600"></div> -->
       <ul class="flex h-[65dvh] w-full shrink-0 flex-col items-start justify-start overflow-y-scroll border-neutral-300 px-4 xl:h-[70dvh]">
         <li
-          v-for="(num, index) in totalQuestions"
-          :key="index"
+          v-for="(question, index) in assignment.questions"
+          :key="question.id"
           class="w-full border-l-4 border-neutral-300 py-0.5 pl-4 first:mt-6 last:mb-6"
           :class="{
             'border-neutral-400 hover:border-neutral-500': currentQuestionIndex === index,
@@ -30,9 +30,9 @@
             }"
             type="button"
             :disabled="!assignmentIsStatic"
-            @click="changeRouteQuery({ q: index + 1 }, 'push')"
+            @click="changeRouteQuery({ q: question.id }, 'push')"
           >
-            Question {{ num }}
+            Question {{ index + 1 }}
           </button>
         </li>
       </ul>
@@ -127,13 +127,6 @@ const assignmentData = computed(() => (props.assignment ?? {}) as Partial<Legacy
 const assignmentName = computed(() => assignmentData.value.name ?? assignmentData.value.assignment?.name ?? "Assignment");
 const dueDate = computed(() => assignmentData.value.dueDate ?? assignmentData.value.assignment?.dueDate ?? new Date());
 const assignedDate = computed(() => assignmentData.value.dateAssigned ?? assignmentData.value.assignment?.dateAssigned ?? new Date());
-const totalQuestions = computed(() => {
-  const questionCount = assignmentData.value.assignment?.numQuestions;
-  if (typeof questionCount === "number") return questionCount;
-
-  const questions = assignmentData.value.questions;
-  return Array.isArray(questions) ? questions.length : 0;
-});
 const assignmentIsStatic = computed(() => assignmentData.value.isStatic ?? assignmentData.value.assignment?.isStatic ?? true);
 const completedQuestions = computed(() => assignmentData.value.questionsCompleted ?? assignmentData.value.assignment?.questionsCompleted ?? 0);
 

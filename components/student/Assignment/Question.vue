@@ -21,9 +21,30 @@
         <!-- <a :href="recording.url" @click="submitAudioAnswer(recording.file, question.id)" class="text-sm underline"> Save </a> -->
       </div>
     </section>
-    <!-- text answer section -->
-    <section v-else class="flex flex-col items-center">
-        <textarea v-model="textAnswer" class="w-full mt-2 p-2 border border-neutral-300 rounded" rows="4" placeholder="Type your answer here..."></textarea>
+
+    <section v-if="question.questionType === 'MCQ'" class="mt-3 flex flex-col gap-2">
+      <label
+        v-for="(choice, index) in multipleChoiceOptions"
+        :key="`${index}-${choice}`"
+        class="flex cursor-pointer items-center gap-3 rounded border border-neutral-300 p-3 hover:bg-neutral-100 dark:border-neutral-600 dark:hover:bg-neutral-800"
+      >
+        <input
+          v-model="textAnswer"
+          type="radio"
+          :value="choice"
+          class="radio radio-primary"
+        />
+        <span>{{ choice }}</span>
+      </label>
+    </section>
+
+    <section v-if="question.questionType === 'FRQ' && question.questionContentType == 'TEXT'" class="mt-3 flex flex-col items-center">
+      <textarea
+        v-model="textAnswer"
+        class="mt-2 w-full rounded border border-neutral-300 p-2 dark:border-neutral-600"
+        rows="4"
+        placeholder="Type your answer here..."
+      ></textarea>
     </section>
   </div>
 </template>
@@ -50,6 +71,10 @@ const isRecording = ref(false)
 const recording = ref<Recording | null>(null)
 
 const textAnswer = ref('')
+const multipleChoiceOptions = computed(() =>
+  [props.question.textAnswer, ...(props.question.falseAnswers ?? [])]
+    .filter((choice): choice is string => Boolean(choice))
+)
 
 onMounted(() => {
     if (localStorage.getItem(`question-${props.question.id}-textAnswer`)) {
