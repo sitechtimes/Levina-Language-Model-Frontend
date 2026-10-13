@@ -12,7 +12,7 @@
         <button
           class="rounded-xl bg-green-accent px-4 py-2 font-medium text-white hover:brightness-110"
           type="button"
-          @click="router.push(`/teacher/course/${route.params.courseID}`)"
+          @click="router.push(`/teacher/course/${courseID}`)"
         >
           Return To Class Page
         </button>
@@ -24,8 +24,8 @@
           <h2 class="text-xl font-bold">Enrolled Students ({{ students.length }})</h2>
         </div>
 
-        <div class="relative flex w-full items-center justify-center overflow-x-auto rounded-b-box rounded-se-box">
-          <table class="table w-full">
+        <div class="relative flex w-full items-center justify-center overflow-x-auto rounded-xl">
+          <table class="du-table w-full">
             <thead>
               <tr class="border-b border-neutral-300 dark:border-neutral-600">
                 <th class="py-3 pl-6 text-start font-bold">First Name</th>
@@ -45,7 +45,7 @@
                 <td class="py-3 pl-6 text-neutral-500">{{ student.email }}</td>
                 <td class="flex items-center justify-center py-3">
                   <button
-                    class="btn btn-sm transition-200 flex h-8 items-center justify-center rounded-xl hover:brightness-125"
+                    class="du-btn du-btn-sm transition duration-200 flex h-8 items-center justify-center rounded-xl hover:brightness-125"
                     type="button"
                     title="Remove student from class"
                     @click="handleConfirmDelete(student)"
@@ -132,8 +132,8 @@
         </div>
 
         <!-- Student Assignment Results Table -->
-        <div v-if="selectedAssignment" class="relative flex w-full items-center justify-center overflow-x-auto rounded-b-box rounded-se-box">
-          <table class="table w-full">
+        <div v-if="selectedAssignment" class="relative flex w-full items-center justify-center overflow-x-auto rounded-xl">
+          <table class="du-table w-full">
             <thead>
               <tr class="border-b border-neutral-300 dark:border-neutral-600">
                 <th class="py-3 pl-6 text-start font-bold">Student</th>
@@ -330,7 +330,7 @@ definePageMeta({
 
 const route = useRoute();
 const router = useRouter();
-const courseID = route.params.courseID as string;
+const courseID = (Array.isArray(route.params.courseID) ? route.params.courseID[0] : route.params.courseID) as string;
 
 const showModal = ref(false);
 const showStatsModal = ref(false);
@@ -355,23 +355,79 @@ async function getStudents() {
   students.value = data || [];
 }
 
+function syncSelectedAssignmentFromQuery() {
+  if (assignments.value.length === 0) {
+    selectedAssignmentId.value = null;
+    return;
+  }
+
+  const queryParam = Array.isArray(route.query.assignment)
+    ? route.query.assignment[0]
+    : route.query.assignment;
+
+  if (queryParam) {
+    const parsedId = Number(queryParam);
+    if (!isNaN(parsedId) && assignments.value.some((a) => a.id === parsedId)) {
+      selectedAssignmentId.value = parsedId;
+      return;
+    }
+  }
+
+  const defaultId = assignments.value[0].id;
+  selectedAssignmentId.value = defaultId;
+  void router.replace({
+    query: {
+      ...route.query,
+      assignment: String(defaultId)
+    }
+  });
+}
+
 async function getAssignments() {
   const { data, error } = await tryRequestEndpoint<TeacherAssignment[]>(`courses/${courseID}/assignments/`);
   if (!error && Array.isArray(data)) {
     assignments.value = data;
-    if (data.length > 0 && selectedAssignmentId.value === null) {
-      selectedAssignmentId.value = data[0].id;
-    }
   } else {
     const { data: courseData } = await tryRequestEndpoint<{ assignments?: TeacherAssignment[] }>(`courses/${courseID}/`);
     if (courseData?.assignments) {
       assignments.value = courseData.assignments;
-      if (courseData.assignments.length > 0 && selectedAssignmentId.value === null) {
-        selectedAssignmentId.value = courseData.assignments[0].id;
+    }
+  }
+  syncSelectedAssignmentFromQuery();
+}
+
+watch(selectedAssignmentId, (newId) => {
+  if (newId !== null) {
+    const currentQuery = Array.isArray(route.query.assignment)
+      ? route.query.assignment[0]
+      : route.query.assignment;
+    if (currentQuery !== String(newId)) {
+      void router.replace({
+        query: {
+          ...route.query,
+          assignment: String(newId)
+        }
+      });
+    }
+  }
+});
+
+watch(
+  () => route.query.assignment,
+  (newQuery) => {
+    const raw = Array.isArray(newQuery) ? newQuery[0] : newQuery;
+    if (raw) {
+      const parsedId = Number(raw);
+      if (
+        !isNaN(parsedId) &&
+        assignments.value.some((a) => a.id === parsedId) &&
+        selectedAssignmentId.value !== parsedId
+      ) {
+        selectedAssignmentId.value = parsedId;
       }
     }
   }
-}
+);
 
 const selectedAssignment = computed<TeacherAssignment | undefined>(() => {
   return assignments.value.find((a) => a.id === selectedAssignmentId.value);
