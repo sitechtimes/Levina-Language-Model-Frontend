@@ -15,22 +15,32 @@ export interface QuestionGrade {
  * Grades an individual question instance against its parent assignment question.
  *
  * Rules:
- * - Autograding is ONLY performed for MCQ questions.
- * - Non-MCQ questions (e.g. FRQ, Audio) are NOT autograded and are always marked as "pending-review".
- * - If the question instance has not been submitted or does not exist, status is "pending-review".
- * - For MCQ: Compares trimmed, case-insensitive student text answer against question text answer.
+ * - Autograding is ONLY performed for MCQ questions with text answers.
+ * - Non-MCQ questions (e.g. FRQ) and questions with audio answers are NOT autograded and are marked as "pending-review".
+ * - For MCQ text questions:
+ *   - If the student did not answer / submit the question instance, status is "incorrect".
+ *   - Compares trimmed, case-insensitive student text answer against question text answer.
  */
 export function autoGradeQuestion(
   question: AssignmentQuestion,
   questionInstance: AssignmentQuestionInstance | undefined
 ): QuestionGrade {
-  if (!questionInstance || !questionInstance.submitted) {
+  // Non-MCQ questions (e.g. FRQ) are never autograded; always pending review
+  if (question.questionType !== "MCQ") {
     return { status: "pending-review" };
   }
 
-  // Non-MCQ questions are never autograded; always pending review
-  if (question.questionType !== "MCQ") {
+  // Audio answers cannot be autograded by text comparison; always pending review
+  if (
+    question.answerContentType === "AUDIO" ||
+    (questionInstance?.audioAnswer && !questionInstance?.textAnswer)
+  ) {
     return { status: "pending-review" };
+  }
+
+  // Unsubmitted or missing question instances for an MCQ are incorrect
+  if (!questionInstance || !questionInstance.submitted) {
+    return { status: "incorrect" };
   }
 
   const studentAnswer = questionInstance.textAnswer?.trim().toLowerCase();
