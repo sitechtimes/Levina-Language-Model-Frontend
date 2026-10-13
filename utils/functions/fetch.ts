@@ -75,7 +75,6 @@ export async function requestEndpoint<T>(endpoint: string, method?: string, body
 
   if (userStore.accessToken) {
     headers.Authorization = `Bearer ${userStore.accessToken}`;
-    console.log(userStore.accessToken)
   }
 
   if (method) {
@@ -126,14 +125,61 @@ export async function requestEndpoint<T>(endpoint: string, method?: string, body
 
 }
 
-export async function submitAudioAnswer(
-  audio_answer:File,
-  questionId: number
-) {
-   await requestEndpoint<void>(`question-instances/${questionId}/`, "POST", {
-    audio_answer
-  });
-  console.log("this might be working", audio_answer, questionId);
+export async function fetchStudentAssignment(assignmentInstanceId: number): Promise<StudentAssignmentPageData> {
+  const assignment = await requestEndpoint<AssignmentInstanceResponse>(
+    `assignment-instances/${assignmentInstanceId}/`
+  );
+
+  const questions = await Promise.all(
+    assignment.questionInstances.map(async (questionInstance) => {
+      const question = await requestEndpoint<QuestionDetailResponse>(`questions/${questionInstance.question}/`);
+      return {
+        id: question.id,
+        description: question.description ?? "",
+        questionType: question.questionType,
+        questionContentType: question.questionContentType,
+        textQuestion: question.textQuestion,
+        audioQuestion: question.audioQuestion,
+        answerContentType: question.answerContentType,
+        questionInstanceId: questionInstance.id,
+      };
+    })
+  );
+
+  return {
+    id: assignment.id,
+    name: `Assignment ${assignment.assignment}`,
+    dueDate: null,
+    questions,
+  };
+}
+
+export async function submitStudentAssignment(
+  assignmentInstanceId: number,
+  answers: Readonly<Record<string, { textAnswer?: string; audioBlob?: File }>>,
+  questionInstanceIdByQuestionId: ReadonlyMap<string, number>
+): Promise<Result<void>> {
+  const updates = await Promise.all(
+    Object.entries(answers)
+      .filter(([, answer]) => answer.textAnswer || answer.audioBlob)
+      .map(([questionId, answer]) => {
+        const questionInstanceId = questionInstanceIdByQuestionId.get(questionId);
+        if (questionInstanceId === undefined) {
+          return { error: new Error(`No question instance for question ${questionId}`) };
+        }
+
+        const formData = new FormData();
+        if (answer.textAnswer) formData.append("text_answer", answer.textAnswer);
+        if (answer.audioBlob) formData.append("audio_answer", answer.audioBlob, `audio_${questionId}.webm`);
+
+        return tryRequestEndpoint<void>(`question-instances/${questionInstanceId}/`, "PATCH", formData);
+      })
+  );
+
+  const failedUpdate = updates.find((result) => result.error);
+  if (failedUpdate?.error) return { error: failedUpdate.error };
+
+  return tryRequestEndpoint<void>(`assignment-instances/${assignmentInstanceId}/submit/`, "POST");
 }
 
 export async function submitCreateAssignment(
@@ -202,7 +248,6 @@ const formData = new FormData();
   formData.append("answer_content_type", answer_content_type);
 
   await requestEndpoint<void>("questions/", "POST", formData);
-  console.log("i'm trying to actually submit an audio q")
 }
 
 
@@ -225,4 +270,3 @@ export async function tryRequestEndpoint<T, K = Error>(endpoint: string, method?
 export async function tryRequestEndpoint<T, K = Error>(endpoint: string, method?: string, body?: object, bypassError?: boolean): Promise<Result<T | void, K>> {
   return tryCatch<T, K>(requestEndpoint<T>(endpoint, method, body, bypassError));
 }
-

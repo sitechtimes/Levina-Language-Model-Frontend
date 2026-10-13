@@ -36,7 +36,9 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { ref, onMounted, watch } from 'vue'
+import { ref } from 'vue'
+import { fetchStudentAssignment, submitStudentAssignment } from '~/utils/functions/fetch'
+import type { StudentAssignmentPageData } from '~/utils/types/assignments'
 
 const answers = ref<Record<string, { textAnswer?: string; audioBlob?: File }>>({})
 
@@ -66,42 +68,12 @@ const instanceIdByQuestionId = computed(() => {
 })
 
 async function submitAssignment() {
-  try {
-    const updatePromises = Object.entries(answers.value ?? {}).map(([questionId, answer]) => {
-      const instanceId = instanceIdByQuestionId.value.get(questionId)
-      if (!instanceId) {
-        console.error('No question instance for question', questionId)
-        return Promise.resolve({ error: new Error('missing instance') })
-      }
-
-      const formData = new FormData()
-      if (answer.textAnswer) formData.append('text_answer', answer.textAnswer)
-      if (answer.audioBlob) formData.append('audio_answer', answer.audioBlob, `audio_${questionId}.webm`)
-
-      if (!answer.textAnswer && !answer.audioBlob) return Promise.resolve({})
-
-      return tryRequestEndpoint(`question-instances/${instanceId}/`, 'PATCH', formData)
-    })
-
-    const results = await Promise.all(updatePromises)
-    const failed = results.filter(r => r?.error)
-    if (failed.length) {
-      console.error('Saving answers failed:', failed)
-      return // don't submit with unsaved answers
-    }
-
-    const submitResult = await tryRequestEndpoint(
-      `assignment-instances/${assignmentId.value}/submit/`,
-      'POST'
-    )
-    if (submitResult.error) {
-      console.error('Submission failed:', submitResult.error)
-      return
-    }
-    console.log('Assignment submitted successfully!')
-  } catch (err) {
-    console.error('An error occurred during submission:', err)
-  }
+  const result = await submitStudentAssignment(
+    Number(assignmentId.value),
+    answers.value,
+    instanceIdByQuestionId.value
+  )
+  if (result.error) console.error('Assignment submission failed:', result.error)
 }
 
 
@@ -121,37 +93,9 @@ const assignmentId = computed(() => String(route.params.assignmentId ?? ''))
 // 1. Get the current 'q' parameter from the query string (?q=...)
 const activeQueryId = computed(() => String(route.query.q ?? ''))
 
-// Fetch assignment payload
-//to do: this should be assignment instance not assignments
-
-const { data: assignment, pending, error } = await useAsyncData<StudentAssignment | null>(
+const { data: assignment, pending, error } = await useAsyncData<StudentAssignmentPageData | null>(
   `assignment-${assignmentId.value}`,
-  async () => {
-    const raw = await requestEndpoint<AssignmentInstanceResponse>(`assignment-instances/${assignmentId.value}/`)
-
-    const questions = await Promise.all(
-      (raw.questionInstances ?? []).map(async (qi) => {
-        const q = await requestEndpoint<QuestionDetailResponse>(`questions/${qi.question}/`)
-        return {
-          id: q.id,
-          description: q.description ?? '',
-          questionType: q.questionType,
-          questionContentType: q.questionContentType,
-          textQuestion: q.textQuestion,
-          audioQuestion: q.audioQuestion,
-          answerContentType: q.answerContentType,
-          questionInstanceId: qi.id,
-        }
-      })
-    )
-
-    return {
-      id: raw.id,
-      name: `Assignment ${raw.assignment}`,
-      dueDate: null,
-      questions,
-    } as unknown as StudentAssignment
-  },
+  () => fetchStudentAssignment(Number(assignmentId.value)),
   { server: false }
 )
 

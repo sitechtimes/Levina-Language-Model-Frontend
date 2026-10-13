@@ -48,6 +48,13 @@ export interface StudentAssignment extends Assignment {
   }[];
 }
 
+export interface StudentAssignmentPageData {
+  readonly id: number;
+  readonly name: string;
+  readonly dueDate: string | null;
+  readonly questions: StudentAssignment["questions"];
+}
+
 export interface TeacherAssignment extends Assignment {
   readonly id: number;
   timeLimit: number;
