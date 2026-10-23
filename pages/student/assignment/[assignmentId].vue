@@ -34,9 +34,6 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
-import { ref, watch } from 'vue'
 import { fetchStudentAssignment, submitStudentAssignment } from '~/utils/functions/fetch'
 import { loadAudioAnswer } from '~/utils/functions/assignment-answers'
 import type { StudentAssignmentPageData } from '~/utils/types/assignments'
@@ -145,14 +142,6 @@ const currentQuestionIndex = computed(() => {
     q => String(q.id) === String(currentQuestion.value?.id)
   )
 })
-
-// 4. Update query parameter when student selects a new question
-function changeQuestion(questionId: number | string) {
-  router.push({
-    path: route.path,
-    query: { ...route.query, q: questionId }
-  })
-}
 
 const assignmentIsComplete = computed(() => {
   const questions = assignment.value?.questions ?? []

@@ -1,4 +1,4 @@
-<!-- components/StudentQuestionCard.vue -->
+
 <template>
   <div class="p-6 border border-neutral-300 bg-body w-1/2 m-auto hover:border-neutral-600/50 hover:shadow-lg hover:transition dark:border-neutral-600 dark:hover:border-neutral-300/50">
     <h2 v-if="question.description">{{ question.description }}</h2>
@@ -38,7 +38,7 @@
       </label>
     </section>
 
-    <section v-if="question.questionType === 'FRQ' && question.questionContentType == 'TEXT'" class="mt-3 flex flex-col items-center">
+    <section v-if="question.questionType === 'FRQ' && question.questionContentType === 'TEXT'" class="mt-3 flex flex-col items-center">
       <textarea
         v-model="textAnswer"
         class="mt-2 w-full rounded border border-neutral-300 p-2 dark:border-neutral-600"
@@ -50,7 +50,6 @@
 </template>
 
 <script setup lang="ts">
-import { loadAudioAnswer, saveAudioAnswer } from '~/utils/functions/assignment-answers'
 
 const props = defineProps<{
   question: StudentAssignment['questions'][number] & { questionInstanceId?: number }
