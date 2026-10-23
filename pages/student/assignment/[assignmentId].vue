@@ -10,7 +10,7 @@
       :current-question-index="currentQuestionIndex" 
       :is-saved="true"
       :trigger-submit="true"
-      :done-assignment="assignmentIsComplete"
+      :done-assignment="doneAssignment"
       @submitted="submitAssignment"    
     />   
 
@@ -23,7 +23,7 @@
         :key="currentQuestion.id"
         :question="currentQuestion"
         @changed-question="handleQuestionChange"
-        :done-assignment="assignmentIsComplete"
+        :done-assignment="doneAssignment"
       />
 
       <div v-else class="text-center text-slate-500 py-8">
@@ -143,7 +143,7 @@ const currentQuestionIndex = computed(() => {
   )
 })
 
-const assignmentIsComplete = computed(() => {
+const doneAssignment = computed(() => {
   const questions = assignment.value?.questions ?? []
   return questions.length > 0 && questions.every((question) => {
     const answer = answers.value[String(question.id)]
