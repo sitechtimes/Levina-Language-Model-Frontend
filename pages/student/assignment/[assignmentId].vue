@@ -49,6 +49,65 @@ import type { StudentAssignmentPageData } from '~/utils/types/assignments'
 
 const answers = ref<Record<string, { textAnswer?: string; audioBlob?: File }>>({})
 
+export async function fetchStudentAssignment(assignmentInstanceId: number): Promise<StudentAssignmentPageData> {
+  const assignment = await requestEndpoint<AssignmentInstanceResponse>(
+    `assignment-instances/${assignmentInstanceId}/`
+  );
+
+  const questions = await Promise.all(
+    assignment.questionInstances.map(async (questionInstance) => {
+      const question = await requestEndpoint<QuestionDetailResponse>(`questions/${questionInstance.question}/`);
+      return {
+        id: question.id,
+        description: question.description ?? "",
+        questionType: question.questionType,
+        questionContentType: question.questionContentType,
+        textQuestion: question.textQuestion,
+        audioQuestion: question.audioQuestion,
+        textAnswer: question.textAnswer,
+        falseAnswers: question.falseAnswers,
+        answerContentType: question.answerContentType,
+        questionInstanceId: questionInstance.id,
+      };
+    })
+  );
+
+  return {
+    id: assignment.id,
+    name: `Assignment ${assignment.assignment}`,
+    dueDate: null,
+    questions,
+  };
+}
+
+export async function submitStudentAssignment(
+  assignmentInstanceId: number,
+  answers: Readonly<Record<string, { textAnswer?: string; audioBlob?: File }>>,
+  questionInstanceIdByQuestionId: ReadonlyMap<string, number>
+): Promise<Result<void>> {
+  const updates = await Promise.all(
+    Object.entries(answers)
+      .filter(([, answer]) => answer.textAnswer || answer.audioBlob)
+      .map(([questionId, answer]) => {
+        const questionInstanceId = questionInstanceIdByQuestionId.get(questionId);
+        if (questionInstanceId === undefined) {
+          return { error: new Error(`No question instance for question ${questionId}`) };
+        }
+
+        const formData = new FormData();
+        if (answer.textAnswer) formData.append("text_answer", answer.textAnswer);
+        if (answer.audioBlob) formData.append("audio_answer", answer.audioBlob, `audio_${questionId}.webm`);
+
+        return tryRequestEndpoint<void>(`question-instances/${questionInstanceId}/`, "PATCH", formData);
+      })
+  );
+
+  const failedUpdate = updates.find((result) => result.error);
+  if (failedUpdate?.error) return { error: failedUpdate.error };
+
+  return tryRequestEndpoint<void>(`assignment-instances/${assignmentInstanceId}/submit/`, "POST");
+}
+
 function handleQuestionChange({ questionId, answer }: { questionId: number | string; answer: string | File | undefined }) {
   const key = String(questionId)
   const current = answers.value[key] ?? {}
