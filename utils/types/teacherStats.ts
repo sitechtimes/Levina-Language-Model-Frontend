@@ -1,5 +1,3 @@
-import type { ClassAssignmentStats, StudentAssignmentResult, TeacherAssignment } from "./assignments";
-
 export interface TeacherStudent {
   id: number;
   email: string;
