@@ -2,7 +2,16 @@
   <div v-if="pending" class="p-8 text-center text-slate-500">
     Loading assignment...
   </div>
-
+  <div v-else-if="error" class="relative flex items-center w-full p-8">
+    <button class="group flex items-center justify-center gap-2 rounded-xl hover:bg-neutral-200 hover:transition dark:hover:bg-neutral-500/25 px-3 py-2" type="button" @click="navigateTo('/student/dashboard')">
+      <img class="size-4 group-hover:-translate-x-1 group-hover:transition dark:invert" src="/ui/arrow-left.svg" aria-hidden="true" />
+      <span class="translate-y-px">Back to dashboard</span>
+    </button>
+    <span class="absolute left-1/2 -translate-x-1/2 text-center pointer-events-none  text-red-500">
+      Error loading assignment: {{error.message}}
+    </span>
+  </div>
+    
   <div v-else-if="assignment" class="flex min-h-screen">
     <!-- Sidebar: Passes current question index and handle clicks -->
     <StudentAssignmentSidebar 
@@ -91,6 +100,7 @@ const assignmentId = computed(() => String(route.params.assignmentId ?? ''))
 // 1. Get the current 'q' parameter from the query string (?q=...)
 const activeQueryId = computed(() => String(route.query.q ?? ''))
 
+//return 
 const { data: assignment, pending, error } = await useAsyncData<StudentAssignmentPageData | null>(
   `assignment-${assignmentId.value}`,
   () => fetchStudentAssignment(Number(assignmentId.value)),
