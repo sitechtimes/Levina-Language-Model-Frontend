@@ -1,13 +1,3 @@
-import type {
-  AssignmentInstance,
-  AssignmentQuestion,
-  ClassAssignmentStats,
-  StudentAssignmentResult,
-  TeacherAssignment,
-} from "../types/assignments";
-import type { TeacherStudent } from "../types/teacherStats";
-import { calculateClassStats, gradeStudentAttempt } from "./autoGrade";
-
 export function buildStudentResults(
   students: TeacherStudent[],
   assignment: TeacherAssignment | undefined,
