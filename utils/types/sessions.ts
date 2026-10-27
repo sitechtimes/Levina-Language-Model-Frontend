@@ -1,7 +1,18 @@
-import type { AssignmentQuestion } from "./assignments";
-
 /** Author of a statement in a live session dialogue. */
 export type SessionStatementAuthor = "STUDENT" | "AI";
+
+export interface SessionQuestion {
+  readonly id: number;
+  readonly description: string | null;
+  readonly questionType: "MCQ" | "FRQ";
+  readonly questionContentType?: "TEXT" | "AUDIO";
+  readonly answerContentType: "TEXT" | "AUDIO";
+  readonly textQuestion?: string | null;
+  readonly audioQuestion?: string | null;
+  /** The answer key. Only the teacher view should render this. */
+  readonly textAnswer: string | null;
+  readonly falseAnswers: string[] | null;
+}
 
 export interface SessionDialogue {
   readonly id: number;
@@ -17,7 +28,7 @@ export interface SessionTemplate {
   readonly timed: boolean;
   readonly timeLimit: number;
   readonly teacher: number;
-  readonly questions: AssignmentQuestion[];
+  readonly questions: SessionQuestion[];
   readonly dialogues: SessionDialogue[];
 }
 
