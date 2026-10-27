@@ -49,7 +49,7 @@ import type { StudentAssignmentPageData } from '~/utils/types/assignments'
 
 const answers = ref<Record<string, { textAnswer?: string; audioBlob?: File }>>({})
 
-export async function fetchStudentAssignment(assignmentInstanceId: number): Promise<StudentAssignmentPageData> {
+async function fetchStudentAssignment(assignmentInstanceId: number): Promise<StudentAssignmentPageData> {
   const assignment = await requestEndpoint<AssignmentInstanceResponse>(
     `assignment-instances/${assignmentInstanceId}/`
   );
@@ -80,7 +80,7 @@ export async function fetchStudentAssignment(assignmentInstanceId: number): Prom
   };
 }
 
-export async function submitStudentAssignment(
+async function submitStudentAssignment(
   assignmentInstanceId: number,
   answers: Readonly<Record<string, { textAnswer?: string; audioBlob?: File }>>,
   questionInstanceIdByQuestionId: ReadonlyMap<string, number>
