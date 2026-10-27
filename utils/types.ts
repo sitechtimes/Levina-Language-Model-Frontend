@@ -8,3 +8,4 @@ export interface CreateCourse {
 export * from "./types/subjects";
 export * from "./types/assignments";
 export * from "./types/courses";
+export * from "./types/sessions";
