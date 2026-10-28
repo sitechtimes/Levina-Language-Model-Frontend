@@ -17,7 +17,7 @@
           class="w-full border-l-4 border-neutral-300 py-0.5 pl-4 first:mt-6 last:mb-6"
           :class="{
             'border-neutral-400 hover:border-neutral-500': currentQuestionIndex === index,
-            'cursor-not-allowed grayscale': !assignmentIsStatic
+            'cursor-not-allowed grayscale': !assignmentIsStatic 
           }"
         >
           <!-- button for question number -->
@@ -85,6 +85,7 @@
 </template>
 
 <script setup lang="ts">
+
 const props = defineProps<{
   assignment: StudentAssignment;
   currentQuestionIndex: number;

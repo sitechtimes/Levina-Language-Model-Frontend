@@ -43,8 +43,6 @@
 </template>
 
 <script setup lang="ts">
-import { fetchStudentAssignment, submitStudentAssignment } from '~/utils/functions/fetch'
-import { loadAudioAnswer } from '~/utils/functions/assignment-answers'
 import type { StudentAssignmentPageData } from '~/utils/types/assignments'
 
 const answers = ref<Record<string, { textAnswer?: string; audioBlob?: File }>>({})
