@@ -11,22 +11,24 @@
       Error loading assignment: {{error.message}}
     </span>
   </div>
-    
+
   <div v-else-if="assignment" class="flex min-h-screen">
-    <!-- Sidebar: Passes current question index and handle clicks -->
-    <StudentAssignmentSidebar 
-      :assignment="assignment"
-      :current-question-index="currentQuestionIndex" 
-      :is-saved="true"
-      :trigger-submit="true"
-      :done-assignment="doneAssignment"
-      @submitted="submitAssignment"    
-    />   
+  <!-- Sidebar -->
+  <StudentAssignmentSidebar 
+    :assignment="assignment"
+    :current-question-index="currentQuestionIndex" 
+    :is-saved="true"
+    :trigger-submit="true"
+    :done-assignment="doneAssignment"
+    @submitted="submitAssignment"    
+  />   
 
-    <main class="flex-1 p-6">
-      <h1 class="text-2xl font-bold mb-4 text-center p-4">Student Assignment</h1>
-
-      <!-- Displays ONLY the matched question component -->
+  <!-- Main container has NO padding here -->
+  <main class="flex flex-1 flex-col">
+    
+    <!-- Content wrapper handles the padding instead -->
+    <div class="flex-1 p-6">
+      <h1 class="text-xl font-bold mb-4 text-center">Question {{ currentQuestionIndex + 1 }}</h1>
       <StudentAssignmentQuestion
         v-if="currentQuestion"
         :key="currentQuestion.id"
@@ -34,12 +36,31 @@
         @changed-question="handleQuestionChange"
         :done-assignment="doneAssignment"
       />
-
       <div v-else class="text-center text-slate-500 py-8">
         Question not found.
       </div>
-    </main>
-  </div>
+    </div>
+
+    <!-- bottom bar for changing questions -->
+    <div class="mt-auto flex items-center justify-between border-t border-neutral-300 bg-neutral-100/40 px-6 py-4 dark:border-neutral-600 dark:bg-neutral-800/80">
+      <button
+        :disabled="currentQuestionIndex <= 0"
+        @click="navigateQuestion(-1)"
+        class="rounded-xl bg-neutral-200 px-4 py-2 text-neutral-800 transition hover:bg-neutral-300 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-neutral-700 dark:text-white dark:hover:bg-neutral-600"
+      >
+        Previous
+      </button>
+      <button
+        :disabled="currentQuestionIndex >= assignment.questions.length - 1"
+        @click="navigateQuestion(1)"
+        class="rounded-xl bg-neutral-200 px-4 py-2 text-neutral-800 transition hover:bg-neutral-300 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-neutral-700 dark:text-white dark:hover:bg-neutral-600"
+      >
+        Next Question
+      </button>
+    </div>
+  </main>
+</div>
+   
 </template>
 
 <script setup lang="ts">
@@ -209,6 +230,15 @@ const currentQuestionIndex = computed(() => {
     q => String(q.id) === String(currentQuestion.value?.id)
   )
 })
+
+function navigateQuestion(offset: -1 | 1) {
+  const questions = assignment.value?.questions ?? []
+  const nextIndex = currentQuestionIndex.value + offset
+  const nextQuestion = questions[nextIndex]
+
+  if (!nextQuestion) return
+  void changeRouteQuery({ q: nextQuestion.id }, 'push')
+}
 
 const doneAssignment = computed(() => {
   const questions = assignment.value?.questions ?? []
