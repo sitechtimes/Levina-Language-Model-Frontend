@@ -109,9 +109,17 @@
 
     <div class="flex w-full flex-col border-neutral-600/50 px-4 lg:-mr-4 lg:max-h-full lg:overflow-y-auto lg:border-l dark:border-neutral-300/50">
       <h2 class="text-2xl font-bold mb-4 mt-4 lg:mt-0">Assignment Bank</h2>
+      <label class="flex items-center gap-2">
+        <input
+          v-model="showFiltered"
+          type="checkbox"
+          class="du-checkbox border-neutral-400 dark:bg-neutral-900"
+          />
+        <span class="fo-label fo-label-text shrink-0 text-base text-black dark:text-white">Show my assignments</span>
+      </label>
       <div class="flex flex-col gap-2">
         <TeacherAssignmentBankCard
-          v-for="assignment in assignments"
+          v-for="assignment in (showFiltered ? displayOwnerAssignments(assignments) : assignments)"
           :key="assignment.id"
           :assignment="assignment"
           @add="addAssignment"
@@ -137,8 +145,9 @@ definePageMeta({
 const route = useRoute();
 const router = useRouter();
 const userStore = useUserStore();
+const {userId } = storeToRefs(userStore);
 const { showSideMenu, teacherCourses } = storeToRefs(userStore);
-
+const showFiltered = ref(false);
 const currentDateISO = (() => {
   const now = new Date();
   return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
@@ -146,6 +155,7 @@ const currentDateISO = (() => {
 let initialCourse = Number(route.query.course);
 const courseIds = reactive<number[]>([]);
 if (initialCourse) courseIds.push(initialCourse);
+
 
 const isPrinting = ref(false);
 watch(
@@ -171,9 +181,7 @@ const assignmentInfo = reactive({
   timeAllotted: ref<number>(),
   attemptsAllowed: ref<number>()
 });
-
 const warn = computed(() => null);
-
 const allowedToSubmit = computed(() =>
   courseIds.length > 0 &&
   assignmentInfo.questions.length > 0
@@ -185,8 +193,8 @@ const assignments = ref<TeacherAssignmentTemplate[]>([]);
 onMounted(async () => {
   try {
     const data = await requestEndpoint<TeacherAssignmentTemplate[]>("assignment-templates/");
-    assignments.value = data.map(a => ({
-      ...a,
+    assignments.value = data.map(assignment => ({
+      ...assignment,
       open: false
     }));
   } catch (err) {
@@ -216,6 +224,17 @@ function toggleCourse(courseID: number, event: Event) {
     courseIds.push(courseID);
   }
 }
+
+function displayOwnerAssignments(assignments: TeacherAssignmentTemplate[]) {
+  const filtered = [];
+  for (const assignment of assignments) {
+    if (assignment.teacher === userId.value) {
+      filtered.push(assignment);
+    }
+  }
+  return filtered;
+}
+
 
 async function handleSubmit() {
   if (!allowedToSubmit.value) return;

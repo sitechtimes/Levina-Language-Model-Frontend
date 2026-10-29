@@ -62,6 +62,7 @@ export const useUserStore = defineStore("userStore", () => {
   const isDarkMode = ref(false);
   const showSideMenu = ref(true);
   const name = ref("");
+  const userId = ref<number>();
   const userType = ref<"student" | "teacher">("student");
 
   const teacherCourses = ref<TeacherCourseNoAssignment[]>([]);
@@ -116,6 +117,7 @@ const studentCurrentCourse = ref<StudentCourse>();
       console.error("Failed to fetch user info:", error);
       return { success: false, data: undefined, error };
     }
+    userId.value = data.id;
 
     isAuth.value = true;
     if (!data.firstName && !data.lastName) {
@@ -178,6 +180,7 @@ const studentCurrentCourse = ref<StudentCourse>();
   async function logout() {
     accessToken.value = null;
     refreshToken.value = null;
+    userId.value = undefined;
     isAuth.value = false;
     await router.push("/");
   }
@@ -200,6 +203,7 @@ const studentCurrentCourse = ref<StudentCourse>();
 
   return {
     name,
+    userId,
     isAuth,
     userType,
     isDarkMode,
