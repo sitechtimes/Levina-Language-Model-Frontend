@@ -163,7 +163,7 @@ async function submitAssignment() {
 
 
 definePageMeta({
-  layout: 'default',
+  layout: 'student',
   middleware: ['role-check', 'student-assignment'],
   requiresAuth: true,
   redirectIfAuth: false,
