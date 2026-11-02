@@ -226,12 +226,7 @@ function toggleCourse(courseID: number, event: Event) {
 }
 
 function displayOwnerAssignments(assignments: TeacherAssignmentTemplate[]) {
-  const filtered = [];
-  for (const assignment of assignments) {
-    if (assignment.teacher === userId.value) {
-      filtered.push(assignment);
-    }
-  }
+  const filtered = assignments.filter(assignment => assignment.teacher === userId.value);
   return filtered;
 }
 
