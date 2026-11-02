@@ -107,7 +107,6 @@ export interface AssignmentInstance {
   /** @readonly ID of the student. */
   readonly student: number;
   submitted: boolean;
-  time_used?: number;
   timeUsed?: number;
   questionInstances: AssignmentQuestionInstance[];
 }
