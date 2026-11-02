@@ -68,6 +68,8 @@ export interface TeacherAssignment extends Assignment {
 export interface TeacherAssignmentTemplate extends Assignment {
   /** @readonly Name of the assignment. */
   readonly name: string;
+  /** @readonly ID of the teacher who created the template. */
+  readonly teacher: number;
   timed: boolean;
   time_limit: number;
   questions: number[];
