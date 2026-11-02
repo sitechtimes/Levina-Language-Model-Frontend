@@ -1,11 +1,10 @@
-import type {
-  AssignmentQuestion,
-  AssignmentQuestionInstance,
-  ClassAssignmentStats,
-  StudentAssignmentResult
-} from "../types/assignments";
+export const QUESTION_GRADE_STATUS = {
+  CORRECT: "correct",
+  INCORRECT: "incorrect",
+  PENDING_REVIEW: "pending-review",
+} as const;
 
-export type QuestionGradeStatus = "correct" | "incorrect" | "pending-review";
+export type QuestionGradeStatus = (typeof QUESTION_GRADE_STATUS)[keyof typeof QUESTION_GRADE_STATUS];
 
 export interface QuestionGrade {
   status: QuestionGradeStatus;
@@ -27,7 +26,7 @@ export function autoGradeQuestion(
 ): QuestionGrade {
   // Non-MCQ questions (e.g. FRQ) are never autograded; always pending review
   if (question.questionType !== "MCQ") {
-    return { status: "pending-review" };
+    return { status: QUESTION_GRADE_STATUS.PENDING_REVIEW };
   }
 
   // Audio answers cannot be autograded by text comparison; always pending review
@@ -35,26 +34,26 @@ export function autoGradeQuestion(
     question.answerContentType === "AUDIO" ||
     (questionInstance?.audioAnswer && !questionInstance?.textAnswer)
   ) {
-    return { status: "pending-review" };
+    return { status: QUESTION_GRADE_STATUS.PENDING_REVIEW };
   }
 
   // Unsubmitted or missing question instances for an MCQ are incorrect
   if (!questionInstance || !questionInstance.submitted) {
-    return { status: "incorrect" };
+    return { status: QUESTION_GRADE_STATUS.INCORRECT };
   }
 
   const studentAnswer = questionInstance.textAnswer?.trim().toLowerCase();
   const correctAnswer = question.textAnswer?.trim().toLowerCase();
 
   if (!studentAnswer || !correctAnswer) {
-    return { status: "incorrect" };
+    return { status: QUESTION_GRADE_STATUS.INCORRECT };
   }
 
   if (studentAnswer === correctAnswer) {
-    return { status: "correct" };
+    return { status: QUESTION_GRADE_STATUS.CORRECT };
   }
 
-  return { status: "incorrect" };
+  return { status: QUESTION_GRADE_STATUS.INCORRECT };
 }
 
 /**
@@ -67,6 +66,7 @@ export function gradeStudentAttempt(
   let correctCount = 0;
   let incorrectCount = 0;
   let pendingCount = 0;
+  let status: QuestionGradeStatus;
 
   const instanceMap = new Map<number, AssignmentQuestionInstance>();
   for (const qi of questionInstances) {
@@ -75,9 +75,9 @@ export function gradeStudentAttempt(
 
   for (const q of questions) {
     const qi = instanceMap.get(q.id);
-    const { status } = autoGradeQuestion(q, qi);
-    if (status === "correct") correctCount++;
-    else if (status === "incorrect") incorrectCount++;
+    status = autoGradeQuestion(q, qi).status;
+    if (status === QUESTION_GRADE_STATUS.CORRECT) correctCount++;
+    else if (status === QUESTION_GRADE_STATUS.INCORRECT) incorrectCount++;
     else pendingCount++;
   }
 
