@@ -1,5 +1,5 @@
 export function buildStudentResults(
-  students: TeacherStudent[],
+  students: EnrolledStudent[],
   assignment: TeacherAssignment | undefined,
 ): StudentAssignmentResult[] {
   if (!assignment) return [];

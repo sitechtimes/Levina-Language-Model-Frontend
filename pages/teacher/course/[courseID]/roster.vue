@@ -48,7 +48,7 @@
 
 <script setup lang="ts">
 import type { TeacherAssignment } from "~/utils/types/assignments";
-import type { TeacherStudent } from "~/utils/types/teacherStats";
+import type { EnrolledStudent } from "~/utils/types/teacherStats";
 import { getClassStats, getPieChartStyle, buildStudentResults } from "~/utils/functions/teacherStats";
 
 definePageMeta({
@@ -64,8 +64,8 @@ const router = useRouter();
 const courseID = (Array.isArray(route.params.courseID) ? route.params.courseID[0] : route.params.courseID) as string;
 const showModal = ref(false);
 const showStatsModal = ref(false);
-const students = ref<TeacherStudent[]>([]);
-const studentToDelete = ref<TeacherStudent | null>(null);
+const students = ref<EnrolledStudent[]>([]);
+const studentToDelete = ref<EnrolledStudent | null>(null);
 const assignments = ref<TeacherAssignment[]>([]);
 const selectedAssignmentId = ref<number | null>(null);
 
@@ -75,7 +75,7 @@ const classStats = computed(() => getClassStats(studentResults.value));
 const pieChartStyle = computed(() => getPieChartStyle(classStats.value));
 
 async function getStudents() {
-  const { data, error } = await tryRequestEndpoint<TeacherStudent[]>(`courses/${courseID}/students/`);
+  const { data, error } = await tryRequestEndpoint<EnrolledStudent[]>(`courses/${courseID}/students/`);
   if (error) return console.error("Failed to fetch students:", error);
   students.value = data || [];
 }
@@ -126,12 +126,12 @@ watch(() => route.query.assignment, (value) => {
   }
 });
 
-function handleConfirmDelete(student: TeacherStudent) {
+function handleConfirmDelete(student: EnrolledStudent) {
   showModal.value = true;
   studentToDelete.value = student;
 }
 
-async function removeStudent(student: TeacherStudent | null) {
+async function removeStudent(student: EnrolledStudent | null) {
   if (!student) return;
   const { error } = await tryRequestEndpoint(`courses/${courseID}/remove_student/`, "DELETE", { student: student.id });
   if (error) {

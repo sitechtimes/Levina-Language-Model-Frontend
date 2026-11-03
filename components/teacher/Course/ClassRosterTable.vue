@@ -40,8 +40,8 @@
 </template>
 
 <script setup lang="ts">
-import type { TeacherStudent } from "~/utils/types/teacherStats";
+import type { EnrolledStudent } from "~/utils/types/teacherStats";
 
-defineProps<{ students: TeacherStudent[] }>();
-const emit = defineEmits<{ remove: [student: TeacherStudent] }>();
+defineProps<{ students: EnrolledStudent[] }>();
+const emit = defineEmits<{ remove: [student: EnrolledStudent] }>();
 </script>
