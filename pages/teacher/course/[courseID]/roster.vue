@@ -41,7 +41,6 @@
     :show-modal="showStatsModal"
     :selected-assignment="selectedAssignment"
     :stats="classStats"
-    :pie-chart-style="pieChartStyle"
     @close="showStatsModal = false"
   />
 </template>
@@ -49,7 +48,8 @@
 <script setup lang="ts">
 import type { TeacherAssignment } from "~/utils/types/assignments";
 import type { EnrolledStudent } from "~/utils/types/teacherStats";
-import { getClassStats, getPieChartStyle, buildStudentResults } from "~/utils/functions/teacherStats";
+import { buildStudentResults } from "~/utils/functions/teacherStats";
+import { calculateClassStats } from "~/utils/functions/autoGrade";
 
 definePageMeta({
   layout: "teacher",
@@ -71,8 +71,7 @@ const selectedAssignmentId = ref<number | null>(null);
 
 const selectedAssignment = computed(() => assignments.value.find((assignment) => assignment.id === selectedAssignmentId.value));
 const studentResults = computed(() => buildStudentResults(students.value, selectedAssignment.value));
-const classStats = computed(() => getClassStats(studentResults.value));
-const pieChartStyle = computed(() => getPieChartStyle(classStats.value));
+const classStats = computed(() => calculateClassStats(studentResults.value));
 
 async function getStudents() {
   const { data, error } = await tryRequestEndpoint<EnrolledStudent[]>(`courses/${courseID}/students/`);

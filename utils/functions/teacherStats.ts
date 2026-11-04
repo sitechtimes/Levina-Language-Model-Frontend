@@ -26,19 +26,3 @@ export function buildStudentResults(
     };
   });
 }
-
-export function getClassStats(results: StudentAssignmentResult[]): ClassAssignmentStats {
-  return calculateClassStats(results);
-}
-
-export function getPieChartStyle(stats: ClassAssignmentStats): { background: string } {
-  const total = stats.totalCorrect + stats.totalIncorrect + stats.totalPending;
-  if (total === 0) return { background: "#9ca3af" };
-
-  const correctEnd = (stats.totalCorrect / total) * 100;
-  const incorrectEnd = correctEnd + (stats.totalIncorrect / total) * 100;
-
-  return {
-    background: `conic-gradient(#22c55e 0% ${correctEnd}%, #ef4444 ${correctEnd}% ${incorrectEnd}%, #eab308 ${incorrectEnd}% 100%)`,
-  };
-}
