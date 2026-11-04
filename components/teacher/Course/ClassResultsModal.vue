@@ -49,12 +49,23 @@
 <script setup lang="ts">
 import type { ClassAssignmentStats, TeacherAssignment } from "~/utils/types/assignments";
 
-defineProps<{
+const props = defineProps<{
   showModal: boolean;
   selectedAssignment?: TeacherAssignment;
   stats: ClassAssignmentStats;
-  pieChartStyle: { background: string };
 }>();
 
 const emit = defineEmits<{ close: [] }>();
+
+const pieChartStyle = computed(() => {
+  const total = props.stats.totalCorrect + props.stats.totalIncorrect + props.stats.totalPending;
+  if (total === 0) return { background: "#9ca3af" };
+
+  const correctEnd = (props.stats.totalCorrect / total) * 100;
+  const incorrectEnd = correctEnd + (props.stats.totalIncorrect / total) * 100;
+
+  return {
+    background: `conic-gradient(#22c55e 0% ${correctEnd}%, #ef4444 ${correctEnd}% ${incorrectEnd}%, #eab308 ${incorrectEnd}% 100%)`,
+  };
+});
 </script>
