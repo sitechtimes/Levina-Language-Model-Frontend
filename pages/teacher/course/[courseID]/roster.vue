@@ -18,7 +18,6 @@
       <TeacherCourseAssignmentStatsPanel
         :assignments="assignments"
         :selected-assignment-id="selectedAssignmentId"
-        :selected-assignment="selectedAssignment"
         :student-results="studentResults"
         :stats="classStats"
         :student-count="students.length"
