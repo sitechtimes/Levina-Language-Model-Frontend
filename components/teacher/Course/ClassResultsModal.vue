@@ -47,8 +47,6 @@
 </template>
 
 <script setup lang="ts">
-import type { ClassAssignmentStats, TeacherAssignment } from "~/utils/types/assignments";
-
 const props = defineProps<{
   showModal: boolean;
   selectedAssignment?: TeacherAssignment;

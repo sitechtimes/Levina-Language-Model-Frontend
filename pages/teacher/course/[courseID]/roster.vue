@@ -45,11 +45,6 @@
 </template>
 
 <script setup lang="ts">
-import type { TeacherAssignment } from "~/utils/types/assignments";
-import type { EnrolledStudent } from "~/utils/types/teacherStats";
-import { buildStudentResults } from "~/utils/functions/teacherStats";
-import { calculateClassStats } from "~/utils/functions/autoGrade";
-
 definePageMeta({
   layout: "teacher",
   middleware: "teacher-get-course",

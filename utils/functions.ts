@@ -37,4 +37,6 @@ export async function changeRouteQuery<T extends string | number>(query: Record<
 
 
 export * from "./functions/fetch";
-export * from "./functions/classTypes"
+export * from "./functions/classTypes";
+export * from "./functions/autoGrade";
+export * from "./functions/teacherStats";

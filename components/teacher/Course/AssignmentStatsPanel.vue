@@ -96,8 +96,6 @@
 </template>
 
 <script setup lang="ts">
-import type { ClassAssignmentStats, StudentAssignmentResult, TeacherAssignment } from "~/utils/types/assignments";
-
 const props = defineProps<{
   assignments: TeacherAssignment[];
   selectedAssignmentId: number | null;
