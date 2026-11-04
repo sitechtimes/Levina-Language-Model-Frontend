@@ -12,7 +12,7 @@
     </span>
   </div>
 
-  <div v-else-if="assignment" class="flex min-h-screen">
+  <div v-else-if="assignment" class="flex min-h-screen flex-col lg:flex-row">
   <!-- Sidebar -->
   <StudentAssignmentSidebar 
     :assignment="assignment"
@@ -24,10 +24,10 @@
   />   
 
   <!-- Main container has NO padding here -->
-  <main class="flex flex-1 flex-col">
+  <main class="flex min-w-0 flex-1 flex-col">
     
     <!-- Content wrapper handles the padding instead -->
-    <div class="flex-1 p-6">
+    <div class="flex-1 p-4 lg:p-6">
       <h1 class="text-xl font-bold mb-4 text-center">Question {{ currentQuestionIndex + 1 }}</h1>
       <StudentAssignmentQuestion
         v-if="currentQuestion"

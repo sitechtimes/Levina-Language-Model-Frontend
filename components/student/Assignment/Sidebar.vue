@@ -1,12 +1,25 @@
 <template>
   <div
-    class="fixed left-0 top-0 flex h-full w-72 shrink-0 flex-col items-start justify-start border-neutral-300 transition-shadow lg:sticky lg:border-r dark:border-neutral-600"
+    class="relative flex h-auto w-full shrink-0 flex-col items-start justify-start border-neutral-300 transition-shadow lg:sticky lg:top-0 lg:h-screen lg:w-72 lg:border-r dark:border-neutral-600"
     :class="doneAssignment ? 'lg:shadow-xl' : 'shadow-none'"
   >
     <button class="group my-4 ml-4 flex items-center justify-center gap-2 rounded-xl px-5 py-2 hover:bg-neutral-200 hover:transition dark:hover:bg-neutral-500/25" type="button" @click="emit('close')">
       <img class="size-4 group-hover:-translate-x-1 group-hover:transition dark:invert" src="/ui/arrow-left.svg" aria-hidden="true" />
       <span class="translate-y-px">Back to course</span>
     </button>
+
+    <label class="flex w-full flex-col gap-2 px-4 pb-4 lg:hidden">
+      <select
+        class="w-full rounded-xl border border-neutral-300 bg-transparent px-4 py-2 dark:border-neutral-600 dark:bg-neutral-800"
+        :value="assignment.questions[currentQuestionIndex]?.id"
+        :disabled="!assignmentIsStatic"
+        @change="selectQuestion"
+      >
+        <option v-for="(question, index) in assignment.questions" :key="question.id" :value="question.id">
+          Question {{ index + 1 }}
+        </option>
+      </select>
+    </label>
 
     <div class="relative hidden w-full lg:block">
       <ul class="flex h-[65dvh] w-full shrink-0 flex-col items-start justify-start overflow-y-scroll border-neutral-300 px-4 xl:h-[70dvh]">
@@ -37,7 +50,7 @@
       </ul>
     </div>
 
-    <div class="flex h-full w-full flex-col items-start justify-end p-4 lg:bg-neutral-100/25 dark:bg-none lg:dark:bg-neutral-800">
+    <div class="flex h-auto w-full flex-col items-start justify-end p-4 lg:h-full lg:bg-neutral-100/25 dark:bg-none lg:dark:bg-neutral-800">
       <h4 class="w-64 overflow-hidden overflow-ellipsis text-nowrap text-2xl font-medium" :title="assignmentName">{{ assignmentName }}</h4>
       <p class="hidden text-sm font-bold sm:block">Due {{ formatDate(dueDate, currentDate) }}</p>
       <p class="hidden text-sm text-neutral-700 sm:block dark:text-white">Assigned {{ formatDate(assignedDate, currentDate) }}</p>
@@ -139,6 +152,13 @@ const submitTriggered = ref(false);
 function submit() {
   submitTriggered.value = true;
   emit("submitted");
+}
+
+function selectQuestion(event: Event) {
+  const select = event.target;
+  if (!(select instanceof HTMLSelectElement)) return;
+
+  changeRouteQuery({ q: select.value }, "push");
 }
 
 async function submitAssignment() {
