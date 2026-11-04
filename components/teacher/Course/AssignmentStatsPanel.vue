@@ -29,7 +29,7 @@
             id="assignment-select"
             class="du-select bg-neutral-200 dark:bg-neutral-700"
             :value="selectedAssignmentId ?? undefined"
-            @change="emit('select-assignment', Number(($event.target as HTMLSelectElement).value))"
+            @change="handleAssignmentSelect"
           >
             <option v-for="assignment in assignments" :key="assignment.id" :value="assignment.id">
               {{ assignment.name }} (ID: {{ assignment.id }})
@@ -98,10 +98,9 @@
 <script setup lang="ts">
 import type { ClassAssignmentStats, StudentAssignmentResult, TeacherAssignment } from "~/utils/types/assignments";
 
-defineProps<{
+const props = defineProps<{
   assignments: TeacherAssignment[];
   selectedAssignmentId: number | null;
-  selectedAssignment?: TeacherAssignment;
   studentResults: StudentAssignmentResult[];
   stats: ClassAssignmentStats;
   studentCount: number;
@@ -111,4 +110,13 @@ const emit = defineEmits<{
   "select-assignment": [id: number];
   "view-results": [];
 }>();
+
+const selectedAssignment = computed(() =>
+  props.assignments.find((assignment) => assignment.id === props.selectedAssignmentId)
+);
+
+function handleAssignmentSelect(event: Event) {
+  const select = event.target as HTMLSelectElement;
+  emit("select-assignment", Number(select.value));
+}
 </script>
