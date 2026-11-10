@@ -1,6 +1,6 @@
 <template>
   <div
-    class="relative flex h-auto w-full shrink-0 flex-col items-start justify-start border-neutral-300 transition-shadow lg:sticky lg:top-0 lg:h-screen lg:w-72 lg:border-r dark:border-neutral-600"
+    class="relative flex h-auto w-full shrink-0 flex-col items-start justify-start border-neutral-300 transition-shadow lg:order-last lg:sticky lg:top-0 lg:h-screen lg:w-72 lg:border-l lg:border-r-0 dark:border-neutral-600"
     :class="doneAssignment ? 'lg:shadow-xl' : 'shadow-none'"
   >
     <button class="group my-4 ml-4 flex items-center justify-center gap-2 rounded-xl px-5 py-2 hover:bg-neutral-200 hover:transition dark:hover:bg-neutral-500/25" type="button" @click="emit('close')">
