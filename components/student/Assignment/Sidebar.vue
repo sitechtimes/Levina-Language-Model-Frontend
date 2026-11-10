@@ -12,7 +12,6 @@
       <select
         class="w-full rounded-xl border border-neutral-300 bg-transparent px-4 py-2 dark:border-neutral-600 dark:bg-neutral-800"
         :value="assignment.questions[currentQuestionIndex]?.id"
-        :disabled="!assignmentIsStatic"
         @change="selectQuestion"
       >
         <option v-for="(question, index) in assignment.questions" :key="question.id" :value="question.id">
@@ -29,19 +28,16 @@
           class="w-full border-l-4 border-neutral-300 py-0.5 pl-4 first:mt-6 last:mb-6"
           :class="{
             'border-neutral-400 hover:border-neutral-500': currentQuestionIndex === index,
-            'cursor-not-allowed grayscale': !assignmentIsStatic 
           }"
         >
           <!-- button for question number -->
           <button
-            class="w-full rounded-xl px-5 py-2 text-left hover:transition"
+            class="w-full rounded-xl px-5 py-2 text-left hover:bg-neutral-200 hover:transition dark:hover:bg-neutral-700"
             :class="{
               'bg-neutral-200 dark:bg-neutral-500/25': currentQuestionIndex === index,
-              'text-neutral-400': currentQuestionIndex < index,
-              'hover:bg-neutral-200 dark:hover:bg-neutral-700': assignmentIsStatic
+              'text-neutral-400': currentQuestionIndex < index
             }"
             type="button"
-            :disabled="!assignmentIsStatic"
             @click="changeRouteQuery({ q: question.id }, 'push')"
           >
             Question {{ index + 1 }}
@@ -98,8 +94,16 @@
 
 <script setup lang="ts">
 
+type AssignmentSidebarData = {
+  id: number;
+  questions: StudentAssignment["questions"];
+  name: string;
+  dueDate?: string | Date | null;
+  dateAssigned?: string | Date | null;
+};
+
 const props = defineProps<{
-  assignment: StudentAssignment;
+  assignment: AssignmentSidebarData;
   currentQuestionIndex: number;
   triggerSubmit: boolean;
   isSaved: boolean;
@@ -136,12 +140,9 @@ function formatDate(dateValue: string | Date | null | undefined, referenceDate: 
   }).format(date);
 }
 
-const assignmentData = computed(() => (props.assignment ?? {}) as Partial<LegacyAssignmentShape>);
-const assignmentName = computed(() => assignmentData.value.name ?? assignmentData.value.assignment?.name ?? "Assignment");
-const dueDate = computed(() => assignmentData.value.dueDate ?? assignmentData.value.assignment?.dueDate ?? new Date());
-const assignedDate = computed(() => assignmentData.value.dateAssigned ?? assignmentData.value.assignment?.dateAssigned ?? new Date());
-const assignmentIsStatic = computed(() => assignmentData.value.isStatic ?? assignmentData.value.assignment?.isStatic ?? true);
-const completedQuestions = computed(() => assignmentData.value.questionsCompleted ?? assignmentData.value.assignment?.questionsCompleted ?? 0);
+const assignmentName = computed(() => props.assignment.name);
+const dueDate = computed(() => props.assignment.dueDate);
+const assignedDate = computed(() => props.assignment.dateAssigned);
 
 const submitState = reactive({
   isLoading: false,
@@ -163,7 +164,7 @@ function selectQuestion(event: Event) {
 
 async function submitAssignment() {
   submitState.isLoading = true;
-  const { error } = await tryRequestEndpoint<SubmitAssignment>("courses/student/submit-assignment/", "POST", { id: props.assignment.id });
+  const { error } = await tryRequestEndpoint<void>("courses/student/submit-assignment/", "POST", { id: props.assignment.id });
 
   submitState.isLoading = false;
   submitState.result = !error;
