@@ -82,8 +82,7 @@ async function loginWithEmail() {
   const result = await userStore.login(email.value.toLowerCase(), password.value);
 
   if (result.success) {
-    if (userStore.userType === "teacher") {void router.push(`/${userStore.userType}/dashboard`);}  // change this in the future
-    else {void router.push(`/success`); }
+    void router.push(`/${userStore.userType}/dashboard`);
   } else {
     const data = result.data;
 

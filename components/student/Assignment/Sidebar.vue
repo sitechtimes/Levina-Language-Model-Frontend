@@ -1,7 +1,7 @@
 <template>
   <div
-    class="relative flex h-auto w-full shrink-0 flex-col items-start justify-start border-neutral-300 transition-shadow lg:order-last lg:sticky lg:top-0 lg:h-screen lg:w-72 lg:border-l lg:border-r-0 dark:border-neutral-600"
-    :class="doneAssignment ? 'lg:shadow-xl' : 'shadow-none'"
+    class="fixed left-0 top-0 flex h-full w-72 shrink-0 flex-col items-start justify-start border-neutral-300 transition-shadow lg:sticky lg:border-r dark:border-neutral-600"
+    :class="assignmentIsComplete ? 'lg:shadow-xl' : 'shadow-none'"
   >
     <button class="group my-4 ml-4 flex items-center justify-center gap-2 rounded-xl px-5 py-2 hover:bg-neutral-200 hover:transition dark:hover:bg-neutral-500/25" type="button" @click="emit('close')">
       <img class="size-4 group-hover:-translate-x-1 group-hover:transition dark:invert" src="/ui/arrow-left.svg" aria-hidden="true" />
@@ -21,10 +21,11 @@
     </label>
 
     <div class="relative hidden w-full lg:block">
+      <!-- <div class="list-overlay pointer-events-none absolute left-0 top-0 h-full w-full border-y border-neutral-300 dark:border-neutral-600"></div> -->
       <ul class="flex h-[65dvh] w-full shrink-0 flex-col items-start justify-start overflow-y-scroll border-neutral-300 px-4 xl:h-[70dvh]">
         <li
-          v-for="(question, index) in assignment.questions"
-          :key="question.id"
+          v-for="(num, index) in assignment.assignment.numQuestions"
+          :key="index"
           class="w-full border-l-4 border-neutral-300 py-0.5 pl-4 first:mt-6 last:mb-6"
           :class="{
             'border-neutral-400 hover:border-neutral-500': currentQuestionIndex === index,
@@ -40,22 +41,22 @@
             type="button"
             @click="changeRouteQuery({ q: question.id }, 'push')"
           >
-            Question {{ index + 1 }}
+            Question {{ num }}
           </button>
         </li>
       </ul>
     </div>
 
-    <div class="flex h-auto w-full flex-col items-start justify-end p-4 lg:h-full lg:bg-neutral-100/25 dark:bg-none lg:dark:bg-neutral-800">
-      <h4 class="w-64 overflow-hidden overflow-ellipsis text-nowrap text-2xl font-medium" :title="assignmentName">{{ assignmentName }}</h4>
-      <p class="hidden text-sm font-bold sm:block">Due {{ formatDate(dueDate, currentDate) }}</p>
-      <p class="hidden text-sm text-neutral-700 sm:block dark:text-white">Assigned {{ formatDate(assignedDate, currentDate) }}</p>
+    <div class="flex h-full w-full flex-col items-start justify-end p-4 lg:bg-neutral-100/25 dark:bg-none lg:dark:bg-neutral-800">
+      <h4 class="w-64 overflow-hidden overflow-ellipsis text-nowrap text-2xl font-medium" :title="assignment.assignment.name">{{ assignment.assignment.name }}</h4>
+      <p class="hidden text-sm font-bold sm:block">Due {{ formatDate(assignment.assignment.dueDate, currentDate) }}</p>
+      <p class="hidden text-sm text-neutral-700 sm:block dark:text-white">Assigned {{ formatDate(assignment.assignment.dateAssigned, currentDate) }}</p>
 
-      <div class="w-full sm:mt-4 lg:mt-auto" :class="{ 'du-tooltip': !doneAssignment }" data-tip="Complete all questions first!">
+      <div class="w-full sm:mt-4 lg:mt-auto" :class="{ 'du-tooltip': !assignmentIsComplete }" data-tip="Complete all questions first!">
         <button
           class="relative w-full rounded-lg bg-green-accent px-5 py-1.5 text-lg font-bold"
-          :class="doneAssignment ? 'submit-button' : 'cursor-not-allowed grayscale'"
-          :disabled="!doneAssignment"
+          :class="assignmentIsComplete ? 'submit-button' : 'cursor-not-allowed grayscale'"
+          :disabled="!assignmentIsComplete"
           type="button"
           @click="submit"
         >
@@ -107,9 +108,7 @@ const props = defineProps<{
   currentQuestionIndex: number;
   triggerSubmit: boolean;
   isSaved: boolean;
-  doneAssignment?: boolean;
 }>();
-
 const emit = defineEmits<{
   close: [void];
   submitted: [void];
@@ -149,17 +148,20 @@ const submitState = reactive({
   result: ref<boolean>()
 });
 
+const assignmentIsComplete = computed(() => {
+  const questionInterfaces = Object.values(props.assignment.assignment.questionInterfaces);
+  return (
+    (props.assignment.assignment.isStatic && // only for statics
+      questionInterfaces.length === props.assignment.assignment.numQuestions && // every question has been loaded
+      questionInterfaces.every((questionInterface) => questionInterface.question.answers.some((answer) => answer.selected))) || // every question has been answered
+    props.assignment.questionsCompleted >= props.assignment.assignment.numQuestions // not all questions loaded but everything still answered
+  );
+});
+
 const submitTriggered = ref(false);
 function submit() {
   submitTriggered.value = true;
   emit("submitted");
-}
-
-function selectQuestion(event: Event) {
-  const select = event.target;
-  if (!(select instanceof HTMLSelectElement)) return;
-
-  changeRouteQuery({ q: select.value }, "push");
 }
 
 async function submitAssignment() {
