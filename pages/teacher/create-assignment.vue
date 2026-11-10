@@ -296,9 +296,6 @@ async function handleQuestionSubmit(){
   if (questionInfo.question_type==="MCQ") {
     questionInfo.answer_content_type = "TEXT"
   }
-  else if (questionInfo.question_type === "FRQ") {
-    questionInfo.answer_content_type = "AUDIO"
-  }
   if (questionInfo.question_content_type === "TEXT") {
     if (!questionInfo.text_question || !questionInfo.question_type) {
     createResult.error = "Please fill in all fields.";
@@ -326,6 +323,7 @@ async function handleQuestionSubmit(){
       createResult.error = "Please fill in all fields.";
       return;
     }
+    console.log(questionInfo.audio_question)
     const { error } = await tryCatch(
     submitCreateAudioQuestion(
       questionInfo.question_type,
@@ -333,6 +331,8 @@ async function handleQuestionSubmit(){
       questionInfo.audio_question,
       questionInfo.description,
       questionInfo.answer_content_type,
+      questionInfo.text_answer,
+      questionInfo.false_answers
     )
   );
   if (error) {
