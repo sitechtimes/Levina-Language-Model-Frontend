@@ -8,6 +8,18 @@
       <span class="translate-y-px">Back to course</span>
     </button>
 
+    <label class="flex w-full flex-col gap-2 px-4 pb-4 lg:hidden">
+      <select
+        class="w-full rounded-xl border border-neutral-300 bg-transparent px-4 py-2 dark:border-neutral-600 dark:bg-neutral-800"
+        :value="assignment.questions[currentQuestionIndex]?.id"
+        @change="selectQuestion"
+      >
+        <option v-for="(question, index) in assignment.questions" :key="question.id" :value="question.id">
+          Question {{ index + 1 }}
+        </option>
+      </select>
+    </label>
+
     <div class="relative hidden w-full lg:block">
       <!-- <div class="list-overlay pointer-events-none absolute left-0 top-0 h-full w-full border-y border-neutral-300 dark:border-neutral-600"></div> -->
       <ul class="flex h-[65dvh] w-full shrink-0 flex-col items-start justify-start overflow-y-scroll border-neutral-300 px-4 xl:h-[70dvh]">
@@ -16,21 +28,18 @@
           :key="index"
           class="w-full border-l-4 border-neutral-300 py-0.5 pl-4 first:mt-6 last:mb-6"
           :class="{
-            'border-neutral-400 hover:border-neutral-500': currentQuestionIndex === index, // current
-            'cursor-not-allowed grayscale': !assignment.assignment.isStatic //if dynamic, disable
+            'border-neutral-400 hover:border-neutral-500': currentQuestionIndex === index,
           }"
         >
           <!-- button for question number -->
           <button
-            class="w-full rounded-xl px-5 py-2 text-left hover:transition"
+            class="w-full rounded-xl px-5 py-2 text-left hover:bg-neutral-200 hover:transition dark:hover:bg-neutral-700"
             :class="{
               'bg-neutral-200 dark:bg-neutral-500/25': currentQuestionIndex === index,
-              'text-neutral-400': currentQuestionIndex < index,
-              'hover:bg-neutral-200 dark:hover:bg-neutral-700': assignment.assignment.isStatic
+              'text-neutral-400': currentQuestionIndex < index
             }"
             type="button"
-            :disabled="!assignment.assignment.isStatic"
-            @click="changeRouteQuery({ q: index + 1 }, 'push')"
+            @click="changeRouteQuery({ q: question.id }, 'push')"
           >
             Question {{ num }}
           </button>
@@ -85,8 +94,17 @@
 </template>
 
 <script setup lang="ts">
+
+type AssignmentSidebarData = {
+  id: number;
+  questions: StudentAssignment["questions"];
+  name: string;
+  dueDate?: string | Date | null;
+  dateAssigned?: string | Date | null;
+};
+
 const props = defineProps<{
-  assignment: StudentAssignment;
+  assignment: AssignmentSidebarData;
   currentQuestionIndex: number;
   triggerSubmit: boolean;
   isSaved: boolean;
@@ -100,6 +118,30 @@ const router = useRouter();
 const userStore = useUserStore();
 const { studentCurrentCourse } = storeToRefs(userStore);
 const currentDate = new Date();
+
+function formatDate(dateValue: string | Date | null | undefined, referenceDate: Date = new Date()) {
+  if (!dateValue) return "No date";
+
+  const date = new Date(dateValue);
+  if (Number.isNaN(date.getTime())) return "Invalid date";
+
+  const today = new Date(referenceDate);
+  const tomorrow = new Date(today);
+  tomorrow.setDate(today.getDate() + 1);
+
+  if (date.toDateString() === today.toDateString()) return "Today";
+  if (date.toDateString() === tomorrow.toDateString()) return "Tomorrow";
+
+  return new Intl.DateTimeFormat("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  }).format(date);
+}
+
+const assignmentName = computed(() => props.assignment.name);
+const dueDate = computed(() => props.assignment.dueDate);
+const assignedDate = computed(() => props.assignment.dateAssigned);
 
 const submitState = reactive({
   isLoading: false,
@@ -124,7 +166,7 @@ function submit() {
 
 async function submitAssignment() {
   submitState.isLoading = true;
-  const { error } = await tryRequestEndpoint<SubmitAssignment>("courses/student/submit-assignment/", "POST", { id: props.assignment.id });
+  const { error } = await tryRequestEndpoint<void>("courses/student/submit-assignment/", "POST", { id: props.assignment.id });
 
   submitState.isLoading = false;
   submitState.result = !error;
