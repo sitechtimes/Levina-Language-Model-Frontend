@@ -77,3 +77,26 @@ export interface Session {
   readonly active: boolean;
   readonly sessionInstances: SessionInstance[];
 }
+
+export interface StudentSessionProgress {
+  instanceId: number;
+  studentName: string;
+  joinedAt: string;
+  submitted: boolean;
+  answeredCount: number;
+  correctCount: number;
+  incorrectCount: number;
+  pendingCount: number;
+  totalQuestions: number;
+}
+
+export interface ClassSessionStats {
+  totalCorrect: number;
+  totalIncorrect: number;
+  totalPending: number;
+  totalAnswered: number;
+  totalQuestions: number;
+  submittedCount: number;
+  totalStudents: number;
+  accuracyPercentage: number;
+}
