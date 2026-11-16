@@ -8,6 +8,6 @@ export const classTypes = {
 export function getGeneralClassType(specificClass: string): string | null {
   const types = Object.keys(classTypes) as Array<keyof typeof classTypes>;
   return (
-    types.find(type => classTypes[type].includes(specificClass)) || null
+    types.find(type => (classTypes[type] as readonly string[]).includes(specificClass)) || null
   );
 }
