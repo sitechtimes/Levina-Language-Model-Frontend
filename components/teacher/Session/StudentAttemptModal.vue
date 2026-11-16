@@ -84,13 +84,6 @@
 </template>
 
 <script setup lang="ts">
-import type {
-  SessionInstance,
-  SessionQuestion,
-  SessionQuestionInstance
-} from "~/utils/types/sessions";
-import { autoGradeSessionQuestion } from "~/utils/functions/autoGrade";
-
 const props = defineProps<{
   showModal: boolean;
   student: SessionInstance | null;

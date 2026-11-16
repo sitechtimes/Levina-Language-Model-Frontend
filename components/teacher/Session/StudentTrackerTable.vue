@@ -92,8 +92,6 @@
 </template>
 
 <script setup lang="ts">
-import type { StudentSessionProgress } from "~/utils/types/sessions";
-
 defineProps<{
   students: StudentSessionProgress[];
 }>();

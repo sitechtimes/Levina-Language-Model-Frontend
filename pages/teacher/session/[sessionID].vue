@@ -59,49 +59,21 @@
 
       <!-- Live Session Content -->
       <template v-else-if="session">
-        <!-- Giant Join Code Banner -->
         <TeacherSessionJoinCodeDisplay
           :access-code="session.accessCode"
           :template-name="session.assignmentTemplate?.name || 'Live Assignment'"
           :active="session.active"
         />
 
-        <!-- Live Quick Metric Cards -->
-        <div class="grid w-full grid-cols-2 gap-3 sm:grid-cols-4">
-          <div class="flex flex-col items-center justify-center rounded-xl border border-neutral-300 bg-neutral-100 p-3 dark:border-neutral-700 dark:bg-neutral-800">
-            <span class="text-xs text-neutral-500">Connected Students</span>
-            <span class="text-xl font-bold">{{ sessionStats.totalStudents }}</span>
-          </div>
+        <TeacherSessionSessionMetricsGrid
+          :stats="sessionStats"
+        />
 
-          <div class="flex flex-col items-center justify-center rounded-xl border border-neutral-300 bg-neutral-100 p-3 dark:border-neutral-700 dark:bg-neutral-800">
-            <span class="text-xs text-neutral-500">Completed Submissions</span>
-            <span class="text-xl font-bold text-green-600 dark:text-green-400">
-              {{ sessionStats.submittedCount }} / {{ sessionStats.totalStudents }}
-            </span>
-          </div>
-
-          <div class="flex flex-col items-center justify-center rounded-xl border border-neutral-300 bg-neutral-100 p-3 dark:border-neutral-700 dark:bg-neutral-800">
-            <span class="text-xs text-neutral-500">Class Accuracy (MCQ)</span>
-            <span class="text-xl font-bold text-green-600 dark:text-green-400">
-              {{ sessionStats.accuracyPercentage }}%
-            </span>
-          </div>
-
-          <div class="flex flex-col items-center justify-center rounded-xl border border-neutral-300 bg-neutral-100 p-3 dark:border-neutral-700 dark:bg-neutral-800">
-            <span class="text-xs text-neutral-500">Questions Answered</span>
-            <span class="text-xl font-bold">
-              {{ sessionStats.totalAnswered }} / {{ sessionStats.totalQuestions }}
-            </span>
-          </div>
-        </div>
-
-        <!-- Student Progress Table -->
         <TeacherSessionStudentTrackerTable
           :students="studentProgressList"
           @inspect="handleInspectStudent"
         />
 
-        <!-- Student Attempt Inspection Modal -->
         <TeacherSessionStudentAttemptModal
           :show-modal="showInspectModal"
           :student="inspectedStudent"
@@ -109,54 +81,18 @@
           @close="showInspectModal = false"
         />
 
-        <!-- End Session Confirmation Modal -->
-        <FullScreenModal
+        <TeacherSessionEndSessionModal
           :show-modal="showEndConfirmModal"
-          transition-name="scale-75"
+          :is-ending="isEnding"
           @close="showEndConfirmModal = false"
-        >
-          <div class="flex flex-col items-center justify-center text-center gap-2">
-            <h2 class="text-xl font-bold">End Live Session?</h2>
-            <p class="text-sm text-neutral-600 dark:text-neutral-400">
-              Ending this session will mark it as inactive. Connected students will no longer be able to submit further answers.
-            </p>
-            <div class="mt-4 flex w-full justify-center gap-3">
-              <button
-                class="du-btn du-btn-md bg-neutral-200 dark:bg-neutral-700"
-                type="button"
-                @click="showEndConfirmModal = false"
-              >
-                Cancel
-              </button>
-              <button
-                class="du-btn du-btn-md bg-red-500 text-white hover:bg-red-600"
-                type="button"
-                :disabled="isEnding"
-                @click="handleEndSession"
-              >
-                <span v-if="isEnding" class="du-loading du-loading-spinner du-loading-sm"></span>
-                <span v-else>Yes, End Session</span>
-              </button>
-            </div>
-          </div>
-        </FullScreenModal>
+          @confirm="handleEndSession"
+        />
       </template>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import type {
-  ClassSessionStats,
-  Session,
-  SessionInstance,
-  StudentSessionProgress
-} from "~/utils/types/sessions";
-import {
-  calculateSessionStats,
-  gradeSessionAttempt
-} from "~/utils/functions/autoGrade";
-
 definePageMeta({
   layout: "teacher",
   requiresAuth: true,
@@ -233,7 +169,6 @@ async function fetchSessionData(isInitial = false) {
 
 async function pollSessionData() {
   if (!session.value?.active && session.value !== null) {
-    // If session ended, stop polling automatically
     stopPolling();
     return;
   }
