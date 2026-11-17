@@ -5,14 +5,7 @@
         <h2 class="text-xl font-bold">Your Sessions</h2>
         <p class="text-xs text-neutral-500">Active sessions can be rejoined and monitored at any time.</p>
       </div>
-      <button
-        class="du-btn du-btn-sm bg-neutral-200 hover:bg-neutral-300 dark:bg-neutral-700 dark:hover:bg-neutral-600"
-        type="button"
-        :disabled="loading"
-        @click="emit('refresh')"
-      >
-        Refresh
-      </button>
+      <button class="du-btn du-btn-sm bg-neutral-200 hover:bg-neutral-300 dark:bg-neutral-700 dark:hover:bg-neutral-600" type="button" :disabled="loading" @click="emit('refresh')">Refresh</button>
     </div>
 
     <div class="relative flex w-full items-center justify-center overflow-x-auto rounded-b-box rounded-se-box">
@@ -27,11 +20,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr
-            v-for="s in sessions"
-            :key="s.id"
-            class="border-t border-neutral-300 dark:border-neutral-600 hover:bg-neutral-100/50 dark:hover:bg-neutral-800/40"
-          >
+          <tr v-for="s in sessions" :key="s.id" class="border-t border-neutral-300 dark:border-neutral-600 hover:bg-neutral-100/50 dark:hover:bg-neutral-800/40">
             <td class="py-3 pl-6 font-medium">
               {{ s.assignmentTemplate?.name || `Session #${s.id}` }}
             </td>
@@ -39,18 +28,8 @@
               {{ s.accessCode }}
             </td>
             <td class="py-3 text-center">
-              <span
-                v-if="s.active"
-                class="rounded-full bg-green-accent/20 px-3 py-0.5 text-xs font-semibold text-green-800 dark:text-green-300"
-              >
-                Active
-              </span>
-              <span
-                v-else
-                class="rounded-full bg-neutral-200 px-3 py-0.5 text-xs font-semibold text-neutral-600 dark:bg-neutral-700 dark:text-neutral-400"
-              >
-                Ended
-              </span>
+              <span v-if="s.active" class="rounded-full bg-green-accent/20 px-3 py-0.5 text-xs font-semibold text-green-800 dark:text-green-300"> Active </span>
+              <span v-else class="rounded-full bg-neutral-200 px-3 py-0.5 text-xs font-semibold text-neutral-600 dark:bg-neutral-700 dark:text-neutral-400"> Ended </span>
             </td>
             <td class="py-3 text-center text-sm font-semibold">
               {{ s.sessionInstances?.length ?? 0 }}

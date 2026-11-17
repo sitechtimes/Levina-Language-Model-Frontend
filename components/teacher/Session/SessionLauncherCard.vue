@@ -8,27 +8,15 @@
     <div class="flex flex-col gap-4 sm:flex-row sm:items-end">
       <div class="flex flex-1 flex-col gap-1.5">
         <label for="template-select" class="text-sm font-semibold">Select Assignment Template:</label>
-        <select
-          id="template-select"
-          v-model="selectedId"
-          class="du-select bg-neutral-200 dark:bg-neutral-700"
-          :disabled="loading || isHosting"
-        >
+        <select id="template-select" v-model="selectedId" class="du-select bg-neutral-200 dark:bg-neutral-700" :disabled="loading || isHosting">
           <option :value="null" disabled>
             {{ loading ? "Loading templates..." : "-- Choose a template --" }}
           </option>
-          <option v-for="t in templates" :key="t.id" :value="t.id">
-            {{ t.name }} ({{ t.questions?.length ?? 0 }} questions{{ t.timed ? `, ${t.timeLimit}m` : "" }})
-          </option>
+          <option v-for="t in templates" :key="t.id" :value="t.id">{{ t.name }} ({{ t.questions?.length ?? 0 }} questions{{ t.timed ? `, ${t.timeLimit}m` : "" }})</option>
         </select>
       </div>
 
-      <button
-        class="du-btn du-btn-md bg-green-accent text-white hover:brightness-110"
-        type="button"
-        :disabled="!selectedId || isHosting"
-        @click="handleHost"
-      >
+      <button class="du-btn du-btn-md bg-green-accent text-white hover:brightness-110" type="button" :disabled="!selectedId || isHosting" @click="handleHost">
         <span v-if="isHosting" class="du-loading du-loading-spinner du-loading-sm"></span>
         <span v-else>Start Live Session</span>
       </button>

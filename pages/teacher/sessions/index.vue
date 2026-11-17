@@ -3,24 +3,12 @@
     <div class="flex w-full max-w-5xl flex-col gap-8">
       <div class="flex flex-col gap-1 border-b border-neutral-300 pb-4 dark:border-neutral-700">
         <h1 class="text-3xl font-bold">Live Sessions</h1>
-        <p class="text-sm text-neutral-500 dark:text-neutral-400">
-          Host synchronous, live assignment sessions for your class with a temporary 6-character access code.
-        </p>
+        <p class="text-sm text-neutral-500 dark:text-neutral-400">Host synchronous, live assignment sessions for your class with a temporary 6-character access code.</p>
       </div>
 
-      <TeacherSessionSessionLauncherCard
-        :templates="templates"
-        :loading="loadingTemplates"
-        :is-hosting="isHosting"
-        :error="hostError"
-        @host="handleHostSession"
-      />
+      <TeacherSessionSessionLauncherCard :templates="templates" :loading="loadingTemplates" :is-hosting="isHosting" :error="hostError" @host="handleHostSession" />
 
-      <TeacherSessionSessionHistoryTable
-        :sessions="userSessions"
-        :loading="loadingSessions"
-        @refresh="fetchSessions"
-      />
+      <TeacherSessionSessionHistoryTable :sessions="userSessions" :loading="loadingSessions" @refresh="fetchSessions" />
     </div>
   </div>
 </template>
@@ -46,10 +34,8 @@ const isHosting = ref(false);
 const hostError = ref("");
 
 const userSessions = computed(() => {
-  if (!userStore.user?.id) return allSessions.value;
-  return allSessions.value
-    .filter((s) => s.host === userStore.user.id)
-    .sort((a, b) => b.id - a.id);
+  if (!userStore.userId) return allSessions.value;
+  return allSessions.value.filter((s) => s.host === userStore.userId).sort((a, b) => b.id - a.id);
 });
 
 async function fetchTemplates() {
@@ -78,11 +64,7 @@ async function handleHostSession(templateId: number) {
   isHosting.value = true;
   hostError.value = "";
 
-  const { data, error } = await tryRequestEndpoint<Session>(
-    "sessions/host_session/",
-    "POST",
-    { assignment_template: templateId }
-  );
+  const { data, error } = await tryRequestEndpoint<Session>("sessions/host_session/", "POST", { assignment_template: templateId });
 
   isHosting.value = false;
 

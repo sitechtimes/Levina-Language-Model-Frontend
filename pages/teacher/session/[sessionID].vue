@@ -4,10 +4,7 @@
       <!-- Breadcrumb & Control Header -->
       <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-neutral-300 pb-4 dark:border-neutral-700">
         <div>
-          <NuxtLink
-            to="/teacher/sessions"
-            class="flex items-center gap-1 text-sm font-semibold text-neutral-600 hover:text-black dark:text-neutral-400 dark:hover:text-white mb-1"
-          >
+          <NuxtLink to="/teacher/sessions" class="flex items-center gap-1 text-sm font-semibold text-neutral-600 hover:text-black dark:text-neutral-400 dark:hover:text-white mb-1">
             ← Back to Sessions Hub
           </NuxtLink>
           <h1 class="text-3xl font-bold">Live Session Monitor</h1>
@@ -15,35 +12,18 @@
 
         <div class="flex flex-wrap items-center gap-2">
           <!-- Auto-refresh pill -->
-          <button
-            class="du-btn du-btn-sm rounded-lg"
-            :class="autoRefresh ? 'bg-green-accent text-white' : 'bg-neutral-200 dark:bg-neutral-700'"
-            type="button"
-            @click="autoRefresh = !autoRefresh"
-          >
+          <button class="du-btn du-btn-sm rounded-lg" :class="autoRefresh ? 'bg-green-accent text-white' : 'bg-neutral-200 dark:bg-neutral-700'" type="button" @click="autoRefresh = !autoRefresh">
             Auto-refresh: {{ autoRefresh ? "ON (3s)" : "PAUSED" }}
           </button>
 
           <!-- Manual Refresh button -->
-          <button
-            class="du-btn du-btn-sm bg-neutral-200 hover:bg-neutral-300 dark:bg-neutral-700 dark:hover:bg-neutral-600"
-            type="button"
-            :disabled="isPolling"
-            @click="pollSessionData"
-          >
+          <button class="du-btn du-btn-sm bg-neutral-200 hover:bg-neutral-300 dark:bg-neutral-700 dark:hover:bg-neutral-600" type="button" :disabled="isPolling" @click="pollSessionData">
             <span v-if="isPolling" class="du-loading du-loading-spinner du-loading-xs"></span>
             <span v-else>Refresh Now</span>
           </button>
 
           <!-- End Session button -->
-          <button
-            v-if="session?.active"
-            class="du-btn du-btn-sm bg-red-500 text-white hover:bg-red-600"
-            type="button"
-            @click="showEndConfirmModal = true"
-          >
-            End Session
-          </button>
+          <button v-if="session?.active" class="du-btn du-btn-sm bg-red-500 text-white hover:bg-red-600" type="button" @click="showEndConfirmModal = true">End Session</button>
         </div>
       </div>
 
@@ -59,34 +39,15 @@
 
       <!-- Live Session Content -->
       <template v-else-if="session">
-        <TeacherSessionJoinCodeDisplay
-          :access-code="session.accessCode"
-          :template-name="session.assignmentTemplate?.name || 'Live Assignment'"
-          :active="session.active"
-        />
+        <TeacherSessionJoinCodeDisplay :access-code="session.accessCode" :template-name="session.assignmentTemplate?.name || 'Live Assignment'" :active="session.active" />
 
-        <TeacherSessionSessionMetricsGrid
-          :stats="sessionStats"
-        />
+        <TeacherSessionSessionMetricsGrid :stats="sessionStats" />
 
-        <TeacherSessionStudentTrackerTable
-          :students="studentProgressList"
-          @inspect="handleInspectStudent"
-        />
+        <TeacherSessionStudentTrackerTable :students="studentProgressList" @inspect="handleInspectStudent" />
 
-        <TeacherSessionStudentAttemptModal
-          :show-modal="showInspectModal"
-          :student="inspectedStudent"
-          :questions="session.assignmentTemplate?.questions || []"
-          @close="showInspectModal = false"
-        />
+        <TeacherSessionStudentAttemptModal :show-modal="showInspectModal" :student="inspectedStudent" :questions="session.assignmentTemplate?.questions || []" @close="showInspectModal = false" />
 
-        <TeacherSessionEndSessionModal
-          :show-modal="showEndConfirmModal"
-          :is-ending="isEnding"
-          @close="showEndConfirmModal = false"
-          @confirm="handleEndSession"
-        />
+        <TeacherSessionEndSessionModal :show-modal="showEndConfirmModal" :is-ending="isEnding" @close="showEndConfirmModal = false" @confirm="handleEndSession" />
       </template>
     </div>
   </div>
@@ -200,10 +161,7 @@ async function handleEndSession() {
   if (!session.value) return;
   isEnding.value = true;
 
-  const { data, error } = await tryRequestEndpoint<Session>(
-    `sessions/${sessionId}/end_session/`,
-    "POST"
-  );
+  const { data, error } = await tryRequestEndpoint<Session>(`sessions/${sessionId}/end_session/`, "POST");
 
   isEnding.value = false;
   showEndConfirmModal.value = false;

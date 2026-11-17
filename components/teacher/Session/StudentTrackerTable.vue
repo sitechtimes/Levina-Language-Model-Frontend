@@ -20,11 +20,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr
-            v-for="student in students"
-            :key="student.instanceId"
-            class="border-t border-neutral-300 dark:border-neutral-600 hover:bg-neutral-100/50 dark:hover:bg-neutral-800/40"
-          >
+          <tr v-for="student in students" :key="student.instanceId" class="border-t border-neutral-300 dark:border-neutral-600 hover:bg-neutral-100/50 dark:hover:bg-neutral-800/40">
             <td class="py-3 pl-6 font-medium">
               {{ student.studentName }}
             </td>
@@ -33,42 +29,24 @@
             </td>
             <td class="py-3 text-center">
               <div class="flex flex-col items-center gap-1">
-                <span class="text-xs font-semibold">
-                  {{ student.answeredCount }} / {{ student.totalQuestions }}
-                </span>
+                <span class="text-xs font-semibold"> {{ student.answeredCount }} / {{ student.totalQuestions }} </span>
                 <div class="h-1.5 w-24 overflow-hidden rounded-full bg-neutral-200 dark:bg-neutral-700">
                   <div
                     class="h-full bg-green-accent transition-all duration-300"
                     :style="{
-                      width: student.totalQuestions > 0
-                        ? `${Math.round((student.answeredCount / student.totalQuestions) * 100)}%`
-                        : '0%'
+                      width: student.totalQuestions > 0 ? `${Math.round((student.answeredCount / student.totalQuestions) * 100)}%` : '0%'
                     }"
                   ></div>
                 </div>
               </div>
             </td>
             <td class="py-3 text-center">
-              <span class="font-semibold text-sm">
-                {{ student.correctCount }} / {{ student.totalQuestions }}
-              </span>
-              <span v-if="student.pendingCount > 0" class="block text-[10px] text-amber-600 dark:text-amber-400">
-                ({{ student.pendingCount }} pending)
-              </span>
+              <span class="font-semibold text-sm"> {{ student.correctCount }} / {{ student.totalQuestions }} </span>
+              <span v-if="student.pendingCount > 0" class="block text-[10px] text-amber-600 dark:text-amber-400"> ({{ student.pendingCount }} pending) </span>
             </td>
             <td class="py-3 text-center">
-              <span
-                v-if="student.submitted"
-                class="rounded-full bg-green-100 px-3 py-0.5 text-xs font-semibold text-green-800 dark:bg-green-950 dark:text-green-300"
-              >
-                Submitted
-              </span>
-              <span
-                v-else
-                class="rounded-full bg-blue-100 px-3 py-0.5 text-xs font-semibold text-blue-800 dark:bg-blue-950 dark:text-blue-300"
-              >
-                In Progress
-              </span>
+              <span v-if="student.submitted" class="rounded-full bg-green-100 px-3 py-0.5 text-xs font-semibold text-green-800 dark:bg-green-950 dark:text-green-300"> Submitted </span>
+              <span v-else class="rounded-full bg-blue-100 px-3 py-0.5 text-xs font-semibold text-blue-800 dark:bg-blue-950 dark:text-blue-300"> In Progress </span>
             </td>
             <td class="py-3 text-center">
               <button
@@ -81,9 +59,7 @@
             </td>
           </tr>
           <tr v-if="students.length === 0" class="border-t border-neutral-300 dark:border-neutral-600">
-            <td colspan="6" class="px-6 py-10 text-center text-neutral-500">
-              No students have joined yet. Waiting for participants to enter the code...
-            </td>
+            <td colspan="6" class="px-6 py-10 text-center text-neutral-500">No students have joined yet. Waiting for participants to enter the code...</td>
           </tr>
         </tbody>
       </table>
