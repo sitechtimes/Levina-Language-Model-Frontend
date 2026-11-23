@@ -85,7 +85,7 @@ function syncSelectedAssignmentFromQuery() {
     ? queryId
     : assignments.value[0].id;
 
-  selectedAssignmentId.value = selectedId;
+  selectedAssignmentId.value = selectedId ?? null;
   if (String(queryId) !== String(selectedId)) {
     void router.replace({ query: { ...route.query, assignment: String(selectedId) } });
   }

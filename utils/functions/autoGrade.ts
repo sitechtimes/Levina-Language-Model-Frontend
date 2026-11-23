@@ -1,7 +1,7 @@
 export const QUESTION_GRADE_STATUS = {
   CORRECT: "correct",
   INCORRECT: "incorrect",
-  PENDING_REVIEW: "pending-review",
+  PENDING_REVIEW: "pending-review"
 } as const;
 
 export type QuestionGradeStatus = (typeof QUESTION_GRADE_STATUS)[keyof typeof QUESTION_GRADE_STATUS];
@@ -20,20 +20,14 @@ export interface QuestionGrade {
  *   - If the student did not answer / submit the question instance, status is "incorrect".
  *   - Compares trimmed, case-insensitive student text answer against question text answer.
  */
-export function autoGradeQuestion(
-  question: AssignmentQuestion,
-  questionInstance: AssignmentQuestionInstance | undefined
-): QuestionGrade {
+export function autoGradeQuestion(question: AssignmentQuestion, questionInstance: AssignmentQuestionInstance | undefined): QuestionGrade {
   // Non-MCQ questions (e.g. FRQ) are never autograded; always pending review
   if (question.questionType !== "MCQ") {
     return { status: QUESTION_GRADE_STATUS.PENDING_REVIEW };
   }
 
   // Audio answers cannot be autograded by text comparison; always pending review
-  if (
-    question.answerContentType === "AUDIO" ||
-    (questionInstance?.audioAnswer && !questionInstance?.textAnswer)
-  ) {
+  if (question.answerContentType === "AUDIO" || (questionInstance?.audioAnswer && !questionInstance?.textAnswer)) {
     return { status: QUESTION_GRADE_STATUS.PENDING_REVIEW };
   }
 
@@ -59,10 +53,7 @@ export function autoGradeQuestion(
 /**
  * Aggregates question grades for a single student's assignment attempt.
  */
-export function gradeStudentAttempt(
-  questions: AssignmentQuestion[],
-  questionInstances: AssignmentQuestionInstance[] = []
-): { correctCount: number; incorrectCount: number; pendingCount: number } {
+export function gradeStudentAttempt(questions: AssignmentQuestion[], questionInstances: AssignmentQuestionInstance[] = []): { correctCount: number; incorrectCount: number; pendingCount: number } {
   let correctCount = 0;
   let incorrectCount = 0;
   let pendingCount = 0;
@@ -87,9 +78,7 @@ export function gradeStudentAttempt(
 /**
  * Calculates overall class performance statistics across all student results.
  */
-export function calculateClassStats(
-  results: StudentAssignmentResult[]
-): ClassAssignmentStats {
+export function calculateClassStats(results: StudentAssignmentResult[]): ClassAssignmentStats {
   const submittedResults = results.filter((r) => r.hasSubmitted);
   const totalCorrect = submittedResults.reduce((acc, r) => acc + r.correctCount, 0);
   const totalIncorrect = submittedResults.reduce((acc, r) => acc + r.incorrectCount, 0);
@@ -97,8 +86,7 @@ export function calculateClassStats(
   const totalQuestions = submittedResults.reduce((acc, r) => acc + r.totalQuestions, 0);
   const gradedQuestions = totalCorrect + totalIncorrect;
 
-  const accuracyPercentage =
-    gradedQuestions > 0 ? Math.round((totalCorrect / gradedQuestions) * 100) : 0;
+  const accuracyPercentage = gradedQuestions > 0 ? Math.round((totalCorrect / gradedQuestions) * 100) : 0;
 
   return {
     totalCorrect,
@@ -107,6 +95,94 @@ export function calculateClassStats(
     totalQuestions,
     submittedCount: submittedResults.length,
     totalStudents: results.length,
+    accuracyPercentage
+  };
+}
+
+/**
+ * Grades a session question instance.
+ * MCQ text questions are compared case-insensitively; non-MCQ / audio questions return pending-review.
+ */
+export function autoGradeSessionQuestion(question: SessionQuestion, questionInstance: SessionQuestionInstance | undefined): QuestionGrade {
+  if (question.questionType !== "MCQ") {
+    return { status: QUESTION_GRADE_STATUS.PENDING_REVIEW };
+  }
+
+  if (question.answerContentType === "AUDIO" || (questionInstance?.audioAnswer && !questionInstance?.textAnswer)) {
+    return { status: QUESTION_GRADE_STATUS.PENDING_REVIEW };
+  }
+
+  if (!questionInstance || !questionInstance.submitted) {
+    return { status: QUESTION_GRADE_STATUS.INCORRECT };
+  }
+
+  const studentAnswer = questionInstance.textAnswer?.trim().toLowerCase();
+  const correctAnswer = question.textAnswer?.trim().toLowerCase();
+
+  if (!studentAnswer || !correctAnswer) {
+    return { status: QUESTION_GRADE_STATUS.INCORRECT };
+  }
+
+  if (studentAnswer === correctAnswer) {
+    return { status: QUESTION_GRADE_STATUS.CORRECT };
+  }
+
+  return { status: QUESTION_GRADE_STATUS.INCORRECT };
+}
+
+/**
+ * Aggregates question grades for a single student in a live session.
+ */
+export function gradeSessionAttempt(
+  questions: SessionQuestion[],
+  questionInstances: SessionQuestionInstance[] = []
+): { correctCount: number; incorrectCount: number; pendingCount: number; answeredCount: number } {
+  let correctCount = 0;
+  let incorrectCount = 0;
+  let pendingCount = 0;
+  let answeredCount = 0;
+
+  const instanceMap = new Map<number, SessionQuestionInstance>();
+  for (const qi of questionInstances) {
+    instanceMap.set(qi.question, qi);
+  }
+
+  for (const q of questions) {
+    const qi = instanceMap.get(q.id);
+    if (qi && qi.submitted) {
+      answeredCount++;
+    }
+    const status = autoGradeSessionQuestion(q, qi).status;
+    if (status === QUESTION_GRADE_STATUS.CORRECT) correctCount++;
+    else if (status === QUESTION_GRADE_STATUS.INCORRECT) incorrectCount++;
+    else pendingCount++;
+  }
+
+  return { correctCount, incorrectCount, pendingCount, answeredCount };
+}
+
+/**
+ * Calculates overall live session statistics across connected students.
+ */
+export function calculateSessionStats(progressList: StudentSessionProgress[]): ClassSessionStats {
+  const totalCorrect = progressList.reduce((acc, p) => acc + p.correctCount, 0);
+  const totalIncorrect = progressList.reduce((acc, p) => acc + p.incorrectCount, 0);
+  const totalPending = progressList.reduce((acc, p) => acc + p.pendingCount, 0);
+  const totalAnswered = progressList.reduce((acc, p) => acc + p.answeredCount, 0);
+  const totalQuestions = progressList.reduce((acc, p) => acc + p.totalQuestions, 0);
+  const submittedCount = progressList.filter((p) => p.submitted).length;
+  const gradedQuestions = totalCorrect + totalIncorrect;
+
+  const accuracyPercentage = gradedQuestions > 0 ? Math.round((totalCorrect / gradedQuestions) * 100) : 0;
+
+  return {
+    totalCorrect,
+    totalIncorrect,
+    totalPending,
+    totalAnswered,
+    totalQuestions,
+    submittedCount,
+    totalStudents: progressList.length,
     accuracyPercentage
   };
 }

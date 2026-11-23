@@ -12,7 +12,7 @@
 
         <div class="relative flex flex-col items-start justify-center gap-1">
           <label class="font-medium" for="access-code"> Access Code <span title="Required" class="font-2xl text-red-500">*</span> </label>
-          <input id="access-code" v-model="accessCode" class="h-12 w-[22rem] rounded-lg border-0 bg-gray-accent px-4" type="number" required autocomplete="number" />
+          <input id="access-code" v-model="accessCode" class="h-12 w-[22rem] rounded-lg border-0 bg-gray-accent px-4 uppercase" type="text" maxlength="6" required autocomplete="off" />
         </div>
 
         <div class="relative flex w-96 flex-col items-center justify-center gap-1">
@@ -47,6 +47,11 @@ async function startSession() {
   await router.push("/success");
 }
 
+onMounted(() => {
+  if (route.query.code) {
+    accessCode.value = String(route.query.code).trim().toUpperCase();
+  }
+});
 </script>
 
 <style scoped></style>

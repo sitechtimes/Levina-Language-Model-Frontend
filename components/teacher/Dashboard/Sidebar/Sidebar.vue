@@ -9,6 +9,7 @@
         <TeacherDashboardSidebarPageLink to="/teacher/dashboard" img-src="/ui/home.svg" text="Dashboard" />
         <TeacherDashboardSidebarPageLink to="/teacher/create-assignment" img-src="/ui/todo.svg" text="Create Assignment" />  
         <TeacherDashboardSidebarPageLink to="/teacher/post-assignment" img-src="/ui/todo.svg" text="Post Assignment" />
+        <TeacherDashboardSidebarPageLink to="/teacher/sessions" img-src="/ui/users.svg" text="Live Sessions" />
       </div>
 
       <div class="my-4 h-px w-full bg-neutral-300 dark:bg-neutral-600"></div>
